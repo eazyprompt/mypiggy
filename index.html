@@ -1,1065 +1,960 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IELTS AI (Real) — GitHub Pages + Google Sheets</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>IELTS AI (Real) • GitHub Pages + Google Sheets</title>
 
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Vue 3 (CDN) -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .glass { background: rgba(255,255,255,.92); backdrop-filter: blur(10px); }
-    .fade-enter-active,.fade-leave-active { transition: opacity .25s; }
-    .fade-enter-from,.fade-leave-to { opacity: 0; }
-    .slide-up-enter-active { transition: all .25s ease; }
-    .slide-up-enter-from { transform: translateY(14px); opacity: 0; }
-
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      font-size: 12px;
-      border: 1px solid #e2e8f0;
-      padding: 2px 6px;
-      border-radius: 8px;
-      background: #fff;
-      color:#0f172a;
+    :root{
+      --bg:#0b1020;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --stroke: rgba(148,163,184,.18);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --blue:#3b82f6;
+      --cyan:#06b6d4;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
     }
-    .recording-pulse { animation: pulse-red 1.4s infinite; }
-    @keyframes pulse-red{
-      0%{ box-shadow:0 0 0 0 rgba(239,68,68,.55); }
-      70%{ box-shadow:0 0 0 16px rgba(239,68,68,0); }
-      100%{ box-shadow:0 0 0 0 rgba(239,68,68,0); }
+    body{
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(59,130,246,.25), transparent 60%),
+        radial-gradient(1000px 700px at 100% 10%, rgba(6,182,212,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(168,85,247,.12), transparent 55%),
+        linear-gradient(180deg, #070a14, #0b1020 35%, #0b1020);
+      color: var(--text);
+    }
+    .glass{
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+    .glass2{
+      background: var(--panel2);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .chip{
+      border:1px solid var(--stroke);
+      background: rgba(2,6,23,.35);
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+    }
+    .btn:hover{ background: rgba(255,255,255,.12); }
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(59,130,246,.9), rgba(99,102,241,.9));
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btnPrimary:hover{ filter: brightness(1.08); }
+    .btnDanger{
+      background: rgba(239,68,68,.16);
+      border:1px solid rgba(239,68,68,.35);
+    }
+    .btnDanger:hover{ background: rgba(239,68,68,.22); }
+    .btnOK{
+      background: rgba(34,197,94,.16);
+      border:1px solid rgba(34,197,94,.35);
+    }
+    .btnOK:hover{ background: rgba(34,197,94,.22); }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .kbd{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      padding: .1rem .35rem;
+      border-radius: .5rem;
+      font-size: .75rem;
+    }
+
+    /* Exam content */
+    .qCard{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+    }
+    .input{
+      background: rgba(2,6,23,.45);
+      border:1px solid rgba(148,163,184,.22);
+      color: var(--text);
+      outline:none;
+    }
+    .input:focus{ border-color: rgba(59,130,246,.65); box-shadow: 0 0 0 3px rgba(59,130,246,.22); }
+    .divider{ border-color: rgba(148,163,184,.16); }
+
+    /* SVG map container */
+    .svgWrap svg{ width: 100%; height: auto; max-height: 320px; }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      max-width: min(520px, calc(100% - 24px));
+      z-index: 50;
     }
   </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body>
 <div id="app" class="min-h-screen">
-
-  <!-- LOADING -->
-  <transition name="fade">
-    <div v-if="loading" class="fixed inset-0 bg-slate-900/70 z-[90] flex items-center justify-center backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 text-center">
-        <div class="mx-auto mb-4 w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        <div class="text-lg font-extrabold">{{ loadingMsg }}</div>
-        <div class="text-slate-500 text-sm mt-1">Connecting to Google Sheets WebApp…</div>
-      </div>
-    </div>
-  </transition>
-
-  <!-- RESULT MODAL -->
-  <transition name="slide-up">
-    <div v-if="resultModal.show" class="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden">
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-700 px-8 py-6 text-white">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">
-                <i class="fa-solid fa-trophy"></i>
-              </div>
-              <div>
-                <div class="text-2xl font-black">Exam Completed</div>
-                <div class="text-indigo-100 text-sm">Saved to Google Sheets + AI feedback (Writing/Speaking)</div>
-              </div>
-            </div>
-            <button @click="resultModal.show=false" class="w-10 h-10 rounded-xl bg-white/15 hover:bg-white/25 transition flex items-center justify-center">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
+  <!-- Top bar -->
+  <div class="sticky top-0 z-30">
+    <div class="mx-auto max-w-6xl px-4 pt-4">
+      <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl grid place-items-center" style="background:linear-gradient(135deg, rgba(59,130,246,.55), rgba(6,182,212,.35)); border:1px solid rgba(255,255,255,.14)">
+            <span class="font-extrabold">IA</span>
           </div>
-        </div>
-
-        <div class="p-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-1">
-            <div class="rounded-2xl border bg-slate-50 p-5">
-              <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Estimated Overall Band</div>
-              <div class="mt-2 text-6xl font-black text-indigo-700">{{ resultModal.overall }}</div>
-              <div class="mt-3 flex items-center gap-2 text-sm font-bold text-slate-600">
-                <i class="fa-solid fa-star text-yellow-400"></i>
-                +{{ resultModal.xp }} XP
-              </div>
-              <div class="mt-4 text-xs text-slate-500 leading-relaxed">
-                Reading/Listening are auto-scored. Writing/Speaking are scored by AI via Apps Script.
-              </div>
-            </div>
-
-            <div class="mt-4 rounded-2xl border p-5">
-              <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Skill Breakdown</div>
-              <div v-for="s in ['Reading','Listening','Writing','Speaking']" :key="s" class="mb-3">
-                <div class="flex items-center justify-between text-sm font-bold">
-                  <span class="text-slate-700">{{ s }}</span>
-                  <span class="text-slate-900">{{ resultModal.skills[s] }}</span>
-                </div>
-                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
-                  <div class="h-full bg-indigo-600 rounded-full" :style="{width: (resultModal.skills[s]/9)*100 + '%'}"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="lg:col-span-2">
-            <div class="rounded-2xl border p-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="text-xl font-black text-slate-900">Feedback</div>
-                  <div class="text-slate-500 text-sm">Summary + next plan</div>
-                </div>
-                <div class="text-xs font-extrabold text-slate-400 uppercase">Real API</div>
-              </div>
-
-              <div class="mt-5 space-y-4">
-                <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
-                  <div class="text-xs font-extrabold text-indigo-800 uppercase tracking-wider mb-1">Summary</div>
-                  <div class="text-slate-700 text-sm leading-relaxed">{{ resultModal.summary }}</div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="rounded-2xl border p-4">
-                    <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">AI Writing (if available)</div>
-                    <div v-if="resultModal.ai?.writing?.feedback" class="text-sm text-slate-700 space-y-2">
-                      <div><b>Band:</b> {{ resultModal.ai.writing.band }}</div>
-                      <div><b>Short summary:</b> {{ resultModal.ai.writing.feedback.short_summary }}</div>
-                      <ul class="list-disc pl-5">
-                        <li v-for="x in resultModal.ai.writing.feedback.fix_next" :key="x">{{ x }}</li>
-                      </ul>
-                    </div>
-                    <div v-else class="text-sm text-slate-500">No AI writing feedback returned.</div>
-                  </div>
-
-                  <div class="rounded-2xl border p-4">
-                    <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">AI Speaking (if available)</div>
-                    <div v-if="resultModal.ai?.speaking?.feedback" class="text-sm text-slate-700 space-y-2">
-                      <div><b>Band:</b> {{ resultModal.ai.speaking.band }}</div>
-                      <div><b>Short summary:</b> {{ resultModal.ai.speaking.feedback.short_summary }}</div>
-                      <ul class="list-disc pl-5">
-                        <li v-for="x in resultModal.ai.speaking.feedback.fix_next" :key="x">{{ x }}</li>
-                      </ul>
-                    </div>
-                    <div v-else class="text-sm text-slate-500">No AI speaking feedback returned.</div>
-                  </div>
-                </div>
-
-                <div class="rounded-2xl border p-4 bg-slate-50">
-                  <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Next Plan</div>
-                  <ul class="text-sm text-slate-700 space-y-1 list-disc pl-5">
-                    <li v-for="x in resultModal.next" :key="x">{{ x }}</li>
-                  </ul>
-                </div>
-
-                <div class="flex gap-3">
-                  <button @click="resultModal.show=false; go('dashboard')"
-                          class="flex-1 py-3 rounded-2xl bg-slate-900 text-white font-extrabold hover:bg-slate-800 transition">
-                    Back to Dashboard
-                  </button>
-                  <button @click="resultModal.show=false; go('practice')"
-                          class="py-3 px-5 rounded-2xl bg-white border font-extrabold text-slate-700 hover:bg-slate-50 transition">
-                    Practice More
-                  </button>
-                </div>
-              </div>
-
+          <div>
+            <div class="font-extrabold leading-tight">IELTS AI (Real)</div>
+            <div class="text-xs text-slate-300/80">
+              GitHub Pages + Google Sheets WebApp • <span class="mono">v1</span>
             </div>
           </div>
         </div>
 
-      </div>
-    </div>
-  </transition>
+        <div class="flex items-center gap-2">
+          <span v-if="user" class="chip rounded-xl px-3 py-2 text-xs">
+            <span class="text-slate-300/70">User:</span>
+            <b class="mono">{{ user.username }}</b>
+            <span class="text-slate-300/70">•</span>
+            <b class="mono uppercase">{{ user.role }}</b>
+          </span>
 
-  <!-- LOGIN -->
-  <div v-if="view==='login'" class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md glass rounded-3xl shadow-2xl border border-white/30 p-8">
-      <div class="text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white text-2xl shadow-lg shadow-indigo-600/30">
-          <i class="fa-solid fa-graduation-cap"></i>
+          <button v-if="user" class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="logout()">
+            Logout
+          </button>
         </div>
-        <div class="mt-4 text-4xl font-black text-slate-900 tracking-tight">
-          IELTS <span class="text-indigo-600">AI</span> (Real)
-        </div>
-        <div class="text-slate-500 font-semibold">GitHub Pages + Google Sheets WebApp</div>
-      </div>
-
-      <div class="mt-6 bg-indigo-50 border border-indigo-100 rounded-2xl p-4 text-sm">
-        <div class="text-xs font-extrabold text-indigo-800 uppercase mb-2">Demo Credentials</div>
-        <div class="flex justify-between"><span>Student</span><span class="font-bold">student / 123</span></div>
-        <div class="flex justify-between"><span>Admin</span><span class="font-bold">admin / 123</span></div>
-      </div>
-
-      <div class="mt-6 space-y-3">
-        <div>
-          <label class="text-xs font-extrabold text-slate-500 uppercase">Username</label>
-          <input v-model="auth.u" class="mt-1 w-full p-4 rounded-2xl border focus:ring-2 ring-indigo-500 outline-none font-bold" placeholder="student">
-        </div>
-        <div>
-          <label class="text-xs font-extrabold text-slate-500 uppercase">Password</label>
-          <input v-model="auth.p" type="password" class="mt-1 w-full p-4 rounded-2xl border focus:ring-2 ring-indigo-500 outline-none font-bold" placeholder="123">
-        </div>
-        <button @click="login()" class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 transition active:scale-[.99]">
-          Sign in
-        </button>
-      </div>
-
-      <div class="mt-5 text-xs text-center text-slate-500">
-        Tip: อย่าเปิดผ่าน <code>file:///</code> ให้เปิดผ่าน GitHub Pages หรือ <code>http://localhost</code>
-      </div>
-
-      <div class="mt-5 text-xs text-center text-slate-400">
-        API_BASE: <span class="font-mono">{{ API_BASE }}</span>
       </div>
     </div>
   </div>
 
-  <!-- APP -->
-  <div v-else class="min-h-screen">
-    <!-- Top Bar -->
-    <div class="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black shadow-lg">
-          {{ (me.username||'U').charAt(0).toUpperCase() }}
+  <!-- Main -->
+  <div class="mx-auto max-w-6xl px-4 pb-20 pt-4">
+    <!-- Login -->
+    <div v-if="!user" class="grid place-items-center mt-8">
+      <div class="glass rounded-3xl p-6 w-full max-w-md">
+        <div class="text-lg font-extrabold">Login</div>
+        <div class="text-sm text-slate-300/80 mt-1">
+          Demo users: <span class="kbd">admin / 123</span> , <span class="kbd">student / 123</span>
         </div>
-        <div>
-          <div class="font-black text-slate-900 leading-tight">IELTS AI (Real)</div>
-          <div class="text-xs text-slate-500 font-extrabold uppercase tracking-wider">{{ me.username }} • {{ me.role }}</div>
-        </div>
-      </div>
 
-      <div class="flex items-center gap-2">
-        <div class="px-4 py-2 rounded-full border bg-white text-sm font-extrabold">
-          <i class="fa-solid fa-star text-yellow-400"></i> {{ me.xp || 0 }} XP
+        <div class="mt-5 space-y-3">
+          <input class="input w-full rounded-2xl px-4 py-3" placeholder="username" v-model.trim="loginForm.username" />
+          <input class="input w-full rounded-2xl px-4 py-3" placeholder="password" type="password" v-model.trim="loginForm.password" />
+          <button class="btnPrimary w-full rounded-2xl px-4 py-3 font-extrabold" @click="doLogin()">
+            Sign in
+          </button>
         </div>
-        <button @click="logout()" class="px-4 py-2 rounded-2xl bg-slate-900 text-white font-extrabold hover:bg-slate-800">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
+
+        <div class="mt-4 text-xs text-slate-300/70">
+          Tip: ตั้งค่า <span class="mono">API_BASE</span> ให้เป็น Web App URL ของ Apps Script
+        </div>
+
+        <div class="mt-4 p-3 rounded-2xl glass2 text-xs text-slate-200/90">
+          <div class="font-extrabold mb-1">API Base</div>
+          <div class="mono break-all">{{ API_BASE || '❌ ยังไม่ได้ตั้งค่า' }}</div>
+        </div>
       </div>
     </div>
 
-    <!-- Content -->
-    <div class="max-w-6xl mx-auto p-4 md:p-8">
+    <!-- Dashboard -->
+    <div v-else>
+      <div class="grid lg:grid-cols-3 gap-4 mt-4">
+        <div class="glass rounded-3xl p-5 lg:col-span-2">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xl font-extrabold">Dashboard</div>
+              <div class="text-sm text-slate-300/80 mt-1">
+                Full Mock: <b>2 ครั้ง/สัปดาห์</b> • Skill Practice: <b>15 ครั้ง/สัปดาห์/สกิล</b>
+              </div>
+            </div>
+            <div class="chip rounded-2xl px-4 py-3 text-xs">
+              <div class="text-slate-300/70">Status</div>
+              <div class="mono font-extrabold">{{ statusLine }}</div>
+            </div>
+          </div>
 
-      <!-- NAV -->
-      <div class="flex flex-wrap gap-2 mb-6">
-        <button @click="go('dashboard')" class="px-4 py-2 rounded-2xl border font-extrabold"
-          :class="view==='dashboard' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'">
-          Dashboard
-        </button>
-        <button @click="go('practice')" class="px-4 py-2 rounded-2xl border font-extrabold"
-          :class="view==='practice' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'">
-          Practice
-        </button>
-        <button @click="go('history')" class="px-4 py-2 rounded-2xl border font-extrabold"
-          :class="view==='history' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'">
-          History
-        </button>
-        <button v-if="me.role==='admin'" @click="go('admin')" class="px-4 py-2 rounded-2xl border font-extrabold"
-          :class="view==='admin' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'">
-          Admin
-        </button>
+          <div class="mt-5 grid md:grid-cols-2 gap-3">
+            <!-- Full Mock -->
+            <div class="qCard p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-extrabold">Full Mock Exam</div>
+                  <div class="text-xs text-slate-300/80 mt-1">
+                    จำนวนข้อเท่าของจริง 100% (R40/L40/W2/S1)
+                  </div>
+                </div>
+                <span class="chip rounded-xl px-3 py-2 text-xs mono">
+                  quota: 2/wk
+                </span>
+              </div>
+              <button class="btnPrimary mt-4 w-full rounded-2xl py-3 font-extrabold"
+                      @click="startExam({mode:'full_mock'})"
+                      :disabled="busy">
+                Start Full Mock
+              </button>
+            </div>
+
+            <!-- Skill Practice -->
+            <div class="qCard p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-extrabold">Skill Practice</div>
+                  <div class="text-xs text-slate-300/80 mt-1">
+                    Generate ใหม่ทุกครั้ง • สรุปผลแยกสกิล
+                  </div>
+                </div>
+                <span class="chip rounded-xl px-3 py-2 text-xs mono">
+                  quota: 15/wk/skill
+                </span>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'reading'})" :disabled="busy">Reading</button>
+                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'listening'})" :disabled="busy">Listening</button>
+                <button class="btn rounded-2xl py-3 font-bold" @click="openWritingPicker()" :disabled="busy">Writing</button>
+                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'speaking'})" :disabled="busy">Speaking</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="loadHistory()" :disabled="busy">
+              Refresh History
+            </button>
+            <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="ping()" :disabled="busy">
+              Ping API
+            </button>
+          </div>
+        </div>
+
+        <div class="glass rounded-3xl p-5">
+          <div class="font-extrabold">My Trend</div>
+          <div class="text-xs text-slate-300/80 mt-1">Overall band (ล่าสุด 20 ครั้ง)</div>
+          <div class="mt-4">
+            <canvas id="trend" width="520" height="220" class="w-full rounded-2xl" style="background:rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.10)"></canvas>
+          </div>
+          <div class="mt-3 text-xs text-slate-300/70">
+            * กราฟนี้อ่านจาก Attempts ที่บันทึกใน Google Sheets
+          </div>
+        </div>
       </div>
 
-      <!-- DASHBOARD -->
-      <section v-if="view==='dashboard'">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="rounded-2xl border bg-white p-5">
-            <div class="text-xs font-extrabold text-slate-400 uppercase">Full Mock quota</div>
-            <div class="mt-2 text-xl font-black">
-              {{ me.quota?.fullUsed ?? 0 }} / {{ me.quota?.fullLimit ?? 2 }}
+      <!-- Exam panel -->
+      <div v-if="exam.active" class="mt-6">
+        <div class="glass rounded-3xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="text-xl font-extrabold">Exam</div>
+              <div class="text-sm text-slate-300/80 mt-1">
+                <span class="chip rounded-xl px-3 py-2 text-xs mono">{{ exam.mode }}</span>
+                <span v-if="exam.skill" class="chip rounded-xl px-3 py-2 text-xs mono ml-2">{{ exam.skill }}</span>
+                <span class="ml-2 text-xs text-slate-300/70">• examId:</span>
+                <span class="mono text-xs">{{ exam.examId }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="prevQ()" :disabled="busy || exam.index===0">Prev</button>
+              <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="nextQ()" :disabled="busy || exam.index>=exam.questions.length-1">Next</button>
+              <button class="btnDanger rounded-xl px-3 py-2 text-sm font-bold" @click="endExamConfirm()" :disabled="busy">End</button>
             </div>
           </div>
-          <div class="rounded-2xl border bg-white p-5">
-            <div class="text-xs font-extrabold text-slate-400 uppercase">Skill quota (per skill)</div>
-            <div class="mt-2 text-sm font-black leading-6">
-              R {{ me.quota?.skill?.reading?.used ?? 0 }}/{{ me.quota?.skill?.reading?.limit ?? 15 }},
-              L {{ me.quota?.skill?.listening?.used ?? 0 }}/{{ me.quota?.skill?.listening?.limit ?? 15 }},
-              W {{ me.quota?.skill?.writing?.used ?? 0 }}/{{ me.quota?.skill?.writing?.limit ?? 15 }},
-              S {{ me.quota?.skill?.speaking?.used ?? 0 }}/{{ me.quota?.skill?.speaking?.limit ?? 15 }}
+
+          <div class="divider border-t my-4"></div>
+
+          <!-- Progress -->
+          <div class="flex items-center justify-between gap-4">
+            <div class="text-sm text-slate-300/80">
+              Question <b class="mono">{{ exam.index+1 }}</b> / <b class="mono">{{ exam.questions.length }}</b>
+            </div>
+            <div class="w-2/3 h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.10)">
+              <div class="h-full" :style="{ width: progressPct+'%', background:'linear-gradient(90deg, rgba(59,130,246,.9), rgba(6,182,212,.9))' }"></div>
             </div>
           </div>
-          <div class="rounded-2xl border bg-white p-5">
-            <div class="text-xs font-extrabold text-slate-400 uppercase">Weekly Key</div>
-            <div class="mt-2 text-xl font-black text-indigo-700">{{ me.quota?.weekKey || '—' }}</div>
-          </div>
-        </div>
 
-        <div class="mt-6 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-700 p-7 md:p-8 text-white shadow-xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-white/15 border border-white/25 text-xs font-extrabold uppercase tracking-wider">
-            <i class="fa-solid fa-layer-group"></i> Full Mock Exam (Real Count)
-          </div>
-          <div class="mt-3 text-3xl md:text-4xl font-black">Listening 40 • Reading 40 • Writing 2 • Speaking 3</div>
-          <div class="mt-2 text-indigo-100 text-sm leading-relaxed">
-            Your attempt will be saved to Google Sheets. Writing/Speaking scored by AI.
-          </div>
-          <div class="mt-5 flex flex-wrap gap-3">
-            <button @click="startFullMock()"
-                    class="px-6 py-3 rounded-2xl bg-white text-indigo-700 font-black hover:bg-indigo-50 transition">
-              Start Full Mock
-            </button>
-            <button @click="fetchAnalytics()"
-                    class="px-6 py-3 rounded-2xl bg-white/15 border border-white/25 font-black hover:bg-white/20 transition">
-              Refresh Analytics
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="rounded-2xl border bg-white p-5">
-            <div class="flex items-center justify-between">
+          <!-- Current question -->
+          <div class="mt-4 qCard p-4">
+            <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <div class="font-black text-slate-900">My Trend (last 30 days)</div>
-                <div class="text-slate-500 text-sm">Overall + skill lines</div>
-              </div>
-            </div>
-            <div class="mt-4"><canvas id="myLine" height="260"></canvas></div>
-          </div>
-
-          <div class="rounded-2xl border bg-white p-5">
-            <div class="font-black text-slate-900">Skill Average</div>
-            <div class="text-slate-500 text-sm">Radar</div>
-            <div class="mt-4"><canvas id="myRadar" height="260"></canvas></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PRACTICE -->
-      <section v-if="view==='practice'">
-        <div class="rounded-2xl border bg-white p-6">
-          <div class="text-2xl font-black">Skill Practice (Direct)</div>
-          <div class="text-slate-500 font-semibold mt-1">Listening 10 • Reading mixed • Writing (T1+T2) • Speaking (1)</div>
-
-          <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-3">
-            <button @click="startSkill('reading')" class="rounded-2xl border p-4 hover:bg-slate-50 transition text-left">
-              <div class="text-indigo-600 text-xl"><i class="fa-solid fa-book-open"></i></div>
-              <div class="mt-2 font-black">Reading</div>
-              <div class="text-xs text-slate-500">Long passage + TFNG + MCQ + One-word</div>
-            </button>
-            <button @click="startSkill('listening')" class="rounded-2xl border p-4 hover:bg-slate-50 transition text-left">
-              <div class="text-indigo-600 text-xl"><i class="fa-solid fa-headphones"></i></div>
-              <div class="mt-2 font-black">Listening</div>
-              <div class="text-xs text-slate-500">10 questions (includes map)</div>
-            </button>
-            <button @click="startSkill('writing')" class="rounded-2xl border p-4 hover:bg-slate-50 transition text-left">
-              <div class="text-indigo-600 text-xl"><i class="fa-solid fa-pen"></i></div>
-              <div class="mt-2 font-black">Writing</div>
-              <div class="text-xs text-slate-500">Task 1 + Task 2</div>
-            </button>
-            <button @click="startSkill('speaking')" class="rounded-2xl border p-4 hover:bg-slate-50 transition text-left">
-              <div class="text-indigo-600 text-xl"><i class="fa-solid fa-microphone"></i></div>
-              <div class="mt-2 font-black">Speaking</div>
-              <div class="text-xs text-slate-500">1 prompt (type transcript)</div>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- EXAM -->
-      <section v-if="view==='exam'" class="rounded-2xl border bg-white overflow-hidden">
-        <div class="h-16 border-b px-4 md:px-6 flex items-center justify-between bg-white">
-          <div class="flex items-center gap-3">
-            <span class="px-3 py-1 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-slate-100 text-slate-700">
-              {{ exam.section }}
-            </span>
-            <div class="font-black text-slate-900">{{ exam.title }}</div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="hidden md:block text-xs font-extrabold text-slate-500">
-              Step {{ exam.index+1 }}/{{ exam.steps.length }}
-            </div>
-            <div class="font-mono text-sm font-extrabold text-slate-500">{{ timerText }}</div>
-            <button @click="confirmExit()" class="w-10 h-10 rounded-xl border hover:bg-slate-50 transition" title="Exit">
-              <i class="fa-solid fa-door-open"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2">
-          <div class="border-r bg-slate-50 p-5 md:p-8 overflow-y-auto max-h-[72vh]">
-            <div class="text-xl font-black text-slate-900">{{ currentStep.title }}</div>
-            <div class="mt-3 rounded-2xl border bg-white p-5">
-              <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Passage / Prompt</div>
-
-              <div v-if="currentStep.section==='Writing'" class="text-sm text-slate-700 whitespace-pre-wrap">{{ currentStep.prompt }}</div>
-              <div v-else-if="currentStep.section==='Speaking'" class="text-sm text-slate-700 whitespace-pre-wrap">{{ currentStep.prompt }}</div>
-              <div v-else class="text-sm text-slate-700 whitespace-pre-wrap">{{ currentStep.passage }}</div>
-
-              <div v-if="currentStep.mapImg" class="mt-4">
-                <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Map</div>
-                <img :src="currentStep.mapImg" class="w-full rounded-2xl border" alt="map">
-              </div>
-
-              <div v-if="currentStep.chartImg" class="mt-4">
-                <div class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Chart</div>
-                <img :src="currentStep.chartImg" class="w-full rounded-2xl border" alt="chart">
-              </div>
-            </div>
-          </div>
-
-          <div class="p-5 md:p-8 overflow-y-auto max-h-[72vh]">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <div class="text-lg font-black text-slate-900">Question</div>
-                <div class="text-slate-600 text-sm font-semibold">{{ currentStep.qText || 'Write / Speak response below' }}</div>
-              </div>
-              <div class="text-xs font-extrabold text-slate-400 uppercase">{{ currentStep.points || 1 }} pts</div>
-            </div>
-
-            <!-- MCQ / TFNG -->
-            <div v-if="currentStep.qType==='mcq' || currentStep.qType==='tfng'" class="mt-6 space-y-3">
-              <div v-for="c in currentStep.choices" :key="c"
-                @click="setAnswer(c)"
-                class="p-4 rounded-2xl border cursor-pointer transition font-semibold"
-                :class="answerOf(currentStep.id)===c ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'">
-                {{ c }}
-              </div>
-            </div>
-
-            <!-- SHORT -->
-            <div v-else-if="currentStep.qType==='short'" class="mt-6">
-              <label class="text-xs font-extrabold text-slate-500 uppercase">Answer</label>
-              <input class="mt-2 w-full p-4 rounded-2xl border bg-slate-50 focus:ring-2 ring-indigo-500 outline-none"
-                     :value="answerOf(currentStep.id)||''"
-                     @input="setAnswer($event.target.value)"
-                     placeholder="Type ONE word / number">
-            </div>
-
-            <!-- WRITING -->
-            <div v-else-if="currentStep.section==='Writing'" class="mt-6">
-              <div class="flex items-center justify-between text-xs font-extrabold text-slate-500 uppercase">
-                <span>Essay</span>
-                <span>{{ wordCount(answerOf(currentStep.id)||'') }} words</span>
-              </div>
-              <textarea class="mt-2 w-full h-72 md:h-96 p-4 rounded-2xl border bg-slate-50 focus:ring-2 ring-indigo-500 outline-none resize-none"
-                        :value="answerOf(currentStep.id)||''"
-                        @input="setAnswer($event.target.value)"
-                        placeholder="Type your answer here..."></textarea>
-              <div class="mt-3 text-xs text-slate-500">
-                Task 1 >= 150 words, Task 2 >= 250 words (ตรวจแบบเบา ๆ ที่ client)
-              </div>
-            </div>
-
-            <!-- SPEAKING (transcript input) -->
-            <div v-else-if="currentStep.section==='Speaking'" class="mt-6">
-              <div class="rounded-2xl border bg-slate-50 p-4">
-                <div class="text-xs font-extrabold text-slate-500 uppercase mb-2">Transcript (type what you said)</div>
-                <textarea class="w-full h-48 p-4 rounded-2xl border bg-white focus:ring-2 ring-indigo-500 outline-none resize-none"
-                          :value="answerOf(currentStep.id)||''"
-                          @input="setAnswer($event.target.value)"
-                          placeholder="Paste / type your speaking transcript here..."></textarea>
-                <div class="mt-2 text-xs text-slate-500">
-                  (ทำเป็นพิมพ์ transcript เพื่อให้ AI ให้คะแนนได้เสถียรบนทุก browser)
+                <div class="text-xs text-slate-300/70 uppercase font-extrabold tracking-wide">
+                  {{ curr.skill }} • {{ curr.subtype }}
                 </div>
+                <div class="text-lg font-extrabold mt-1">{{ currTitle }}</div>
+                <div v-if="currSubtitle" class="text-sm text-slate-300/80 mt-1">{{ currSubtitle }}</div>
               </div>
-            </div>
 
-            <div class="mt-7 grid grid-cols-1 md:grid-cols-3 gap-3">
-              <button @click="prevStep()"
-                      class="py-3 rounded-2xl border font-extrabold text-slate-700 hover:bg-slate-50 transition"
-                      :disabled="exam.index===0"
-                      :class="exam.index===0 ? 'opacity-50 cursor-not-allowed' : ''">
-                <i class="fa-solid fa-arrow-left"></i> Previous
-              </button>
-
-              <button @click="saveProgress()"
-                      class="py-3 rounded-2xl border font-extrabold text-slate-700 hover:bg-slate-50 transition">
-                <i class="fa-solid fa-floppy-disk"></i> Save (local)
-              </button>
-
-              <button @click="nextOrFinish()"
-                      class="py-3 rounded-2xl bg-slate-900 text-white font-black hover:bg-slate-800 transition">
-                {{ exam.index === exam.steps.length-1 ? 'Finish & Submit' : 'Submit & Next' }}
-                <i class="fa-solid fa-arrow-right ml-2"></i>
-              </button>
-            </div>
-
-            <div class="mt-4 text-xs text-slate-500">
-              Keyboard: <span class="kbd">N</span> next, <span class="kbd">P</span> prev, <span class="kbd">ESC</span> exit
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- HISTORY -->
-      <section v-if="view==='history'" class="rounded-2xl border bg-white p-6">
-        <div class="flex items-end justify-between gap-3">
-          <div>
-            <div class="text-2xl font-black">History</div>
-            <div class="text-slate-500 font-semibold">Loaded from Google Sheets</div>
-          </div>
-          <button @click="loadHistory()" class="px-4 py-2 rounded-2xl border font-extrabold hover:bg-slate-50">Refresh</button>
-        </div>
-
-        <div class="mt-6 space-y-3">
-          <div v-if="history.length===0" class="rounded-2xl border bg-slate-50 p-6 text-slate-500 font-semibold">
-            No attempts yet.
-          </div>
-
-          <div v-for="h in history" :key="h.attemptId"
-               class="rounded-2xl border bg-white p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-              <div class="font-black text-slate-900">
-                {{ h.mode.toUpperCase() }} <span v-if="h.skill">• {{ h.skill }}</span>
-                <span v-if="h.overall">• Overall {{ h.overall }}</span>
-              </div>
-              <div class="text-sm text-slate-500">
-                {{ h.submittedAt || h.startedAt }}
-              </div>
-              <div v-if="h.overall" class="text-sm text-slate-600 mt-1">
-                R {{ h.reading }} / L {{ h.listening }} / W {{ h.writing }} / S {{ h.speaking }}
-              </div>
-            </div>
-            <div class="text-sm font-extrabold text-slate-600">
-              +{{ h.xp }} XP
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ADMIN -->
-      <section v-if="view==='admin' && me.role==='admin'" class="space-y-4">
-        <div class="rounded-2xl border bg-white p-6">
-          <div class="flex items-end justify-between gap-3">
-            <div>
-              <div class="text-2xl font-black">Admin — Users</div>
-              <div class="text-slate-500 font-semibold">Manage users + quotas</div>
-            </div>
-            <button @click="adminOpenAdd=true" class="px-4 py-2 rounded-2xl bg-emerald-600 text-white font-extrabold">
-              <i class="fa-solid fa-plus"></i> Add user
-            </button>
-          </div>
-
-          <div class="mt-4 overflow-x-auto">
-            <table class="w-full text-left">
-              <thead class="bg-slate-50 text-slate-500 text-xs font-extrabold uppercase">
-                <tr>
-                  <th class="p-3">User</th>
-                  <th class="p-3">Role</th>
-                  <th class="p-3">Quota (full)</th>
-                  <th class="p-3">Quota (skills)</th>
-                  <th class="p-3">XP</th>
-                  <th class="p-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y">
-                <tr v-for="u in adminUsers" :key="u.username" class="hover:bg-slate-50">
-                  <td class="p-3 font-black">{{ u.username }}</td>
-                  <td class="p-3"><span class="px-2 py-1 rounded-lg text-xs font-extrabold"
-                    :class="u.role==='admin'?'bg-purple-100 text-purple-700':'bg-blue-100 text-blue-700'">{{ u.role }}</span></td>
-                  <td class="p-3 text-sm font-bold">{{ u.quota.fullUsed }}/{{ u.quota.fullLimit }}</td>
-                  <td class="p-3 text-xs">
-                    R {{u.quota.skill.reading.used}}/{{u.quota.skill.reading.limit}},
-                    L {{u.quota.skill.listening.used}}/{{u.quota.skill.listening.limit}},
-                    W {{u.quota.skill.writing.used}}/{{u.quota.skill.writing.limit}},
-                    S {{u.quota.skill.speaking.used}}/{{u.quota.skill.speaking.limit}}
-                  </td>
-                  <td class="p-3 font-extrabold">{{ u.xp }}</td>
-                  <td class="p-3 text-right space-x-2">
-                    <button @click="adminReset(u.username)"
-                            class="px-3 py-2 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-slate-200">
-                      Reset quota
-                    </button>
-                    <button v-if="u.username!=='admin'" @click="adminDelete(u.username)"
-                            class="px-3 py-2 rounded-xl text-xs font-extrabold bg-red-50 hover:bg-red-100 text-red-600">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border bg-white p-6">
-          <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <div class="text-2xl font-black">Admin — Analytics</div>
-              <div class="text-slate-500 font-semibold">Avg + trend across users</div>
-            </div>
-            <div class="flex gap-2">
-              <select v-model="adminSelUser" class="px-4 py-2 rounded-2xl border font-bold">
-                <option value="">All users</option>
-                <option v-for="u in adminUsers.filter(x=>x.role!=='admin')" :key="u.username" :value="u.username">{{u.username}}</option>
-              </select>
-              <select v-model="adminDays" class="px-4 py-2 rounded-2xl border font-bold">
-                <option :value="7">Last 7 days</option>
-                <option :value="30">Last 30 days</option>
-                <option :value="90">Last 90 days</option>
-                <option :value="365">Last 12 months</option>
-              </select>
-              <button @click="adminLoadAnalytics()" class="px-4 py-2 rounded-2xl bg-slate-900 text-white font-extrabold">
-                Refresh
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div class="rounded-2xl border p-4">
-              <div class="font-black">Admin Trend</div>
-              <div class="mt-3"><canvas id="adminLine" height="240"></canvas></div>
-            </div>
-            <div class="rounded-2xl border p-4">
-              <div class="font-black">Admin Radar (avg)</div>
-              <div class="mt-3"><canvas id="adminRadar" height="240"></canvas></div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Add user modal -->
-        <transition name="slide-up">
-          <div v-if="adminOpenAdd" class="fixed inset-0 z-[85] bg-black/60 flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
-              <div class="flex items-center justify-between">
-                <div class="text-xl font-black">Create New User</div>
-                <button @click="adminOpenAdd=false" class="w-10 h-10 rounded-xl border hover:bg-slate-50 transition">
-                  <i class="fa-solid fa-xmark"></i>
+              <!-- Listening: read script -->
+              <div v-if="curr.skill==='listening' && curr.payload?.audioScript" class="flex items-center gap-2">
+                <button class="btnOK rounded-xl px-3 py-2 text-sm font-extrabold" @click="speak(curr.payload.audioScript)">
+                  ▶ Read Script
                 </button>
+                <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="stopSpeak()">Stop</button>
+              </div>
+            </div>
+
+            <!-- Reading passage -->
+            <div v-if="curr.skill==='reading' && curr.subtype==='passage_multi'" class="mt-4 grid lg:grid-cols-2 gap-4">
+              <div class="glass2 rounded-2xl p-4">
+                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Passage</div>
+                <div class="text-sm leading-relaxed whitespace-pre-wrap">{{ curr.payload?.passage || '' }}</div>
               </div>
 
-              <div class="mt-4 space-y-3">
-                <input v-model="adminNew.u" class="w-full p-4 rounded-2xl border" placeholder="username">
-                <input v-model="adminNew.p" class="w-full p-4 rounded-2xl border" placeholder="password">
-                <select v-model="adminNew.role" class="w-full p-4 rounded-2xl border bg-white font-semibold">
-                  <option value="student">student</option>
-                  <option value="admin">admin</option>
-                </select>
+              <div class="space-y-3">
+                <div v-for="(q, qi) in (curr.payload?.questions || [])" :key="q.qid" class="glass2 rounded-2xl p-4">
+                  <div class="text-sm font-extrabold">
+                    Q{{ qi+1 }} • <span class="mono text-xs">{{ q.type }}</span>
+                  </div>
+                  <div class="text-sm mt-2 whitespace-pre-wrap">{{ q.qText }}</div>
 
-                <div class="grid grid-cols-2 gap-3 mt-2">
-                  <button @click="adminOpenAdd=false" class="py-3 rounded-2xl border font-extrabold">Cancel</button>
-                  <button @click="adminAdd()" class="py-3 rounded-2xl bg-indigo-600 text-white font-black">Create</button>
+                  <!-- tfng -->
+                  <div v-if="q.type==='tfng'" class="mt-3 grid grid-cols-3 gap-2">
+                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'True')"
+                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='True'}">True</button>
+                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'False')"
+                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='False'}">False</button>
+                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'Not Given')"
+                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='Not Given'}">Not Given</button>
+                  </div>
+
+                  <!-- mcq -->
+                  <div v-else-if="q.type==='mcq'" class="mt-3 space-y-2">
+                    <label v-for="(c, ci) in (q.choices||[])" :key="ci" class="flex items-center gap-2 btn rounded-xl px-3 py-2 cursor-pointer">
+                      <input type="radio" :name="q.qid" :value="c" class="accent-cyan-400"
+                             :checked="getAnswer(q.qid)===c"
+                             @change="setReadingAnswer(q.qid,c)">
+                      <span class="text-sm">{{ c }}</span>
+                    </label>
+                  </div>
+
+                  <!-- matching / completion (simple input) -->
+                  <div v-else class="mt-3">
+                    <input class="input w-full rounded-xl px-3 py-2" placeholder="Type your answer..."
+                           :value="getAnswer(q.qid) || ''"
+                           @input="setReadingAnswer(q.qid, $event.target.value)">
+                    <div v-if="q.choices && q.choices.length" class="text-xs text-slate-300/70 mt-2">
+                      Choices: <span class="mono">{{ q.choices.join(' | ') }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Listening -->
+            <div v-else-if="curr.skill==='listening'" class="mt-4">
+              <div v-if="curr.payload?.passage" class="glass2 rounded-2xl p-4">
+                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Context</div>
+                <div class="text-sm whitespace-pre-wrap">{{ curr.payload.passage }}</div>
+              </div>
+
+              <!-- Map -->
+              <div v-if="curr.subtype==='map'" class="mt-4 glass2 rounded-2xl p-4">
+                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Map</div>
+                <div class="svgWrap" v-html="curr.payload?.mapSvg || ''"></div>
+                <div class="text-sm mt-3">
+                  Find: <b>{{ curr.payload?.mapAsk || '—' }}</b>
                 </div>
               </div>
 
-              <div class="mt-4 text-xs text-slate-500">
-                Users are stored in Google Sheets (Users sheet).
+              <div class="mt-4">
+                <div class="text-sm font-extrabold">Question</div>
+                <div class="text-sm mt-2 whitespace-pre-wrap">{{ curr.payload?.qText || '' }}</div>
+                <div class="mt-3 space-y-2">
+                  <label v-for="(c, ci) in (curr.payload?.choices || [])" :key="ci"
+                         class="flex items-center gap-2 btn rounded-xl px-3 py-2 cursor-pointer">
+                    <input type="radio" :name="curr.qid" :value="c" class="accent-cyan-400"
+                           :checked="getAnswer(curr.qid)===c"
+                           @change="setAnswer(curr.qid, c)">
+                    <span class="text-sm">{{ c }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Writing -->
+            <div v-else-if="curr.skill==='writing'" class="mt-4 space-y-3">
+              <div class="glass2 rounded-2xl p-4">
+                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Prompt</div>
+                <div class="text-sm whitespace-pre-wrap">{{ curr.payload?.prompt || '' }}</div>
+                <div v-if="curr.payload?.chartDesc" class="mt-3 text-xs text-slate-300/70">
+                  Chart description: <span class="mono">{{ curr.payload.chartDesc }}</span>
+                </div>
+                <div v-if="curr.payload?.requirements?.length" class="mt-3 text-xs text-slate-300/80">
+                  <div class="font-extrabold uppercase mb-1">Requirements</div>
+                  <ul class="list-disc ml-5 space-y-1">
+                    <li v-for="(r, ri) in curr.payload.requirements" :key="ri">{{ r }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <textarea class="input w-full rounded-2xl px-4 py-3 min-h-[220px]"
+                        placeholder="Write your answer here..."
+                        :value="getAnswer(curr.qid) || ''"
+                        @input="setAnswer(curr.qid, $event.target.value)"></textarea>
+              <div class="text-xs text-slate-300/70">
+                Tip: Writing จะให้ AI feedback ตอน submit (ถ้า API คืนกลับมา)
+              </div>
+            </div>
+
+            <!-- Speaking -->
+            <div v-else-if="curr.skill==='speaking'" class="mt-4 space-y-3">
+              <div class="glass2 rounded-2xl p-4">
+                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Speaking</div>
+
+                <div class="text-sm font-extrabold mt-2">Part 1</div>
+                <ul class="list-disc ml-5 text-sm text-slate-200/90 space-y-1">
+                  <li v-for="(x,i) in (curr.payload?.part1Questions||[])" :key="i">{{ x }}</li>
+                </ul>
+
+                <div class="text-sm font-extrabold mt-4">Part 2 Cue Card</div>
+                <div class="text-sm whitespace-pre-wrap">{{ curr.payload?.part2CueCard || '' }}</div>
+
+                <div class="text-sm font-extrabold mt-4">Part 3</div>
+                <ul class="list-disc ml-5 text-sm text-slate-200/90 space-y-1">
+                  <li v-for="(x,i) in (curr.payload?.part3Questions||[])" :key="i">{{ x }}</li>
+                </ul>
+              </div>
+
+              <textarea class="input w-full rounded-2xl px-4 py-3 min-h-[200px]"
+                        placeholder="Paste your speaking transcript (or type your answer)..."
+                        :value="getAnswer(curr.qid) || ''"
+                        @input="setAnswer(curr.qid, $event.target.value)"></textarea>
+
+              <div class="text-xs text-slate-300/70">
+                ถ้าจะอัดเสียงจริง: ต้องทำเพิ่ม (ตอนนี้ใช้ transcript เพื่อให้ AI ให้คะแนน)
+              </div>
+            </div>
+
+            <!-- Fallback -->
+            <div v-else class="mt-4 text-sm text-slate-300/80">
+              Unknown question type.
+            </div>
+
+            <!-- Footer actions -->
+            <div class="divider border-t my-4"></div>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs text-slate-300/70">
+                Saved locally until submit. (answers stored in memory)
+              </div>
+              <button class="btnPrimary rounded-2xl px-4 py-3 font-extrabold" @click="submitExam()" :disabled="busy">
+                Submit Exam
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result modal -->
+      <div v-if="result.open" class="fixed inset-0 z-40 grid place-items-center p-4" style="background:rgba(0,0,0,.55)">
+        <div class="glass rounded-3xl w-full max-w-4xl overflow-hidden">
+          <div class="px-5 py-4 flex items-start justify-between" style="background:linear-gradient(135deg, rgba(59,130,246,.55), rgba(99,102,241,.40)); border-bottom:1px solid rgba(255,255,255,.12)">
+            <div>
+              <div class="text-lg font-extrabold flex items-center gap-2">
+                <span>🏆</span> Exam Completed
+              </div>
+              <div class="text-sm text-slate-100/80 mt-1">
+                Saved to Google Sheets + AI feedback (Writing/Speaking)
+              </div>
+            </div>
+            <button class="btn rounded-xl px-3 py-2 font-bold" @click="closeResult()">✕</button>
+          </div>
+
+          <div class="p-5 grid lg:grid-cols-3 gap-4">
+            <div class="glass2 rounded-2xl p-4">
+              <div class="text-xs text-slate-300/70 uppercase font-extrabold">Estimated Overall Band</div>
+              <div class="text-6xl font-extrabold mt-2">{{ result.data?.overall ?? '—' }}</div>
+              <div class="mt-3 text-sm text-slate-300/80">
+                Reading/Listening auto-score. Writing/Speaking scored by AI if text provided.
+              </div>
+            </div>
+
+            <div class="glass2 rounded-2xl p-4 lg:col-span-2">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-lg font-extrabold">Feedback</div>
+                  <div class="text-sm text-slate-300/80">Summary + next plan</div>
+                </div>
+                <span class="chip rounded-xl px-3 py-2 text-xs mono">REAL API</span>
+              </div>
+
+              <div class="mt-3 space-y-3">
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Summary</div>
+                  <div class="text-sm mt-1">{{ result.data?.feedback?.summary || '—' }}</div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-3">
+                  <div class="glass rounded-2xl p-4">
+                    <div class="text-xs font-extrabold text-slate-300/70 uppercase">AI Writing (if available)</div>
+                    <div class="text-sm mt-1" v-if="result.data?.feedback?.writing">
+                      <div class="font-extrabold">Band: {{ result.data.feedback.writing.band ?? '—' }}</div>
+                      <div class="text-sm mt-1">{{ result.data.feedback.writing.shortFeedback || '' }}</div>
+                    </div>
+                    <div class="text-sm mt-1 text-slate-300/70" v-else>No AI writing feedback returned.</div>
+                  </div>
+                  <div class="glass rounded-2xl p-4">
+                    <div class="text-xs font-extrabold text-slate-300/70 uppercase">AI Speaking (if available)</div>
+                    <div class="text-sm mt-1" v-if="result.data?.feedback?.speaking">
+                      <div class="font-extrabold">Band: {{ result.data.feedback.speaking.band ?? '—' }}</div>
+                      <div class="text-sm mt-1">{{ result.data.feedback.speaking.shortFeedback || '' }}</div>
+                    </div>
+                    <div class="text-sm mt-1 text-slate-300/70" v-else>No AI speaking feedback returned.</div>
+                  </div>
+                </div>
+
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Next Plan</div>
+                  <ul class="list-disc ml-5 mt-2 text-sm space-y-1">
+                    <li v-for="(x,i) in (result.data?.feedback?.nextPlan || [])" :key="i">{{ x }}</li>
+                  </ul>
+                </div>
+
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Skill Breakdown</div>
+                  <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="chip rounded-2xl p-3">
+                      <div class="text-xs text-slate-300/70">Reading</div>
+                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.reading) }}</div>
+                    </div>
+                    <div class="chip rounded-2xl p-3">
+                      <div class="text-xs text-slate-300/70">Listening</div>
+                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.listening) }}</div>
+                    </div>
+                    <div class="chip rounded-2xl p-3">
+                      <div class="text-xs text-slate-300/70">Writing</div>
+                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.writing) }}</div>
+                    </div>
+                    <div class="chip rounded-2xl p-3">
+                      <div class="text-xs text-slate-300/70">Speaking</div>
+                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.speaking) }}</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-slate-300/70 mt-2">
+                    * ถ้าเป็น Skill Practice ระบบจะแสดงเฉพาะ skill ที่ทำ (อื่นๆเป็น —)
+                  </div>
+                </div>
+
+                <div class="flex gap-2 justify-end">
+                  <button class="btn rounded-2xl px-4 py-3 font-extrabold" @click="closeResult()">Back to Dashboard</button>
+                  <button class="btnPrimary rounded-2xl px-4 py-3 font-extrabold" @click="practiceMore()">Practice More</button>
+                </div>
               </div>
             </div>
           </div>
-        </transition>
+        </div>
+      </div>
 
-      </section>
+      <!-- Writing type modal -->
+      <div v-if="writingPicker" class="fixed inset-0 z-40 grid place-items-center p-4" style="background:rgba(0,0,0,.55)">
+        <div class="glass rounded-3xl w-full max-w-md p-5">
+          <div class="text-lg font-extrabold">Writing Practice</div>
+          <div class="text-sm text-slate-300/80 mt-1">เลือก Task 1 หรือ Task 2</div>
+          <div class="mt-4 grid grid-cols-2 gap-2">
+            <button class="btn rounded-2xl py-3 font-extrabold" @click="startExam({mode:'skill_practice', skill:'writing', writingType:'task1'})">Task 1</button>
+            <button class="btnPrimary rounded-2xl py-3 font-extrabold" @click="startExam({mode:'skill_practice', skill:'writing', writingType:'task2'})">Task 2</button>
+          </div>
+          <button class="btn mt-3 w-full rounded-2xl py-3 font-bold" @click="writingPicker=false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Toast -->
+  <div class="toast" v-if="toast.show">
+    <div class="glass rounded-2xl px-4 py-3 flex items-start justify-between gap-3">
+      <div>
+        <div class="font-extrabold">{{ toast.title }}</div>
+        <div class="text-sm text-slate-200/90">{{ toast.msg }}</div>
+      </div>
+      <button class="btn rounded-xl px-3 py-2 font-bold" @click="toast.show=false">OK</button>
     </div>
   </div>
 </div>
 
 <script>
+/**
+ * IMPORTANT:
+ * 1) เปลี่ยน API_BASE ให้เป็น URL ของ Apps Script Web App (Deploy → Web app)
+ * 2) ห้ามตั้ง Content-Type ใน fetch เพื่อไม่ให้เกิด CORS preflight
+ */
+const API_BASE = "https://script.google.com/macros/s/AKfycbxyKYqQTsmtdXc-MMXzwdPiRqgyAkSUxWJBP85pUPwUqHZgUrI2VdfEZ3ZLoIBxPzoe0w/exec"; // <-- เปลี่ยนตรงนี้
+
 const { createApp } = Vue;
-
-/** IMPORTANT:
- *  Put your Apps Script Web App URL here (ends with /exec)
- *  Example: https://script.google.com/macros/s/AKfycbx.../exec
- */
-const API_BASE = "https://script.google.com/macros/s/AKfycbxFj3jOCSw0SKhQ7_oHsuDlcIsLf2yRbAaOo1e43a1XtyYOkxlfGtjQNe5Vq_XLy-m0/exec";
-
-/** CORS FIX:
- *  Send body as plain string, DO NOT set Content-Type header
- *  -> avoids preflight (OPTIONS)
- */
-async function apiPost(op, data = {}) {
-  const body = JSON.stringify({ op, ...data });
-  const res = await fetch(API_BASE, { method: "POST", body, redirect: "follow" });
-  const text = await res.text();
-  try { return JSON.parse(text); }
-  catch { throw new Error("API non-JSON: " + text); }
-}
 
 createApp({
   data(){
     return {
       API_BASE,
-      view:'login',
-      loading:false,
-      loadingMsg:'',
-      auth:{ u:'', p:'' },
+      busy: false,
+      statusLine: "Ready",
+      toast: { show:false, title:"", msg:"" },
 
-      token: localStorage.getItem('IELTS_TOKEN') || '',
-      me: {},
+      user: null,
+      loginForm: { username:"student", password:"123" },
 
-      // exam state
-      attemptId: '',
-      exam:{ title:'', steps:[], index:0, section:'' },
-      answers:{}, // stepId -> answer
-      timer:{ leftSec:0, t:null },
+      history: [],
+      writingPicker: false,
 
-      // charts
-      charts:{ myLine:null, myRadar:null, adminLine:null, adminRadar:null },
+      exam: {
+        active: false,
+        examId: "",
+        mode: "",
+        skill: "",
+        questions: [],
+        index: 0,
+        answers: {} // qid -> answer
+      },
 
-      // history
-      history:[],
-
-      // admin
-      adminUsers:[],
-      adminOpenAdd:false,
-      adminNew:{ u:'', p:'', role:'student' },
-      adminSelUser:'',
-      adminDays:30,
-      adminAnalytics:null,
-
-      // result
-      resultModal:{ show:false, overall:'0.0', skills:{}, summary:'', next:[], xp:0, ai:null }
-    }
+      result: { open:false, data:null }
+    };
   },
-
   computed:{
-    currentStep(){
-      return this.exam.steps[this.exam.index] || {};
+    progressPct(){
+      if(!this.exam.active || !this.exam.questions.length) return 0;
+      return Math.round(((this.exam.index+1)/this.exam.questions.length)*100);
     },
-    timerText(){
-      const s = this.timer.leftSec || 0;
-      const hh = String(Math.floor(s/3600)).padStart(2,'0');
-      const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
-      const ss = String(s%60).padStart(2,'0');
-      return `${hh}:${mm}:${ss}`;
+    curr(){
+      return this.exam.questions[this.exam.index] || { qid:"", skill:"", subtype:"", payload:{} };
+    },
+    currTitle(){
+      const p = this.curr.payload || {};
+      return p.title || p.qText || "Question";
+    },
+    currSubtitle(){
+      const p = this.curr.payload || {};
+      return p.subtitle || "";
     }
   },
-
   mounted(){
-    window.addEventListener('keydown', this.onKey);
-    if(this.token){
-      this.bootstrap();
+    // Try restore session
+    const s = localStorage.getItem("ielts_user");
+    if(s){
+      try{ this.user = JSON.parse(s); }catch(e){}
     }
+    if(this.user){
+      this.loadHistory();
+    }
+    this.drawTrend([]);
   },
-  beforeUnmount(){
-    window.removeEventListener('keydown', this.onKey);
-    this.stopTimer();
-  },
-
   methods:{
-    onKey(e){
-      if(this.view !== 'exam') return;
-      if(e.key.toLowerCase()==='n') this.nextOrFinish();
-      if(e.key.toLowerCase()==='p') this.prevStep();
-      if(e.key==='Escape') this.confirmExit();
+    // --- UI helpers ---
+    showToast(title, msg){
+      this.toast = { show:true, title, msg };
     },
+    setStatus(msg){ this.statusLine = msg; },
 
-    async bootstrap(){
-      try{
-        this.loading=true; this.loadingMsg='Loading profile…';
-        const r = await apiPost('me', { token: this.token });
-        this.loading=false;
-        if(!r.ok) throw new Error(r.error||'auth failed');
-        this.me = r.user;
-        this.view = (this.me.role==='admin') ? 'admin' : 'dashboard';
-        if(this.view==='dashboard') await this.fetchAnalytics();
-        if(this.me.role==='admin'){
-          await this.adminLoadUsers();
-          await this.adminLoadAnalytics();
-        }
-      }catch(err){
-        this.loading=false;
-        console.warn(err);
-        this.token='';
-        localStorage.removeItem('IELTS_TOKEN');
-        this.view='login';
+    // --- API (no CORS preflight) ---
+    async api(action, data={}){
+      if(!this.API_BASE || this.API_BASE.includes("PASTE_YOUR")){
+        throw new Error("API_BASE ยังไม่ได้ตั้งค่า");
       }
-    },
-
-    go(v){
-      this.view=v;
-      if(v==='dashboard') this.fetchAnalytics();
-      if(v==='history') this.loadHistory();
-      if(v==='admin' && this.me.role==='admin'){
-        this.adminLoadUsers();
-        this.adminLoadAnalytics();
-      }
-    },
-
-    async login(){
-      try{
-        this.loading=true; this.loadingMsg='Authenticating…';
-        const r = await apiPost('login', { u:this.auth.u, p:this.auth.p });
-        this.loading=false;
-        if(!r.ok) return alert(r.error || 'Login failed');
-        this.token = r.token;
-        localStorage.setItem('IELTS_TOKEN', this.token);
-        this.me = r.user;
-        this.view = (this.me.role==='admin') ? 'admin' : 'dashboard';
-        if(this.view==='dashboard') await this.fetchAnalytics();
-        if(this.me.role==='admin'){
-          await this.adminLoadUsers();
-          await this.adminLoadAnalytics();
-        }
-      }catch(err){
-        this.loading=false;
-        alert(String(err));
-      }
-    },
-
-    logout(){
-      this.stopTimer();
-      this.token='';
-      localStorage.removeItem('IELTS_TOKEN');
-      this.me={};
-      this.view='login';
-      this.answers={};
-      this.exam={ title:'', steps:[], index:0, section:'' };
-      this.history=[];
-    },
-
-    // ---------- Exam start ----------
-    async startFullMock(){
-      await this.startExam({ mode:'full', skill:'' });
-    },
-    async startSkill(skill){
-      await this.startExam({ mode:'skill', skill });
-    },
-    async startExam({mode, skill}){
-      try{
-        this.loading=true; this.loadingMsg='Generating exam…';
-        const r = await apiPost('genExam', { token:this.token, mode, skill });
-        this.loading=false;
-        if(!r.ok) return alert(r.error || 'Cannot start');
-
-        this.me = r.user; // updated quota
-        this.attemptId = r.attemptId;
-
-        this.exam.title = r.exam.title;
-        this.exam.steps = r.exam.steps;
-        this.exam.index = 0;
-        this.exam.section = this.exam.steps[0]?.section || '';
-
-        this.answers = {};
-        this.timer.leftSec = r.exam.timerSec || 3600;
-        this.stopTimer();
-        this.timer.t = setInterval(()=>{
-          this.timer.leftSec--;
-          if(this.timer.leftSec<=0){
-            this.timer.leftSec=0;
-            this.stopTimer();
-            this.finishSubmit();
-          }
-        },1000);
-
-        this.view='exam';
-      }catch(err){
-        this.loading=false;
-        alert(String(err));
-      }
-    },
-
-    stopTimer(){
-      if(this.timer.t){ clearInterval(this.timer.t); this.timer.t=null; }
-    },
-
-    confirmExit(){
-      if(confirm('Exit exam? Your progress is kept locally only (Save).')){
-        this.stopTimer();
-        this.go('dashboard');
-      }
-    },
-
-    // ---------- Answers ----------
-    setAnswer(val){
-      const id = this.currentStep.id;
-      this.answers[id] = val;
-    },
-    answerOf(id){
-      return this.answers[id] ?? '';
-    },
-    wordCount(text){
-      if(!text) return 0;
-      return String(text).trim().split(/\s+/).filter(Boolean).length;
-    },
-
-    saveProgress(){
-      const key = 'IELTS_LOCAL_SAVE_' + (this.attemptId||'');
-      localStorage.setItem(key, JSON.stringify({ attemptId:this.attemptId, answers:this.answers, idx:this.exam.index }));
-      alert('Saved locally.');
-    },
-
-    prevStep(){
-      if(this.exam.index===0) return;
-      this.exam.index--;
-      this.exam.section = this.currentStep.section || '';
-    },
-
-    nextOrFinish(){
-      // Light client validation
-      const step = this.currentStep;
-
-      if(step.section==='Writing'){
-        const wc = this.wordCount(this.answerOf(step.id));
-        if(step.title.includes('Task 1') && wc < 120){
-          if(!confirm('Task 1 seems short. Submit anyway?')) return;
-        }
-        if(step.title.includes('Task 2') && wc < 180){
-          if(!confirm('Task 2 seems short. Submit anyway?')) return;
-        }
-      }else{
-        if((step.qType==='mcq' || step.qType==='tfng') && !this.answerOf(step.id)){
-          return alert('Please select an answer.');
-        }
-      }
-
-      if(this.exam.index < this.exam.steps.length-1){
-        this.exam.index++;
-        this.exam.section = this.currentStep.section || '';
-      }else{
-        this.finishSubmit();
-      }
-    },
-
-    async finishSubmit(){
-      try{
-        this.stopTimer();
-        this.loading=true; this.loadingMsg='Submitting + scoring (AI)…';
-        const r = await apiPost('submitAttempt', { token:this.token, attemptId:this.attemptId, answers:this.answers });
-        this.loading=false;
-        if(!r.ok) return alert(r.error || 'Submit failed');
-
-        this.me = r.user;
-
-        const result = r.result;
-        this.resultModal = {
-          show:true,
-          overall: Number(result.overall).toFixed(1),
-          skills: result.skills,
-          summary: result.summary,
-          next: result.next,
-          xp: result.xp,
-          ai: result.ai
-        };
-
-        // back to dashboard after closing modal
-        this.view='dashboard';
-        await this.fetchAnalytics();
-      }catch(err){
-        this.loading=false;
-        alert(String(err));
-      }
-    },
-
-    // ---------- Analytics ----------
-    async fetchAnalytics(){
-      try{
-        const r = await apiPost('getAnalytics', { token:this.token, days:30 });
-        if(!r.ok) return;
-
-        // charts
-        this.$nextTick(()=>{
-          const labels = r.trend.map(x => (new Date(x.t)).toLocaleDateString());
-          const series = (k)=> r.trend.map(x => x[k] || 0);
-
-          if(this.charts.myLine){ this.charts.myLine.destroy(); this.charts.myLine=null; }
-          if(this.charts.myRadar){ this.charts.myRadar.destroy(); this.charts.myRadar=null; }
-
-          const lineEl = document.getElementById('myLine');
-          if(lineEl){
-            this.charts.myLine = new Chart(lineEl, {
-              type:'line',
-              data:{
-                labels,
-                datasets:[
-                  { label:'Overall', data: series('Overall'), tension:.25 },
-                  { label:'Reading', data: series('Reading'), tension:.25 },
-                  { label:'Listening', data: series('Listening'), tension:.25 },
-                  { label:'Writing', data: series('Writing'), tension:.25 },
-                  { label:'Speaking', data: series('Speaking'), tension:.25 }
-                ]
-              },
-              options:{ plugins:{ legend:{ position:'bottom' } }, scales:{ y:{ suggestedMin:0, suggestedMax:9 } } }
-            });
-          }
-
-          const radarEl = document.getElementById('myRadar');
-          if(radarEl){
-            this.charts.myRadar = new Chart(radarEl, {
-              type:'radar',
-              data:{
-                labels:['Reading','Listening','Writing','Speaking'],
-                datasets:[{ label:'Avg', data:[r.avg.Reading,r.avg.Listening,r.avg.Writing,r.avg.Speaking], fill:true }]
-              },
-              options:{ plugins:{ legend:{ display:false } }, scales:{ r:{ suggestedMin:0, suggestedMax:9 } } }
-            });
-          }
-        });
-      }catch(e){
-        console.warn(e);
-      }
-    },
-
-    // ---------- History ----------
-    async loadHistory(){
-      try{
-        const r = await apiPost('getHistory', { token:this.token, limit:50 });
-        if(!r.ok) return alert(r.error||'History failed');
-        this.history = r.items || [];
-      }catch(err){
-        alert(String(err));
-      }
-    },
-
-    // ---------- Admin ----------
-    async adminLoadUsers(){
-      const r = await apiPost('adminListUsers', { token:this.token });
-      if(r.ok) this.adminUsers = r.users || [];
-    },
-    async adminAdd(){
-      if(!this.adminNew.u || !this.adminNew.p) return alert('Fill username + password');
-      const r = await apiPost('adminAddUser', { token:this.token, username:this.adminNew.u, password:this.adminNew.p, role:this.adminNew.role });
-      if(!r.ok) return alert(r.error||'Add failed');
-      this.adminUsers = r.users || [];
-      this.adminOpenAdd=false;
-      this.adminNew={ u:'', p:'', role:'student' };
-    },
-    async adminDelete(username){
-      if(!confirm(`Delete ${username}?`)) return;
-      const r = await apiPost('adminDeleteUser', { token:this.token, username });
-      if(!r.ok) return alert(r.error||'Delete failed');
-      this.adminUsers = r.users || [];
-    },
-    async adminReset(username){
-      const r = await apiPost('adminResetQuota', { token:this.token, username });
-      if(!r.ok) return alert(r.error||'Reset failed');
-      this.adminUsers = r.users || [];
-    },
-    async adminLoadAnalytics(){
-      const r = await apiPost('adminAnalytics', { token:this.token, selectedUser:this.adminSelUser, days:this.adminDays });
-      if(!r.ok) return;
-
-      this.adminAnalytics = r;
-
-      this.$nextTick(()=>{
-        const labels = r.trend.map(x => (new Date(x.t)).toLocaleDateString());
-        const series = (k)=> r.trend.map(x => x[k] || 0);
-
-        if(this.charts.adminLine){ this.charts.adminLine.destroy(); this.charts.adminLine=null; }
-        if(this.charts.adminRadar){ this.charts.adminRadar.destroy(); this.charts.adminRadar=null; }
-
-        const lineEl = document.getElementById('adminLine');
-        if(lineEl){
-          this.charts.adminLine = new Chart(lineEl, {
-            type:'line',
-            data:{
-              labels,
-              datasets:[
-                { label:'Overall', data: series('Overall'), tension:.25 },
-                { label:'Reading', data: series('Reading'), tension:.25 },
-                { label:'Listening', data: series('Listening'), tension:.25 },
-                { label:'Writing', data: series('Writing'), tension:.25 },
-                { label:'Speaking', data: series('Speaking'), tension:.25 }
-              ]
-            },
-            options:{ plugins:{ legend:{ position:'bottom' } }, scales:{ y:{ suggestedMin:0, suggestedMax:9 } } }
-          });
-        }
-
-        const radarEl = document.getElementById('adminRadar');
-        if(radarEl){
-          this.charts.adminRadar = new Chart(radarEl, {
-            type:'radar',
-            data:{
-              labels:['Reading','Listening','Writing','Speaking'],
-              datasets:[{ label:'Avg', data:[r.avg.Reading,r.avg.Listening,r.avg.Writing,r.avg.Speaking], fill:true }]
-            },
-            options:{ plugins:{ legend:{ display:false } }, scales:{ r:{ suggestedMin:0, suggestedMax:9 } } }
-          });
-        }
+      const payload = JSON.stringify({ action, ...data });
+      const res = await fetch(this.API_BASE, {
+        method: "POST",
+        body: payload
       });
+      const json = await res.json();
+      return json;
+    },
+
+    // --- Auth ---
+    async doLogin(){
+      this.busy = true;
+      this.setStatus("Logging in...");
+      try{
+        const r = await this.api("login", {
+          username: this.loginForm.username,
+          password: this.loginForm.password
+        });
+        if(!r.ok) throw new Error(r.error || "Login failed");
+        this.user = r.user;
+        localStorage.setItem("ielts_user", JSON.stringify(this.user));
+        this.showToast("Login success", `Welcome ${this.user.username}`);
+        await this.loadHistory();
+      }catch(err){
+        this.showToast("Login error", String(err.message || err));
+      }finally{
+        this.busy = false;
+        this.setStatus("Ready");
+      }
+    },
+    logout(){
+      this.stopSpeak();
+      this.user = null;
+      localStorage.removeItem("ielts_user");
+      this.exam.active = false;
+      this.result.open = false;
+      this.showToast("Logged out", "Session cleared.");
+    },
+
+    // --- Ping ---
+    async ping(){
+      this.busy = true;
+      this.setStatus("Pinging API...");
+      try{
+        const r = await this.api("ping",{});
+        if(!r.ok) throw new Error(r.error || "Ping failed");
+        this.showToast("API OK", r.msg || "Ready");
+      }catch(err){
+        this.showToast("API error", String(err.message || err));
+      }finally{
+        this.busy = false;
+        this.setStatus("Ready");
+      }
+    },
+
+    // --- History ---
+    async loadHistory(){
+      this.busy = true;
+      this.setStatus("Loading history...");
+      try{
+        const r = await this.api("getMyHistory", { username: this.user.username });
+        if(!r.ok) throw new Error(r.error || "History failed");
+        this.history = r.items || [];
+        const arr = (this.history.slice(0,20)).map(x=>Number(x.overall || 0)).reverse();
+        this.drawTrend(arr);
+        this.showToast("History", `Loaded ${this.history.length} attempt(s)`);
+      }catch(err){
+        this.showToast("History error", String(err.message || err));
+        this.drawTrend([]);
+      }finally{
+        this.busy = false;
+        this.setStatus("Ready");
+      }
+    },
+
+    // --- Start exam ---
+    openWritingPicker(){ this.writingPicker = true; },
+
+    async startExam({mode, skill="", writingType=""}){
+      this.writingPicker = false;
+      this.busy = true;
+      this.setStatus("Generating exam...");
+      try{
+        const r = await this.api("genExam", {
+          username: this.user.username,
+          mode,
+          skill,
+          writingType
+        });
+        if(!r.ok) throw new Error(r.error || "Generate failed");
+
+        this.exam.active = true;
+        this.exam.examId = r.examId;
+        this.exam.mode = r.mode;
+        this.exam.skill = r.skill || "";
+        this.exam.questions = normalizeQuestions(r.questions || []);
+        this.exam.index = 0;
+        this.exam.answers = {};
+
+        // For reading passage_multi: initialize sub question answers
+        for(const q of this.exam.questions){
+          if(q.skill==="reading" && q.subtype==="passage_multi" && q.payload?.questions){
+            for(const sub of q.payload.questions){
+              this.exam.answers[sub.qid] = "";
+            }
+          }
+        }
+
+        // Scroll top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        this.showToast("Exam started", `${this.exam.questions.length} item(s) generated.`);
+      }catch(err){
+        this.showToast("Generate error", String(err.message || err));
+      }finally{
+        this.busy = false;
+        this.setStatus("Ready");
+      }
+    },
+
+    prevQ(){ if(this.exam.index>0) this.exam.index--; },
+    nextQ(){ if(this.exam.index < this.exam.questions.length-1) this.exam.index++; },
+
+    // --- Answer handlers ---
+    setAnswer(qid, val){
+      this.exam.answers[qid] = val;
+    },
+    getAnswer(qid){
+      return this.exam.answers[qid] ?? "";
+    },
+    setReadingAnswer(subQid, val){
+      this.exam.answers[subQid] = val;
+    },
+
+    // --- Submit ---
+    async submitExam(){
+      if(!this.exam.active) return;
+
+      // Build answers payload:
+      // - For passage_multi: send each sub-question as its own {qid, answer}
+      // - For others: send {qid, answer}
+      const payloadAnswers = [];
+      for(const q of this.exam.questions){
+        if(q.skill==="reading" && q.subtype==="passage_multi" && Array.isArray(q.payload?.questions)){
+          for(const sub of q.payload.questions){
+            payloadAnswers.push({ qid: sub.qid, answer: this.getAnswer(sub.qid) });
+          }
+        }else{
+          payloadAnswers.push({ qid: q.qid, answer: this.getAnswer(q.qid) });
+        }
+      }
+
+      this.busy = true;
+      this.setStatus("Submitting...");
+      try{
+        const r = await this.api("submitAnswers", {
+          username: this.user.username,
+          examId: this.exam.examId,
+          mode: this.exam.mode,
+          skill: this.exam.skill,
+          answers: payloadAnswers
+        });
+        if(!r.ok) throw new Error(r.error || "Submit failed");
+
+        this.result.open = true;
+        this.result.data = r;
+
+        // End exam
+        this.exam.active = false;
+
+        // refresh history
+        await this.loadHistory();
+      }catch(err){
+        this.showToast("Submit error", String(err.message || err));
+      }finally{
+        this.busy = false;
+        this.setStatus("Ready");
+      }
+    },
+
+    endExamConfirm(){
+      if(confirm("End exam now? (answers not submitted)")){
+        this.stopSpeak();
+        this.exam.active = false;
+        this.showToast("Exam ended", "Not submitted.");
+      }
+    },
+
+    closeResult(){
+      this.result.open = false;
+      this.result.data = null;
+    },
+    practiceMore(){
+      this.closeResult();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+
+    // --- Listening TTS ---
+    speak(text){
+      try{
+        if(!("speechSynthesis" in window)) return this.showToast("TTS", "SpeechSynthesis not supported.");
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(String(text || ""));
+        u.lang = "en-US";
+        u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }catch(e){
+        this.showToast("TTS error", String(e));
+      }
+    },
+    stopSpeak(){
+      try{
+        if("speechSynthesis" in window) window.speechSynthesis.cancel();
+      }catch(e){}
+    },
+
+    // --- Display helpers ---
+    displayScore(v){
+      if(v===null || v===undefined || v==="") return "—";
+      return v;
+    },
+
+    // --- Trend chart (simple canvas) ---
+    drawTrend(values){
+      const c = document.getElementById("trend");
+      if(!c) return;
+      const ctx = c.getContext("2d");
+      const w = c.width, h = c.height;
+      ctx.clearRect(0,0,w,h);
+
+      // axes
+      ctx.globalAlpha = 0.65;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1;
+
+      // grid
+      ctx.globalAlpha = 0.10;
+      for(let i=0;i<=5;i++){
+        const y = 18 + i*( (h-36)/5 );
+        ctx.beginPath(); ctx.moveTo(16,y); ctx.lineTo(w-16,y); ctx.stroke();
+      }
+
+      // labels (bands)
+      ctx.globalAlpha = 0.55;
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace";
+      const bands = [9,7.5,6,4.5,3,1.5];
+      for(let i=0;i<bands.length;i++){
+        const y = 18 + i*( (h-36)/(bands.length-1) );
+        ctx.fillText(String(bands[i]), 6, y+4);
+      }
+
+      if(!values || values.length<2) return;
+
+      // line
+      const minB = 0, maxB = 9;
+      const padL=16, padR=16, padT=18, padB=18;
+      const plotW = w-padL-padR, plotH = h-padT-padB;
+
+      const xAt = i => padL + (i/(values.length-1))*plotW;
+      const yAt = v => padT + (1 - ( (v-minB)/(maxB-minB) ))*plotH;
+
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.moveTo(xAt(0), yAt(values[0]));
+      for(let i=1;i<values.length;i++){
+        ctx.lineTo(xAt(i), yAt(values[i]));
+      }
+      ctx.stroke();
+
+      // points
+      ctx.globalAlpha = 0.95;
+      for(let i=0;i<values.length;i++){
+        ctx.beginPath();
+        ctx.arc(xAt(i), yAt(values[i]), 3, 0, Math.PI*2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+      }
     }
   }
-}).mount('#app');
+}).mount("#app");
+
+// Normalize question payload for safety
+function normalizeQuestions(list){
+  return (list||[]).map(q => ({
+    qid: String(q.qid || ""),
+    skill: String(q.skill || ""),
+    subtype: String(q.subtype || ""),
+    payload: q.payload || {}
+  }));
+}
 </script>
 </body>
 </html>
