@@ -1,960 +1,279 @@
-<!doctype html>
-<html lang="th">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>IELTS AI (Real) • GitHub Pages + Google Sheets</title>
-
-  <!-- Tailwind (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Vue 3 (CDN) -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --stroke: rgba(148,163,184,.18);
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --blue:#3b82f6;
-      --cyan:#06b6d4;
-      --ok:#22c55e;
-      --warn:#f59e0b;
-      --danger:#ef4444;
-    }
-    body{
-      background:
-        radial-gradient(1200px 800px at 20% 0%, rgba(59,130,246,.25), transparent 60%),
-        radial-gradient(1000px 700px at 100% 10%, rgba(6,182,212,.18), transparent 55%),
-        radial-gradient(900px 700px at 50% 110%, rgba(168,85,247,.12), transparent 55%),
-        linear-gradient(180deg, #070a14, #0b1020 35%, #0b1020);
-      color: var(--text);
-    }
-    .glass{
-      background: var(--panel);
-      border: 1px solid var(--stroke);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 12px 40px rgba(0,0,0,.35);
-    }
-    .glass2{
-      background: var(--panel2);
-      border: 1px solid var(--stroke);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .chip{
-      border:1px solid var(--stroke);
-      background: rgba(2,6,23,.35);
-    }
-    .btn{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.08);
-    }
-    .btn:hover{ background: rgba(255,255,255,.12); }
-    .btnPrimary{
-      background: linear-gradient(135deg, rgba(59,130,246,.9), rgba(99,102,241,.9));
-      border: 1px solid rgba(255,255,255,.14);
-    }
-    .btnPrimary:hover{ filter: brightness(1.08); }
-    .btnDanger{
-      background: rgba(239,68,68,.16);
-      border:1px solid rgba(239,68,68,.35);
-    }
-    .btnDanger:hover{ background: rgba(239,68,68,.22); }
-    .btnOK{
-      background: rgba(34,197,94,.16);
-      border:1px solid rgba(34,197,94,.35);
-    }
-    .btnOK:hover{ background: rgba(34,197,94,.22); }
-
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    .kbd{
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.08);
-      padding: .1rem .35rem;
-      border-radius: .5rem;
-      font-size: .75rem;
-    }
-
-    /* Exam content */
-    .qCard{
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: 20px;
-    }
-    .input{
-      background: rgba(2,6,23,.45);
-      border:1px solid rgba(148,163,184,.22);
-      color: var(--text);
-      outline:none;
-    }
-    .input:focus{ border-color: rgba(59,130,246,.65); box-shadow: 0 0 0 3px rgba(59,130,246,.22); }
-    .divider{ border-color: rgba(148,163,184,.16); }
-
-    /* SVG map container */
-    .svgWrap svg{ width: 100%; height: auto; max-height: 320px; }
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      max-width: min(520px, calc(100% - 24px));
-      z-index: 50;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS AI - Production</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .map-container svg { width: 100%; height: auto; border-radius: 8px; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+    </style>
 </head>
-
-<body>
-<div id="app" class="min-h-screen">
-  <!-- Top bar -->
-  <div class="sticky top-0 z-30">
-    <div class="mx-auto max-w-6xl px-4 pt-4">
-      <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="h-10 w-10 rounded-xl grid place-items-center" style="background:linear-gradient(135deg, rgba(59,130,246,.55), rgba(6,182,212,.35)); border:1px solid rgba(255,255,255,.14)">
-            <span class="font-extrabold">IA</span>
-          </div>
-          <div>
-            <div class="font-extrabold leading-tight">IELTS AI (Real)</div>
-            <div class="text-xs text-slate-300/80">
-              GitHub Pages + Google Sheets WebApp • <span class="mono">v1</span>
+<body class="bg-gray-100 font-sans text-gray-800">
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <nav class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
+            <h1 class="text-xl font-bold">IELTS AI <span class="text-xs bg-blue-600 px-2 py-1 rounded">Beta</span></h1>
+            <div v-if="user">
+                <span class="mr-4">Hi, {{ user }}</span>
+                <button @click="logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm">Logout</button>
             </div>
-          </div>
-        </div>
+        </nav>
 
-        <div class="flex items-center gap-2">
-          <span v-if="user" class="chip rounded-xl px-3 py-2 text-xs">
-            <span class="text-slate-300/70">User:</span>
-            <b class="mono">{{ user.username }}</b>
-            <span class="text-slate-300/70">•</span>
-            <b class="mono uppercase">{{ user.role }}</b>
-          </span>
-
-          <button v-if="user" class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="logout()">
-            Logout
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main -->
-  <div class="mx-auto max-w-6xl px-4 pb-20 pt-4">
-    <!-- Login -->
-    <div v-if="!user" class="grid place-items-center mt-8">
-      <div class="glass rounded-3xl p-6 w-full max-w-md">
-        <div class="text-lg font-extrabold">Login</div>
-        <div class="text-sm text-slate-300/80 mt-1">
-          Demo users: <span class="kbd">admin / 123</span> , <span class="kbd">student / 123</span>
-        </div>
-
-        <div class="mt-5 space-y-3">
-          <input class="input w-full rounded-2xl px-4 py-3" placeholder="username" v-model.trim="loginForm.username" />
-          <input class="input w-full rounded-2xl px-4 py-3" placeholder="password" type="password" v-model.trim="loginForm.password" />
-          <button class="btnPrimary w-full rounded-2xl px-4 py-3 font-extrabold" @click="doLogin()">
-            Sign in
-          </button>
-        </div>
-
-        <div class="mt-4 text-xs text-slate-300/70">
-          Tip: ตั้งค่า <span class="mono">API_BASE</span> ให้เป็น Web App URL ของ Apps Script
-        </div>
-
-        <div class="mt-4 p-3 rounded-2xl glass2 text-xs text-slate-200/90">
-          <div class="font-extrabold mb-1">API Base</div>
-          <div class="mono break-all">{{ API_BASE || '❌ ยังไม่ได้ตั้งค่า' }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div v-else>
-      <div class="grid lg:grid-cols-3 gap-4 mt-4">
-        <div class="glass rounded-3xl p-5 lg:col-span-2">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-xl font-extrabold">Dashboard</div>
-              <div class="text-sm text-slate-300/80 mt-1">
-                Full Mock: <b>2 ครั้ง/สัปดาห์</b> • Skill Practice: <b>15 ครั้ง/สัปดาห์/สกิล</b>
-              </div>
-            </div>
-            <div class="chip rounded-2xl px-4 py-3 text-xs">
-              <div class="text-slate-300/70">Status</div>
-              <div class="mono font-extrabold">{{ statusLine }}</div>
-            </div>
-          </div>
-
-          <div class="mt-5 grid md:grid-cols-2 gap-3">
-            <!-- Full Mock -->
-            <div class="qCard p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-extrabold">Full Mock Exam</div>
-                  <div class="text-xs text-slate-300/80 mt-1">
-                    จำนวนข้อเท่าของจริง 100% (R40/L40/W2/S1)
-                  </div>
-                </div>
-                <span class="chip rounded-xl px-3 py-2 text-xs mono">
-                  quota: 2/wk
-                </span>
-              </div>
-              <button class="btnPrimary mt-4 w-full rounded-2xl py-3 font-extrabold"
-                      @click="startExam({mode:'full_mock'})"
-                      :disabled="busy">
-                Start Full Mock
-              </button>
-            </div>
-
-            <!-- Skill Practice -->
-            <div class="qCard p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-extrabold">Skill Practice</div>
-                  <div class="text-xs text-slate-300/80 mt-1">
-                    Generate ใหม่ทุกครั้ง • สรุปผลแยกสกิล
-                  </div>
-                </div>
-                <span class="chip rounded-xl px-3 py-2 text-xs mono">
-                  quota: 15/wk/skill
-                </span>
-              </div>
-
-              <div class="mt-4 grid grid-cols-2 gap-2">
-                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'reading'})" :disabled="busy">Reading</button>
-                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'listening'})" :disabled="busy">Listening</button>
-                <button class="btn rounded-2xl py-3 font-bold" @click="openWritingPicker()" :disabled="busy">Writing</button>
-                <button class="btn rounded-2xl py-3 font-bold" @click="startExam({mode:'skill_practice', skill:'speaking'})" :disabled="busy">Speaking</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-5 flex flex-wrap items-center gap-2">
-            <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="loadHistory()" :disabled="busy">
-              Refresh History
-            </button>
-            <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="ping()" :disabled="busy">
-              Ping API
-            </button>
-          </div>
-        </div>
-
-        <div class="glass rounded-3xl p-5">
-          <div class="font-extrabold">My Trend</div>
-          <div class="text-xs text-slate-300/80 mt-1">Overall band (ล่าสุด 20 ครั้ง)</div>
-          <div class="mt-4">
-            <canvas id="trend" width="520" height="220" class="w-full rounded-2xl" style="background:rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.10)"></canvas>
-          </div>
-          <div class="mt-3 text-xs text-slate-300/70">
-            * กราฟนี้อ่านจาก Attempts ที่บันทึกใน Google Sheets
-          </div>
-        </div>
-      </div>
-
-      <!-- Exam panel -->
-      <div v-if="exam.active" class="mt-6">
-        <div class="glass rounded-3xl p-5">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div class="text-xl font-extrabold">Exam</div>
-              <div class="text-sm text-slate-300/80 mt-1">
-                <span class="chip rounded-xl px-3 py-2 text-xs mono">{{ exam.mode }}</span>
-                <span v-if="exam.skill" class="chip rounded-xl px-3 py-2 text-xs mono ml-2">{{ exam.skill }}</span>
-                <span class="ml-2 text-xs text-slate-300/70">• examId:</span>
-                <span class="mono text-xs">{{ exam.examId }}</span>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="prevQ()" :disabled="busy || exam.index===0">Prev</button>
-              <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="nextQ()" :disabled="busy || exam.index>=exam.questions.length-1">Next</button>
-              <button class="btnDanger rounded-xl px-3 py-2 text-sm font-bold" @click="endExamConfirm()" :disabled="busy">End</button>
-            </div>
-          </div>
-
-          <div class="divider border-t my-4"></div>
-
-          <!-- Progress -->
-          <div class="flex items-center justify-between gap-4">
-            <div class="text-sm text-slate-300/80">
-              Question <b class="mono">{{ exam.index+1 }}</b> / <b class="mono">{{ exam.questions.length }}</b>
-            </div>
-            <div class="w-2/3 h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.10)">
-              <div class="h-full" :style="{ width: progressPct+'%', background:'linear-gradient(90deg, rgba(59,130,246,.9), rgba(6,182,212,.9))' }"></div>
-            </div>
-          </div>
-
-          <!-- Current question -->
-          <div class="mt-4 qCard p-4">
-            <div class="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <div class="text-xs text-slate-300/70 uppercase font-extrabold tracking-wide">
-                  {{ curr.skill }} • {{ curr.subtype }}
-                </div>
-                <div class="text-lg font-extrabold mt-1">{{ currTitle }}</div>
-                <div v-if="currSubtitle" class="text-sm text-slate-300/80 mt-1">{{ currSubtitle }}</div>
-              </div>
-
-              <!-- Listening: read script -->
-              <div v-if="curr.skill==='listening' && curr.payload?.audioScript" class="flex items-center gap-2">
-                <button class="btnOK rounded-xl px-3 py-2 text-sm font-extrabold" @click="speak(curr.payload.audioScript)">
-                  ▶ Read Script
+        <main class="flex-grow p-4 md:p-8 max-w-5xl mx-auto w-full">
+            
+            <div v-if="!user" class="max-w-md mx-auto bg-white p-8 rounded shadow">
+                <h2 class="text-2xl font-bold mb-4">Login</h2>
+                <input v-model="loginForm.username" type="text" placeholder="Username" class="w-full mb-3 p-2 border rounded">
+                <input v-model="loginForm.password" type="password" placeholder="Password" class="w-full mb-4 p-2 border rounded">
+                <button @click="doLogin" :disabled="loading" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+                    {{ loading ? 'Loading...' : 'Login / Register' }}
                 </button>
-                <button class="btn rounded-xl px-3 py-2 text-sm font-bold" @click="stopSpeak()">Stop</button>
-              </div>
             </div>
 
-            <!-- Reading passage -->
-            <div v-if="curr.skill==='reading' && curr.subtype==='passage_multi'" class="mt-4 grid lg:grid-cols-2 gap-4">
-              <div class="glass2 rounded-2xl p-4">
-                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Passage</div>
-                <div class="text-sm leading-relaxed whitespace-pre-wrap">{{ curr.payload?.passage || '' }}</div>
-              </div>
-
-              <div class="space-y-3">
-                <div v-for="(q, qi) in (curr.payload?.questions || [])" :key="q.qid" class="glass2 rounded-2xl p-4">
-                  <div class="text-sm font-extrabold">
-                    Q{{ qi+1 }} • <span class="mono text-xs">{{ q.type }}</span>
-                  </div>
-                  <div class="text-sm mt-2 whitespace-pre-wrap">{{ q.qText }}</div>
-
-                  <!-- tfng -->
-                  <div v-if="q.type==='tfng'" class="mt-3 grid grid-cols-3 gap-2">
-                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'True')"
-                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='True'}">True</button>
-                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'False')"
-                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='False'}">False</button>
-                    <button class="btn rounded-xl py-2 text-sm font-bold" @click="setReadingAnswer(q.qid,'Not Given')"
-                      :class="{'ring-2 ring-cyan-400/70': getAnswer(q.qid)==='Not Given'}">Not Given</button>
-                  </div>
-
-                  <!-- mcq -->
-                  <div v-else-if="q.type==='mcq'" class="mt-3 space-y-2">
-                    <label v-for="(c, ci) in (q.choices||[])" :key="ci" class="flex items-center gap-2 btn rounded-xl px-3 py-2 cursor-pointer">
-                      <input type="radio" :name="q.qid" :value="c" class="accent-cyan-400"
-                             :checked="getAnswer(q.qid)===c"
-                             @change="setReadingAnswer(q.qid,c)">
-                      <span class="text-sm">{{ c }}</span>
-                    </label>
-                  </div>
-
-                  <!-- matching / completion (simple input) -->
-                  <div v-else class="mt-3">
-                    <input class="input w-full rounded-xl px-3 py-2" placeholder="Type your answer..."
-                           :value="getAnswer(q.qid) || ''"
-                           @input="setReadingAnswer(q.qid, $event.target.value)">
-                    <div v-if="q.choices && q.choices.length" class="text-xs text-slate-300/70 mt-2">
-                      Choices: <span class="mono">{{ q.choices.join(' | ') }}</span>
+            <div v-else-if="view === 'dashboard'" class="grid gap-6">
+                <div class="bg-white p-6 rounded shadow grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Modes</h3>
+                        <div class="space-y-2">
+                            <button @click="startExam('skill', 'reading')" class="block w-full text-left p-2 bg-green-50 hover:bg-green-100 rounded border border-green-200">📚 Practice Reading</button>
+                            <button @click="startExam('skill', 'listening')" class="block w-full text-left p-2 bg-yellow-50 hover:bg-yellow-100 rounded border border-yellow-200">🎧 Practice Listening</button>
+                            <button @click="startExam('skill', 'writing')" class="block w-full text-left p-2 bg-purple-50 hover:bg-purple-100 rounded border border-purple-200">✍️ Practice Writing</button>
+                            <button @click="startExam('skill', 'speaking')" class="block w-full text-left p-2 bg-pink-50 hover:bg-pink-100 rounded border border-pink-200">🎤 Practice Speaking</button>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Listening -->
-            <div v-else-if="curr.skill==='listening'" class="mt-4">
-              <div v-if="curr.payload?.passage" class="glass2 rounded-2xl p-4">
-                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Context</div>
-                <div class="text-sm whitespace-pre-wrap">{{ curr.payload.passage }}</div>
-              </div>
-
-              <!-- Map -->
-              <div v-if="curr.subtype==='map'" class="mt-4 glass2 rounded-2xl p-4">
-                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Map</div>
-                <div class="svgWrap" v-html="curr.payload?.mapSvg || ''"></div>
-                <div class="text-sm mt-3">
-                  Find: <b>{{ curr.payload?.mapAsk || '—' }}</b>
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <div class="text-sm font-extrabold">Question</div>
-                <div class="text-sm mt-2 whitespace-pre-wrap">{{ curr.payload?.qText || '' }}</div>
-                <div class="mt-3 space-y-2">
-                  <label v-for="(c, ci) in (curr.payload?.choices || [])" :key="ci"
-                         class="flex items-center gap-2 btn rounded-xl px-3 py-2 cursor-pointer">
-                    <input type="radio" :name="curr.qid" :value="c" class="accent-cyan-400"
-                           :checked="getAnswer(curr.qid)===c"
-                           @change="setAnswer(curr.qid, c)">
-                    <span class="text-sm">{{ c }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Writing -->
-            <div v-else-if="curr.skill==='writing'" class="mt-4 space-y-3">
-              <div class="glass2 rounded-2xl p-4">
-                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Prompt</div>
-                <div class="text-sm whitespace-pre-wrap">{{ curr.payload?.prompt || '' }}</div>
-                <div v-if="curr.payload?.chartDesc" class="mt-3 text-xs text-slate-300/70">
-                  Chart description: <span class="mono">{{ curr.payload.chartDesc }}</span>
-                </div>
-                <div v-if="curr.payload?.requirements?.length" class="mt-3 text-xs text-slate-300/80">
-                  <div class="font-extrabold uppercase mb-1">Requirements</div>
-                  <ul class="list-disc ml-5 space-y-1">
-                    <li v-for="(r, ri) in curr.payload.requirements" :key="ri">{{ r }}</li>
-                  </ul>
-                </div>
-              </div>
-
-              <textarea class="input w-full rounded-2xl px-4 py-3 min-h-[220px]"
-                        placeholder="Write your answer here..."
-                        :value="getAnswer(curr.qid) || ''"
-                        @input="setAnswer(curr.qid, $event.target.value)"></textarea>
-              <div class="text-xs text-slate-300/70">
-                Tip: Writing จะให้ AI feedback ตอน submit (ถ้า API คืนกลับมา)
-              </div>
-            </div>
-
-            <!-- Speaking -->
-            <div v-else-if="curr.skill==='speaking'" class="mt-4 space-y-3">
-              <div class="glass2 rounded-2xl p-4">
-                <div class="text-xs font-extrabold text-slate-300/70 uppercase mb-2">Speaking</div>
-
-                <div class="text-sm font-extrabold mt-2">Part 1</div>
-                <ul class="list-disc ml-5 text-sm text-slate-200/90 space-y-1">
-                  <li v-for="(x,i) in (curr.payload?.part1Questions||[])" :key="i">{{ x }}</li>
-                </ul>
-
-                <div class="text-sm font-extrabold mt-4">Part 2 Cue Card</div>
-                <div class="text-sm whitespace-pre-wrap">{{ curr.payload?.part2CueCard || '' }}</div>
-
-                <div class="text-sm font-extrabold mt-4">Part 3</div>
-                <ul class="list-disc ml-5 text-sm text-slate-200/90 space-y-1">
-                  <li v-for="(x,i) in (curr.payload?.part3Questions||[])" :key="i">{{ x }}</li>
-                </ul>
-              </div>
-
-              <textarea class="input w-full rounded-2xl px-4 py-3 min-h-[200px]"
-                        placeholder="Paste your speaking transcript (or type your answer)..."
-                        :value="getAnswer(curr.qid) || ''"
-                        @input="setAnswer(curr.qid, $event.target.value)"></textarea>
-
-              <div class="text-xs text-slate-300/70">
-                ถ้าจะอัดเสียงจริง: ต้องทำเพิ่ม (ตอนนี้ใช้ transcript เพื่อให้ AI ให้คะแนน)
-              </div>
-            </div>
-
-            <!-- Fallback -->
-            <div v-else class="mt-4 text-sm text-slate-300/80">
-              Unknown question type.
-            </div>
-
-            <!-- Footer actions -->
-            <div class="divider border-t my-4"></div>
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="text-xs text-slate-300/70">
-                Saved locally until submit. (answers stored in memory)
-              </div>
-              <button class="btnPrimary rounded-2xl px-4 py-3 font-extrabold" @click="submitExam()" :disabled="busy">
-                Submit Exam
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Result modal -->
-      <div v-if="result.open" class="fixed inset-0 z-40 grid place-items-center p-4" style="background:rgba(0,0,0,.55)">
-        <div class="glass rounded-3xl w-full max-w-4xl overflow-hidden">
-          <div class="px-5 py-4 flex items-start justify-between" style="background:linear-gradient(135deg, rgba(59,130,246,.55), rgba(99,102,241,.40)); border-bottom:1px solid rgba(255,255,255,.12)">
-            <div>
-              <div class="text-lg font-extrabold flex items-center gap-2">
-                <span>🏆</span> Exam Completed
-              </div>
-              <div class="text-sm text-slate-100/80 mt-1">
-                Saved to Google Sheets + AI feedback (Writing/Speaking)
-              </div>
-            </div>
-            <button class="btn rounded-xl px-3 py-2 font-bold" @click="closeResult()">✕</button>
-          </div>
-
-          <div class="p-5 grid lg:grid-cols-3 gap-4">
-            <div class="glass2 rounded-2xl p-4">
-              <div class="text-xs text-slate-300/70 uppercase font-extrabold">Estimated Overall Band</div>
-              <div class="text-6xl font-extrabold mt-2">{{ result.data?.overall ?? '—' }}</div>
-              <div class="mt-3 text-sm text-slate-300/80">
-                Reading/Listening auto-score. Writing/Speaking scored by AI if text provided.
-              </div>
-            </div>
-
-            <div class="glass2 rounded-2xl p-4 lg:col-span-2">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="text-lg font-extrabold">Feedback</div>
-                  <div class="text-sm text-slate-300/80">Summary + next plan</div>
-                </div>
-                <span class="chip rounded-xl px-3 py-2 text-xs mono">REAL API</span>
-              </div>
-
-              <div class="mt-3 space-y-3">
-                <div class="glass rounded-2xl p-4">
-                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Summary</div>
-                  <div class="text-sm mt-1">{{ result.data?.feedback?.summary || '—' }}</div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-3">
-                  <div class="glass rounded-2xl p-4">
-                    <div class="text-xs font-extrabold text-slate-300/70 uppercase">AI Writing (if available)</div>
-                    <div class="text-sm mt-1" v-if="result.data?.feedback?.writing">
-                      <div class="font-extrabold">Band: {{ result.data.feedback.writing.band ?? '—' }}</div>
-                      <div class="text-sm mt-1">{{ result.data.feedback.writing.shortFeedback || '' }}</div>
+                    <div>
+                        <button @click="startExam('fullmock')" class="w-full py-4 bg-indigo-600 text-white font-bold rounded shadow hover:bg-indigo-700 mb-4">
+                            Start Full Mock Exam
+                        </button>
+                        <button @click="view = 'history'" class="text-blue-600 underline text-sm">View History</button>
+                        <button @click="view = 'settings'" class="text-blue-600 underline text-sm ml-4">Settings</button>
                     </div>
-                    <div class="text-sm mt-1 text-slate-300/70" v-else>No AI writing feedback returned.</div>
-                  </div>
-                  <div class="glass rounded-2xl p-4">
-                    <div class="text-xs font-extrabold text-slate-300/70 uppercase">AI Speaking (if available)</div>
-                    <div class="text-sm mt-1" v-if="result.data?.feedback?.speaking">
-                      <div class="font-extrabold">Band: {{ result.data.feedback.speaking.band ?? '—' }}</div>
-                      <div class="text-sm mt-1">{{ result.data.feedback.speaking.shortFeedback || '' }}</div>
-                    </div>
-                    <div class="text-sm mt-1 text-slate-300/70" v-else>No AI speaking feedback returned.</div>
-                  </div>
                 </div>
-
-                <div class="glass rounded-2xl p-4">
-                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Next Plan</div>
-                  <ul class="list-disc ml-5 mt-2 text-sm space-y-1">
-                    <li v-for="(x,i) in (result.data?.feedback?.nextPlan || [])" :key="i">{{ x }}</li>
-                  </ul>
-                </div>
-
-                <div class="glass rounded-2xl p-4">
-                  <div class="text-xs font-extrabold text-slate-300/70 uppercase">Skill Breakdown</div>
-                  <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="chip rounded-2xl p-3">
-                      <div class="text-xs text-slate-300/70">Reading</div>
-                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.reading) }}</div>
-                    </div>
-                    <div class="chip rounded-2xl p-3">
-                      <div class="text-xs text-slate-300/70">Listening</div>
-                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.listening) }}</div>
-                    </div>
-                    <div class="chip rounded-2xl p-3">
-                      <div class="text-xs text-slate-300/70">Writing</div>
-                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.writing) }}</div>
-                    </div>
-                    <div class="chip rounded-2xl p-3">
-                      <div class="text-xs text-slate-300/70">Speaking</div>
-                      <div class="text-xl font-extrabold">{{ displayScore(result.data?.scores?.speaking) }}</div>
-                    </div>
-                  </div>
-                  <div class="text-xs text-slate-300/70 mt-2">
-                    * ถ้าเป็น Skill Practice ระบบจะแสดงเฉพาะ skill ที่ทำ (อื่นๆเป็น —)
-                  </div>
-                </div>
-
-                <div class="flex gap-2 justify-end">
-                  <button class="btn rounded-2xl px-4 py-3 font-extrabold" @click="closeResult()">Back to Dashboard</button>
-                  <button class="btnPrimary rounded-2xl px-4 py-3 font-extrabold" @click="practiceMore()">Practice More</button>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Writing type modal -->
-      <div v-if="writingPicker" class="fixed inset-0 z-40 grid place-items-center p-4" style="background:rgba(0,0,0,.55)">
-        <div class="glass rounded-3xl w-full max-w-md p-5">
-          <div class="text-lg font-extrabold">Writing Practice</div>
-          <div class="text-sm text-slate-300/80 mt-1">เลือก Task 1 หรือ Task 2</div>
-          <div class="mt-4 grid grid-cols-2 gap-2">
-            <button class="btn rounded-2xl py-3 font-extrabold" @click="startExam({mode:'skill_practice', skill:'writing', writingType:'task1'})">Task 1</button>
-            <button class="btnPrimary rounded-2xl py-3 font-extrabold" @click="startExam({mode:'skill_practice', skill:'writing', writingType:'task2'})">Task 2</button>
-          </div>
-          <button class="btn mt-3 w-full rounded-2xl py-3 font-bold" @click="writingPicker=false">Cancel</button>
-        </div>
-      </div>
+            <div v-else-if="view === 'exam'" class="bg-white p-6 rounded shadow min-h-[500px]">
+                <div v-if="loading" class="text-center py-20">
+                    <div class="text-4xl animate-bounce mb-4">🤖</div>
+                    <p>AI is generating a unique exam based on your history...</p>
+                    <p class="text-sm text-gray-500 mt-2">Checking fingerprints, semantic rotation, and map templates.</p>
+                </div>
+                
+                <div v-else class="h-full flex flex-col">
+                    <div class="flex justify-between border-b pb-2 mb-4">
+                        <span class="font-bold uppercase">{{ currentExam.mode }} - {{ currentExam.skill || 'ALL' }}</span>
+                        <span class="text-red-500 font-mono">{{ timerDisplay }}</span>
+                    </div>
+
+                    <div class="flex-grow overflow-y-auto space-y-8">
+                        <div v-for="(q, idx) in currentExam.questions" :key="q.id" class="border p-4 rounded bg-gray-50">
+                            <div class="font-bold mb-2">Q{{ idx + 1 }}. ({{ q.skill }})</div>
+                            
+                            <div v-if="q.skill === 'listening'" class="mb-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <button @click="playTTS(q.audioScript)" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">▶ Play Audio</button>
+                                </div>
+                                <div v-if="q.mapData && q.mapData.mapSvg" class="map-container mb-4 p-2 bg-white border" v-html="q.mapData.mapSvg"></div>
+                                <p class="mb-2 italic">{{ q.mapData ? q.mapData.mapAsk : 'Listen to the audio...' }}</p>
+                            </div>
+
+                            <div v-if="q.skill === 'reading'" class="mb-4 p-3 bg-white border h-64 overflow-y-scroll text-sm leading-relaxed">
+                                {{ q.text }}
+                            </div>
+
+                            <p class="mb-2">{{ q.text }}</p>
+
+                            <div v-if="q.choices && q.choices.length" class="space-y-1">
+                                <label v-for="c in q.choices" :key="c" class="block">
+                                    <input type="radio" :name="q.id" :value="c" v-model="answers[q.id]"> {{ c }}
+                                </label>
+                            </div>
+                            <div v-else-if="q.skill === 'writing' || q.skill === 'speaking'">
+                                <textarea v-model="answers[q.id]" class="w-full h-32 p-2 border rounded" placeholder="Type answer here..."></textarea>
+                            </div>
+                            <div v-else>
+                                <input type="text" v-model="answers[q.id]" class="w-full p-2 border rounded">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t flex justify-end">
+                        <button @click="submitExam" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Submit Exam</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else-if="view === 'results'" class="bg-white p-8 rounded shadow">
+                <h2 class="text-2xl font-bold mb-6">Results</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="p-4 bg-blue-50 text-center rounded">
+                        <div class="text-sm text-gray-500">Reading</div>
+                        <div class="text-2xl font-bold">{{ results.scores.reading !== null ? results.scores.reading.toFixed(1) : '—' }}</div>
+                    </div>
+                    <div class="p-4 bg-yellow-50 text-center rounded">
+                        <div class="text-sm text-gray-500">Listening</div>
+                        <div class="text-2xl font-bold">{{ results.scores.listening !== null ? results.scores.listening.toFixed(1) : '—' }}</div>
+                    </div>
+                    <div class="p-4 bg-purple-50 text-center rounded">
+                        <div class="text-sm text-gray-500">Writing</div>
+                        <div class="text-2xl font-bold">{{ results.scores.writing !== null ? results.scores.writing.toFixed(1) : '—' }}</div>
+                    </div>
+                    <div class="p-4 bg-pink-50 text-center rounded">
+                        <div class="text-sm text-gray-500">Speaking</div>
+                        <div class="text-2xl font-bold">{{ results.scores.speaking !== null ? results.scores.speaking.toFixed(1) : '—' }}</div>
+                    </div>
+                </div>
+                
+                <div v-if="results.feedback && results.feedback.feedback" class="mb-6 p-4 bg-gray-50 border rounded">
+                    <h3 class="font-bold mb-2">AI Coach Feedback:</h3>
+                    <p>{{ results.feedback.feedback }}</p>
+                </div>
+
+                <button @click="view = 'dashboard'" class="bg-gray-800 text-white px-4 py-2 rounded">Back to Dashboard</button>
+            </div>
+            
+            <div v-else-if="view === 'history'" class="bg-white p-6 rounded shadow">
+                <h2 class="text-xl font-bold mb-4">Attempt History</h2>
+                <table class="w-full text-left text-sm">
+                    <thead><tr class="border-b"><th>Date</th><th>Mode</th><th>R</th><th>L</th><th>W</th><th>S</th></tr></thead>
+                    <tbody>
+                        <tr v-for="h in history" :key="h.date" class="border-b">
+                            <td class="py-2">{{ new Date(h.date).toLocaleDateString() }}</td>
+                            <td>{{ h.mode }} - {{ h.skill || 'All' }}</td>
+                            <td>{{ h.R ? Number(h.R).toFixed(1) : '-' }}</td>
+                            <td>{{ h.L ? Number(h.L).toFixed(1) : '-' }}</td>
+                            <td>{{ h.W ? Number(h.W).toFixed(1) : '-' }}</td>
+                            <td>{{ h.S ? Number(h.S).toFixed(1) : '-' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button @click="view = 'dashboard'" class="mt-4 text-blue-600">Back</button>
+            </div>
+
+        </main>
     </div>
-  </div>
 
-  <!-- Toast -->
-  <div class="toast" v-if="toast.show">
-    <div class="glass rounded-2xl px-4 py-3 flex items-start justify-between gap-3">
-      <div>
-        <div class="font-extrabold">{{ toast.title }}</div>
-        <div class="text-sm text-slate-200/90">{{ toast.msg }}</div>
-      </div>
-      <button class="btn rounded-xl px-3 py-2 font-bold" @click="toast.show=false">OK</button>
-    </div>
-  </div>
-</div>
+    <script>
+        const { createApp, ref, reactive } = Vue;
 
-<script>
-/**
- * IMPORTANT:
- * 1) เปลี่ยน API_BASE ให้เป็น URL ของ Apps Script Web App (Deploy → Web app)
- * 2) ห้ามตั้ง Content-Type ใน fetch เพื่อไม่ให้เกิด CORS preflight
- */
-const API_BASE = "https://script.google.com/macros/s/AKfycbxyKYqQTsmtdXc-MMXzwdPiRqgyAkSUxWJBP85pUPwUqHZgUrI2VdfEZ3ZLoIBxPzoe0w/exec"; // <-- เปลี่ยนตรงนี้
+        // PASTE YOUR GOOGLE SCRIPT URL HERE
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyJwFB2D65RG6KKgu1CBgTgU20atZ4MI2izTNVRLDnv30KsWhiud29eRk-hOnHgTUbCIQ/exec'; 
 
-const { createApp } = Vue;
+        createApp({
+            setup() {
+                const view = ref('dashboard');
+                const user = ref(localStorage.getItem('ieltsUser') || null);
+                const loading = ref(false);
+                const loginForm = reactive({ username: '', password: '' });
+                const currentExam = ref(null);
+                const answers = ref({});
+                const results = ref(null);
+                const history = ref([]);
+                const timerDisplay = ref("00:00");
+                let timerInterval;
 
-createApp({
-  data(){
-    return {
-      API_BASE,
-      busy: false,
-      statusLine: "Ready",
-      toast: { show:false, title:"", msg:"" },
+                // API HELPER (CORS Workaround)
+                const api = async (action, payload = {}) => {
+                    loading.value = true;
+                    try {
+                        const body = new URLSearchParams();
+                        body.append('payload', JSON.stringify({ action, username: user.value, ...payload }));
+                        
+                        const res = await fetch(API_URL, {
+                            method: 'POST',
+                            body: body
+                            // NO HEADERS to avoid CORS Preflight
+                        });
+                        const data = await res.json();
+                        loading.value = false;
+                        if (!data.ok) throw new Error(data.error || 'Server error');
+                        return data;
+                    } catch (e) {
+                        loading.value = false;
+                        alert("Error: " + e.message);
+                        throw e;
+                    }
+                };
 
-      user: null,
-      loginForm: { username:"student", password:"123" },
+                const doLogin = async () => {
+                    if(!loginForm.username) return;
+                    try {
+                        const res = await api('login', loginForm);
+                        user.value = res.username;
+                        localStorage.setItem('ieltsUser', res.username);
+                        view.value = 'dashboard';
+                    } catch(e) {}
+                };
 
-      history: [],
-      writingPicker: false,
+                const logout = () => {
+                    user.value = null;
+                    localStorage.removeItem('ieltsUser');
+                    view.value = 'login';
+                };
 
-      exam: {
-        active: false,
-        examId: "",
-        mode: "",
-        skill: "",
-        questions: [],
-        index: 0,
-        answers: {} // qid -> answer
-      },
+                const startExam = async (mode, skill = null) => {
+                    view.value = 'exam';
+                    loading.value = true;
+                    try {
+                        const res = await api('genExam', { mode, skill });
+                        currentExam.value = res.exam;
+                        answers.value = {};
+                        startTimer();
+                    } catch (e) {
+                        view.value = 'dashboard';
+                    }
+                };
 
-      result: { open:false, data:null }
-    };
-  },
-  computed:{
-    progressPct(){
-      if(!this.exam.active || !this.exam.questions.length) return 0;
-      return Math.round(((this.exam.index+1)/this.exam.questions.length)*100);
-    },
-    curr(){
-      return this.exam.questions[this.exam.index] || { qid:"", skill:"", subtype:"", payload:{} };
-    },
-    currTitle(){
-      const p = this.curr.payload || {};
-      return p.title || p.qText || "Question";
-    },
-    currSubtitle(){
-      const p = this.curr.payload || {};
-      return p.subtitle || "";
-    }
-  },
-  mounted(){
-    // Try restore session
-    const s = localStorage.getItem("ielts_user");
-    if(s){
-      try{ this.user = JSON.parse(s); }catch(e){}
-    }
-    if(this.user){
-      this.loadHistory();
-    }
-    this.drawTrend([]);
-  },
-  methods:{
-    // --- UI helpers ---
-    showToast(title, msg){
-      this.toast = { show:true, title, msg };
-    },
-    setStatus(msg){ this.statusLine = msg; },
+                const startTimer = () => {
+                    let sec = 0;
+                    clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        sec++;
+                        const m = Math.floor(sec/60).toString().padStart(2,'0');
+                        const s = (sec%60).toString().padStart(2,'0');
+                        timerDisplay.value = `${m}:${s}`;
+                    }, 1000);
+                };
 
-    // --- API (no CORS preflight) ---
-    async api(action, data={}){
-      if(!this.API_BASE || this.API_BASE.includes("PASTE_YOUR")){
-        throw new Error("API_BASE ยังไม่ได้ตั้งค่า");
-      }
-      const payload = JSON.stringify({ action, ...data });
-      const res = await fetch(this.API_BASE, {
-        method: "POST",
-        body: payload
-      });
-      const json = await res.json();
-      return json;
-    },
+                const playTTS = (text) => {
+                    if(!text) return;
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = 'en-GB'; // IELTS Accent
+                    window.speechSynthesis.speak(u);
+                };
 
-    // --- Auth ---
-    async doLogin(){
-      this.busy = true;
-      this.setStatus("Logging in...");
-      try{
-        const r = await this.api("login", {
-          username: this.loginForm.username,
-          password: this.loginForm.password
-        });
-        if(!r.ok) throw new Error(r.error || "Login failed");
-        this.user = r.user;
-        localStorage.setItem("ielts_user", JSON.stringify(this.user));
-        this.showToast("Login success", `Welcome ${this.user.username}`);
-        await this.loadHistory();
-      }catch(err){
-        this.showToast("Login error", String(err.message || err));
-      }finally{
-        this.busy = false;
-        this.setStatus("Ready");
-      }
-    },
-    logout(){
-      this.stopSpeak();
-      this.user = null;
-      localStorage.removeItem("ielts_user");
-      this.exam.active = false;
-      this.result.open = false;
-      this.showToast("Logged out", "Session cleared.");
-    },
+                const submitExam = async () => {
+                    clearInterval(timerInterval);
+                    try {
+                        const res = await api('submitAnswers', { 
+                            examId: currentExam.value.examId, 
+                            answersJson: JSON.stringify(answers.value) 
+                        });
+                        results.value = res;
+                        view.value = 'results';
+                    } catch(e) {}
+                };
 
-    // --- Ping ---
-    async ping(){
-      this.busy = true;
-      this.setStatus("Pinging API...");
-      try{
-        const r = await this.api("ping",{});
-        if(!r.ok) throw new Error(r.error || "Ping failed");
-        this.showToast("API OK", r.msg || "Ready");
-      }catch(err){
-        this.showToast("API error", String(err.message || err));
-      }finally{
-        this.busy = false;
-        this.setStatus("Ready");
-      }
-    },
+                // Watch for history view to fetch data
+                Vue.watch(view, async (newV) => {
+                    if(newV === 'history') {
+                        const res = await api('getMyHistory');
+                        history.value = res.history;
+                    }
+                });
 
-    // --- History ---
-    async loadHistory(){
-      this.busy = true;
-      this.setStatus("Loading history...");
-      try{
-        const r = await this.api("getMyHistory", { username: this.user.username });
-        if(!r.ok) throw new Error(r.error || "History failed");
-        this.history = r.items || [];
-        const arr = (this.history.slice(0,20)).map(x=>Number(x.overall || 0)).reverse();
-        this.drawTrend(arr);
-        this.showToast("History", `Loaded ${this.history.length} attempt(s)`);
-      }catch(err){
-        this.showToast("History error", String(err.message || err));
-        this.drawTrend([]);
-      }finally{
-        this.busy = false;
-        this.setStatus("Ready");
-      }
-    },
+                if(!user.value) view.value = 'login'; // Init check
 
-    // --- Start exam ---
-    openWritingPicker(){ this.writingPicker = true; },
-
-    async startExam({mode, skill="", writingType=""}){
-      this.writingPicker = false;
-      this.busy = true;
-      this.setStatus("Generating exam...");
-      try{
-        const r = await this.api("genExam", {
-          username: this.user.username,
-          mode,
-          skill,
-          writingType
-        });
-        if(!r.ok) throw new Error(r.error || "Generate failed");
-
-        this.exam.active = true;
-        this.exam.examId = r.examId;
-        this.exam.mode = r.mode;
-        this.exam.skill = r.skill || "";
-        this.exam.questions = normalizeQuestions(r.questions || []);
-        this.exam.index = 0;
-        this.exam.answers = {};
-
-        // For reading passage_multi: initialize sub question answers
-        for(const q of this.exam.questions){
-          if(q.skill==="reading" && q.subtype==="passage_multi" && q.payload?.questions){
-            for(const sub of q.payload.questions){
-              this.exam.answers[sub.qid] = "";
+                return { 
+                    view, user, loading, loginForm, doLogin, logout, 
+                    startExam, currentExam, answers, playTTS, submitExam, 
+                    results, history, timerDisplay 
+                };
             }
-          }
-        }
-
-        // Scroll top
-        window.scrollTo({ top: 0, behavior: "smooth" });
-
-        this.showToast("Exam started", `${this.exam.questions.length} item(s) generated.`);
-      }catch(err){
-        this.showToast("Generate error", String(err.message || err));
-      }finally{
-        this.busy = false;
-        this.setStatus("Ready");
-      }
-    },
-
-    prevQ(){ if(this.exam.index>0) this.exam.index--; },
-    nextQ(){ if(this.exam.index < this.exam.questions.length-1) this.exam.index++; },
-
-    // --- Answer handlers ---
-    setAnswer(qid, val){
-      this.exam.answers[qid] = val;
-    },
-    getAnswer(qid){
-      return this.exam.answers[qid] ?? "";
-    },
-    setReadingAnswer(subQid, val){
-      this.exam.answers[subQid] = val;
-    },
-
-    // --- Submit ---
-    async submitExam(){
-      if(!this.exam.active) return;
-
-      // Build answers payload:
-      // - For passage_multi: send each sub-question as its own {qid, answer}
-      // - For others: send {qid, answer}
-      const payloadAnswers = [];
-      for(const q of this.exam.questions){
-        if(q.skill==="reading" && q.subtype==="passage_multi" && Array.isArray(q.payload?.questions)){
-          for(const sub of q.payload.questions){
-            payloadAnswers.push({ qid: sub.qid, answer: this.getAnswer(sub.qid) });
-          }
-        }else{
-          payloadAnswers.push({ qid: q.qid, answer: this.getAnswer(q.qid) });
-        }
-      }
-
-      this.busy = true;
-      this.setStatus("Submitting...");
-      try{
-        const r = await this.api("submitAnswers", {
-          username: this.user.username,
-          examId: this.exam.examId,
-          mode: this.exam.mode,
-          skill: this.exam.skill,
-          answers: payloadAnswers
-        });
-        if(!r.ok) throw new Error(r.error || "Submit failed");
-
-        this.result.open = true;
-        this.result.data = r;
-
-        // End exam
-        this.exam.active = false;
-
-        // refresh history
-        await this.loadHistory();
-      }catch(err){
-        this.showToast("Submit error", String(err.message || err));
-      }finally{
-        this.busy = false;
-        this.setStatus("Ready");
-      }
-    },
-
-    endExamConfirm(){
-      if(confirm("End exam now? (answers not submitted)")){
-        this.stopSpeak();
-        this.exam.active = false;
-        this.showToast("Exam ended", "Not submitted.");
-      }
-    },
-
-    closeResult(){
-      this.result.open = false;
-      this.result.data = null;
-    },
-    practiceMore(){
-      this.closeResult();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-
-    // --- Listening TTS ---
-    speak(text){
-      try{
-        if(!("speechSynthesis" in window)) return this.showToast("TTS", "SpeechSynthesis not supported.");
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(String(text || ""));
-        u.lang = "en-US";
-        u.rate = 1.0;
-        window.speechSynthesis.speak(u);
-      }catch(e){
-        this.showToast("TTS error", String(e));
-      }
-    },
-    stopSpeak(){
-      try{
-        if("speechSynthesis" in window) window.speechSynthesis.cancel();
-      }catch(e){}
-    },
-
-    // --- Display helpers ---
-    displayScore(v){
-      if(v===null || v===undefined || v==="") return "—";
-      return v;
-    },
-
-    // --- Trend chart (simple canvas) ---
-    drawTrend(values){
-      const c = document.getElementById("trend");
-      if(!c) return;
-      const ctx = c.getContext("2d");
-      const w = c.width, h = c.height;
-      ctx.clearRect(0,0,w,h);
-
-      // axes
-      ctx.globalAlpha = 0.65;
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 1;
-
-      // grid
-      ctx.globalAlpha = 0.10;
-      for(let i=0;i<=5;i++){
-        const y = 18 + i*( (h-36)/5 );
-        ctx.beginPath(); ctx.moveTo(16,y); ctx.lineTo(w-16,y); ctx.stroke();
-      }
-
-      // labels (bands)
-      ctx.globalAlpha = 0.55;
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace";
-      const bands = [9,7.5,6,4.5,3,1.5];
-      for(let i=0;i<bands.length;i++){
-        const y = 18 + i*( (h-36)/(bands.length-1) );
-        ctx.fillText(String(bands[i]), 6, y+4);
-      }
-
-      if(!values || values.length<2) return;
-
-      // line
-      const minB = 0, maxB = 9;
-      const padL=16, padR=16, padT=18, padB=18;
-      const plotW = w-padL-padR, plotH = h-padT-padB;
-
-      const xAt = i => padL + (i/(values.length-1))*plotW;
-      const yAt = v => padT + (1 - ( (v-minB)/(maxB-minB) ))*plotH;
-
-      ctx.globalAlpha = 0.9;
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(xAt(0), yAt(values[0]));
-      for(let i=1;i<values.length;i++){
-        ctx.lineTo(xAt(i), yAt(values[i]));
-      }
-      ctx.stroke();
-
-      // points
-      ctx.globalAlpha = 0.95;
-      for(let i=0;i<values.length;i++){
-        ctx.beginPath();
-        ctx.arc(xAt(i), yAt(values[i]), 3, 0, Math.PI*2);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-      }
-    }
-  }
-}).mount("#app");
-
-// Normalize question payload for safety
-function normalizeQuestions(list){
-  return (list||[]).map(q => ({
-    qid: String(q.qid || ""),
-    skill: String(q.skill || ""),
-    subtype: String(q.subtype || ""),
-    payload: q.payload || {}
-  }));
-}
-</script>
+        }).mount('#app');
+    </script>
 </body>
 </html>
