@@ -3,191 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Pro | Real System</title>
-    
+    <title>IELTS Pro | Enterprise Prep</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-        .slide-up-enter-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .slide-up-enter-from { transform: translateY(40px); opacity: 0; }
+        
         .recording-pulse { animation: pulse-ring 1.5s infinite; }
         @keyframes pulse-ring {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="text-slate-800 h-screen overflow-hidden selection:bg-indigo-500 selection:text-white">
-    <div id="app" class="h-full flex flex-col">
-
-        <transition name="fade">
-            <div v-if="loading.show" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center backdrop-blur-md">
-                <div class="mb-6 relative">
-                    <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                    <div class="absolute inset-0 flex items-center justify-center text-indigo-500"><i class="fas fa-bolt"></i></div>
-                </div>
-                <h3 class="text-white text-xl font-bold">{{ loading.title }}</h3>
-                <p class="text-slate-400 text-sm mt-2">{{ loading.msg }}</p>
-            </div>
-        </transition>
-
-        <transition name="slide-up">
-            <div v-if="modal.show" class="fixed inset-0 bg-black/60 z-40 flex items-center justify-center p-4 backdrop-blur-sm">
-                <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-center text-white">
-                        <i class="fas fa-medal text-4xl mb-2"></i>
-                        <h3 class="text-2xl font-bold">Grading Complete</h3>
-                    </div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-center mb-6 bg-yellow-50 p-4 rounded-2xl border border-yellow-100">
-                            <span class="text-yellow-800 font-bold text-xs uppercase">Band Score</span>
-                            <span class="text-5xl font-black text-yellow-500">{{ modal.band }}</span>
-                        </div>
-                        <div class="bg-slate-50 p-4 rounded-xl text-sm text-slate-600 mb-4 border h-32 overflow-y-auto">{{ modal.feedback }}</div>
-                        <div class="text-center text-green-600 font-bold text-sm mb-6">+{{ modal.xp }} XP Earned</div>
-                        <button @click="closeModal" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold">Continue</button>
-                    </div>
-                </div>
-            </div>
-        </transition>
-
-        <div v-if="view === 'login'" class="flex-1 flex items-center justify-center bg-slate-900 relative">
-            <div class="absolute inset-0 overflow-hidden"><div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-600 rounded-full blur-3xl opacity-20"></div></div>
-            <div class="relative glass-panel p-10 rounded-3xl shadow-2xl w-full max-w-md mx-4 z-10">
-                <div class="text-center mb-10">
-                    <h1 class="text-4xl font-extrabold text-slate-900 mb-2">IELTS<span class="text-indigo-600">Pro</span></h1>
-                    <p class="text-slate-500 font-medium">Commercial AI Platform</p>
-                </div>
-                <div class="space-y-5">
-                    <input v-model="auth.u" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 ring-indigo-500 outline-none" placeholder="Username">
-                    <input v-model="auth.p" type="password" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 ring-indigo-500 outline-none" placeholder="Password">
-                    <button @click="handleLogin" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg transition transform active:scale-95">Login System</button>
-                </div>
+<body>
+    <div id="app" class="min-h-screen text-slate-800 relative overflow-hidden">
+        
+        <div v-if="showSetup" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur">
+            <div class="glass-panel p-8 rounded-2xl w-full max-w-md bg-white">
+                <h2 class="text-2xl font-bold mb-4 text-slate-900"><i class="fa-solid fa-server mr-2 text-indigo-600"></i>System Setup</h2>
+                <p class="mb-4 text-slate-600">Please paste your Google Web App URL to connect to the backend.</p>
+                <input v-model="tempApiUrl" type="text" placeholder="https://script.google.com/macros/s/..." class="w-full p-3 rounded border border-slate-300 mb-4 focus:ring-2 focus:ring-indigo-500 outline-none">
+                <button @click="saveApiUrl" :disabled="loading" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                    <span v-if="loading"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Connecting...</span>
+                    <span v-else>Connect & Save</span>
+                </button>
+                <p v-if="setupError" class="mt-3 text-red-500 text-sm text-center">{{ setupError }}</p>
             </div>
         </div>
 
-        <div v-else class="flex h-full">
-            <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20 hidden md:flex">
-                <div class="p-6 border-b border-slate-800">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">{{ user.name.charAt(0).toUpperCase() }}</div>
-                        <div>
-                            <div class="text-white font-bold">{{ user.name }}</div>
-                            <div class="text-xs text-indigo-400 font-bold uppercase">{{ user.role }}</div>
-                        </div>
+        <div v-if="!token && !showSetup" class="min-h-screen flex items-center justify-center bg-slate-900 relative">
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500 rounded-full blur-3xl opacity-20"></div>
+                <div class="absolute top-40 -left-20 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
+            </div>
+            <div class="glass-panel p-8 rounded-2xl w-full max-w-sm z-10">
+                <h1 class="text-3xl font-bold text-center mb-2">IELTS Pro</h1>
+                <p class="text-center text-slate-500 mb-6">Enterprise Prep Platform</p>
+                <form @submit.prevent="login">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">Username</label>
+                        <input v-model="loginForm.username" type="text" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500">
                     </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-1">Password</label>
+                        <input v-model="loginForm.password" type="password" class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button type="submit" :disabled="loading" class="w-full bg-indigo-600 text-white py-2 rounded font-semibold hover:bg-indigo-700">
+                        <span v-if="loading"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                        <span v-else>Sign In</span>
+                    </button>
+                    <p v-if="errorMsg" class="mt-3 text-red-500 text-sm text-center">{{ errorMsg }}</p>
+                </form>
+            </div>
+        </div>
+
+        <div v-if="token && !showSetup" class="flex h-screen">
+            <aside class="w-64 bg-white border-r border-slate-200 flex flex-col">
+                <div class="p-6 border-b border-slate-100">
+                    <h1 class="text-xl font-bold text-indigo-700"><i class="fa-solid fa-graduation-cap mr-2"></i>IELTS Pro</h1>
                 </div>
                 <nav class="flex-1 p-4 space-y-2">
-                    <button @click="view='dashboard'" :class="view=='dashboard'?'bg-indigo-600 text-white shadow-lg':'hover:bg-slate-800'" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 font-medium"><i class="fas fa-chart-pie w-5"></i> Dashboard</button>
-                    <button @click="loadExamSelect" :class="['exam_select','exam_room'].includes(view)?'bg-indigo-600 text-white shadow-lg':'hover:bg-slate-800'" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 font-medium"><i class="fas fa-pen-nib w-5"></i> Practice Exam</button>
-                    <button v-if="user.role=='admin'" @click="loadAdmin" :class="view=='admin'?'bg-indigo-600 text-white shadow-lg':'hover:bg-slate-800'" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 font-medium text-yellow-500"><i class="fas fa-users-cog w-5"></i> Admin Panel</button>
+                    <button @click="view='dashboard'" :class="view==='dashboard'?'bg-indigo-50 text-indigo-600':''" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 font-medium transition"><i class="fa-solid fa-chart-pie w-6"></i> Dashboard</button>
+                    <button @click="view='practice'" :class="view==='practice'?'bg-indigo-50 text-indigo-600':''" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 font-medium transition"><i class="fa-solid fa-pen-to-square w-6"></i> Practice</button>
+                    <button @click="view='analytics'" :class="view==='analytics'?'bg-indigo-50 text-indigo-600':''" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 font-medium transition"><i class="fa-solid fa-chart-line w-6"></i> Analytics</button>
+                    <button v-if="user.role==='admin'" @click="view='admin'" :class="view==='admin'?'bg-indigo-50 text-indigo-600':''" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-50 font-medium transition"><i class="fa-solid fa-shield-halved w-6"></i> Admin</button>
                 </nav>
-                <div class="p-4 bg-slate-950">
-                    <div class="bg-slate-800/50 rounded-xl p-4 mb-3 border border-slate-700">
-                        <div class="flex justify-between text-xs font-bold uppercase text-slate-400 mb-2"><span>Quota</span><span class="text-white">{{ user.qUsed }}/{{ user.qLimit }}</span></div>
-                        <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-green-500 h-full rounded-full" :style="{width: Math.min((user.qUsed/user.qLimit)*100, 100)+'%'}"></div></div>
-                    </div>
-                    <button @click="logout" class="w-full py-2 text-xs font-bold text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition">Sign Out</button>
+                <div class="p-4 border-t border-slate-100">
+                    <div class="text-xs text-slate-400 mb-2 uppercase font-bold">Settings</div>
+                    <button @click="showSetup=true" class="w-full text-left px-4 py-2 text-sm text-slate-600 hover:text-indigo-600"><i class="fa-solid fa-link w-6"></i> Change API</button>
+                    <button @click="logout" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:text-red-700"><i class="fa-solid fa-right-from-bracket w-6"></i> Logout</button>
                 </div>
             </aside>
 
-            <main class="flex-1 bg-slate-50 relative overflow-hidden flex flex-col">
+            <main class="flex-1 overflow-auto bg-slate-50 relative">
                 
-                <div v-if="view === 'dashboard'" class="flex-1 p-8 overflow-y-auto">
-                    <header class="flex justify-between items-center mb-8">
-                        <h2 class="text-3xl font-bold text-slate-900">Dashboard</h2>
-                        <div class="bg-white px-4 py-2 rounded-full border shadow-sm text-sm font-bold text-slate-700"><i class="fas fa-star text-yellow-400 mr-2"></i> {{ user.xp }} XP</div>
-                    </header>
-                    <div class="grid grid-cols-2 gap-6 mb-8">
-                        <div @click="generateExam('genFullExam')" class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-lg cursor-pointer hover:scale-[1.02] transition">
-                            <h3 class="text-2xl font-bold mb-2">Full Mock Exam</h3>
-                            <p class="opacity-90">Generate all 4 skills set.</p>
-                        </div>
-                        <div @click="generateExam('genAdaptive')" class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-lg cursor-pointer hover:scale-[1.02] transition">
-                            <h3 class="text-2xl font-bold mb-2">Adaptive Practice</h3>
-                            <p class="opacity-90">Fix your weakest skill.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                        <h4 class="font-bold mb-4">Exam History</h4>
-                        <div v-if="history.length === 0" class="text-center text-slate-400 py-4">No exams taken yet.</div>
-                        <table v-else class="w-full text-sm text-left">
-                            <tr v-for="h in history" class="border-b"><td class="p-3 font-bold capitalize">{{ h.type }}</td><td class="p-3">Band {{ h.score }}</td></tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div v-if="view === 'exam_select'" class="flex-1 p-8 flex items-center justify-center">
+                <div v-if="loading" class="absolute inset-0 z-40 bg-white/80 backdrop-blur flex items-center justify-center">
                     <div class="text-center">
-                        <div v-if="questions.length === 0">
-                            <i class="fas fa-folder-open text-6xl text-slate-300 mb-4"></i>
-                            <p class="text-slate-500 mb-4">No active exams found.</p>
-                            <button @click="view='dashboard'" class="text-indigo-600 font-bold hover:underline">Go Generate One</button>
+                        <i class="fa-solid fa-brain fa-spin text-4xl text-indigo-600 mb-4"></i>
+                        <p class="text-slate-600 font-medium">Processing with AI...</p>
+                    </div>
+                </div>
+
+                <div v-if="view==='dashboard'" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Welcome back, {{ user.displayName }}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                            <div class="text-slate-500 text-sm">Goal Band</div>
+                            <div class="text-3xl font-bold text-indigo-600">{{ userProfile.goalBand || 6.5 }}</div>
                         </div>
-                        <div v-else>
-                            <h2 class="text-3xl font-bold mb-4">Exam Ready</h2>
-                            <button @click="view='exam_room'" class="bg-green-600 text-white px-8 py-4 rounded-xl font-bold shadow-xl hover:bg-green-700 transition">Start Exam ({{questions.length}} items)</button>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                            <div class="text-slate-500 text-sm">Mock Exams Left</div>
+                            <div class="text-3xl font-bold text-green-600">{{ 2 - (quota.fullMockUsed || 0) }}<span class="text-sm font-normal text-slate-400">/2 this week</span></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                            <div class="text-slate-500 text-sm">Practice Streak</div>
+                            <div class="text-3xl font-bold text-orange-500">{{ userProfile.streakCount || 0 }} <span class="text-sm font-normal text-slate-400">days</span></div>
                         </div>
                     </div>
                 </div>
 
-                <div v-if="view === 'exam_room'" class="flex-1 flex flex-col bg-white">
-                    <div class="h-16 border-b flex items-center justify-between px-6 shrink-0">
-                        <div class="flex gap-2"><span v-for="(q,i) in questions" :key="q.id" @click="qIndex=i" class="w-8 h-8 rounded flex items-center justify-center text-xs font-bold cursor-pointer transition" :class="qIndex==i?'bg-indigo-600 text-white':'bg-slate-100 text-slate-500'">{{ q.type[0].toUpperCase() }}</span></div>
-                        <div class="font-mono text-slate-500 font-bold">Exam Mode</div>
-                    </div>
-                    <div class="flex-1 flex overflow-hidden">
-                        <div class="w-1/2 p-8 border-r overflow-y-auto bg-slate-50">
-                            <span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded uppercase mb-4 inline-block">{{ currentQ.type }}</span>
-                            <h2 class="text-2xl font-serif font-bold mb-4">{{ currentQ.title }}</h2>
-                            <div v-if="hasMedia(currentQ.passage_text)" class="mb-6">
-                                <audio v-if="currentQ.type=='listening'" controls :src="getMedia(currentQ.passage_text)" class="w-full"></audio>
-                                <img v-if="currentQ.type=='writing'" :src="getMedia(currentQ.passage_text)" class="w-full rounded-xl shadow-lg border">
+                <div v-if="view==='practice'" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">Select Mode</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer border border-slate-100" @click="startExamConfig('skill')">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-4"><i class="fa-solid fa-dumbbell text-xl"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-lg">Skill Practice</h3>
+                                    <p class="text-sm text-slate-500">Focus on specific areas</p>
+                                </div>
                             </div>
-                            <div class="prose text-slate-600 leading-loose whitespace-pre-line">{{ getText(currentQ.passage_text) }}</div>
                         </div>
-                        <div class="w-1/2 p-8 overflow-y-auto">
-                            <h3 class="text-lg font-bold mb-6">{{ currentQ.question_text }}</h3>
-                            <div v-if="['reading','listening'].includes(currentQ.type)" class="space-y-3">
-                                <div v-for="c in parseChoices(currentQ.choices)" :key="c" @click="answers[currentQ.id]=c" :class="answers[currentQ.id]==c?'border-indigo-600 bg-indigo-50 ring-2 ring-indigo-600':'border-slate-200 hover:border-slate-300'" class="p-4 border rounded-xl cursor-pointer transition font-medium">{{ c }}</div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition cursor-pointer border border-slate-100" @click="generateExam('fullmock', 'full')">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-4"><i class="fa-solid fa-clock text-xl"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-lg">Full Mock Exam</h3>
+                                    <p class="text-sm text-slate-500">Real exam simulation (3h)</p>
+                                </div>
                             </div>
-                            <textarea v-if="currentQ.type=='writing'" v-model="answers[currentQ.id]" class="w-full h-80 p-4 border rounded-xl focus:ring-2 ring-indigo-500 resize-none" placeholder="Type answer..."></textarea>
-                            <div v-if="currentQ.type=='speaking'" class="text-center py-12 border-2 border-dashed rounded-xl bg-slate-50">
-                                <button @click="toggleRecord" :class="isRecording?'bg-red-500 recording-pulse':'bg-indigo-600 hover:bg-indigo-700'" class="w-20 h-20 rounded-full text-white text-3xl shadow-lg mb-4 flex items-center justify-center mx-auto transition"><i class="fas" :class="isRecording?'fa-stop':'fa-microphone'"></i></button>
-                                <p class="text-sm font-bold text-slate-500">{{ isRecording?'Recording...':'Tap to Record' }}</p>
-                                <div v-if="transcript" class="mt-4 mx-8 p-3 bg-white border rounded text-xs text-left">{{ transcript }}</div>
-                            </div>
-                            <button @click="submitAnswer" class="mt-8 w-full py-4 bg-slate-900 text-white rounded-xl font-bold shadow-lg hover:bg-slate-800 transition">Submit Answer</button>
                         </div>
                     </div>
                 </div>
 
-                <div v-if="view === 'admin'" class="p-8 h-full overflow-y-auto">
-                    <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-3xl font-bold text-slate-900">User Management</h2>
-                        <button @click="userModal.show=true" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold shadow hover:bg-indigo-700">Add User</button>
+                <div v-if="showSkillSelect" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div class="bg-white rounded-xl p-6 w-96">
+                        <h3 class="font-bold text-lg mb-4">Choose Skill</h3>
+                        <div class="space-y-2">
+                            <button @click="generateExam('skill', 'reading')" class="w-full text-left p-3 rounded hover:bg-slate-100"><i class="fa-solid fa-book-open w-8"></i> Reading</button>
+                            <button @click="generateExam('skill', 'listening')" class="w-full text-left p-3 rounded hover:bg-slate-100"><i class="fa-solid fa-headphones w-8"></i> Listening</button>
+                            <button @click="generateExam('skill', 'writing')" class="w-full text-left p-3 rounded hover:bg-slate-100"><i class="fa-solid fa-pen-nib w-8"></i> Writing</button>
+                            <button @click="generateExam('skill', 'speaking')" class="w-full text-left p-3 rounded hover:bg-slate-100"><i class="fa-solid fa-microphone w-8"></i> Speaking</button>
+                        </div>
+                        <button @click="showSkillSelect=false" class="mt-4 w-full border border-slate-300 py-2 rounded">Cancel</button>
                     </div>
-                    <div class="bg-white rounded-2xl shadow border overflow-hidden">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase"><tr><th class="p-4">User</th><th class="p-4">Role</th><th class="p-4">Quota</th><th class="p-4 text-right">Actions</th></tr></thead>
-                            <tbody class="divide-y divide-slate-100">
-                                <tr v-for="u in adminUsers" :key="u.username" class="hover:bg-slate-50">
-                                    <td class="p-4 font-bold">{{ u.username }}</td><td class="p-4">{{ u.role }}</td><td class="p-4">{{ u.quota_used }}/{{ u.quota_limit }}</td>
-                                    <td class="p-4 text-right space-x-2">
-                                        <button @click="adminAction('reset', u.username)" class="text-xs bg-white border hover:border-indigo-500 text-slate-600 px-3 py-1 rounded-lg">Reset</button>
-                                        <button @click="adminAction('delete', u.username)" class="text-xs bg-white border hover:border-red-500 text-red-600 px-3 py-1 rounded-lg">Delete</button>
+                </div>
+
+                <div v-if="view==='exam_room' && examData" class="h-full flex flex-col bg-white">
+                    <div class="h-16 border-b flex items-center justify-between px-6 bg-slate-50">
+                        <span class="font-bold text-lg capitalize">{{ examData.mode }} - {{ examData.skill }}</span>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-slate-200 px-3 py-1 rounded font-mono">{{ formatTime(timer) }}</div>
+                            <button @click="submitExam" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Finish Exam</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-hidden flex">
+                        <div class="w-1/2 p-6 overflow-y-auto border-r border-slate-200 bg-slate-50">
+                            <div v-for="(sec, idx) in examData.sections" :key="'L'+idx">
+                                <h3 class="font-bold text-xl mb-3">{{ sec.title }}</h3>
+                                <p class="mb-4 text-slate-600 italic">{{ sec.instruction }}</p>
+                                
+                                <div v-if="sec.type==='reading' && sec.passage" class="prose max-w-none mb-8 p-4 bg-white rounded shadow-sm">
+                                    <div v-html="sec.passage.replace(/\n/g, '<br>')"></div>
+                                </div>
+
+                                <div v-if="sec.type==='listening'" class="mb-8 p-4 bg-white rounded border border-indigo-100">
+                                    <button @click="playTTS(sec.audioScript)" class="flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-2 rounded hover:bg-indigo-200">
+                                        <i class="fa-solid fa-play"></i> Play Audio
+                                    </button>
+                                </div>
+
+                                <div v-if="sec.type==='writing'" class="p-4 bg-white rounded border mb-4">
+                                     <div v-if="sec.items[0].qType === 'task1_chart' || sec.items[0].qType === 'map'" class="mb-4 h-64 bg-slate-100 flex items-center justify-center rounded">
+                                        <div v-if="sec.items[0].map" v-html="sec.items[0].map.svg" class="w-full h-full p-2"></div>
+                                        <span v-else class="text-slate-400">[Chart/Graph Placeholder for Task 1]</span>
+                                     </div>
+                                     <p class="font-medium">{{ sec.items[0].questionText }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-1/2 p-6 overflow-y-auto">
+                            <div v-for="(sec, sIdx) in examData.sections" :key="'R'+sIdx">
+                                <div v-for="(item, qIdx) in sec.items" :key="item.id" class="mb-8 pb-6 border-b border-slate-100">
+                                    
+                                    <div v-if="item.qType === 'map'" class="mb-4">
+                                        <div v-html="item.map.svg" class="w-full h-64 bg-slate-50 mb-2 rounded border"></div>
+                                        <p class="font-bold mb-2">{{ item.map.prompt }}</p>
+                                    </div>
+
+                                    <div class="flex gap-3">
+                                        <span class="font-bold text-slate-400">{{ qIdx + 1 }}.</span>
+                                        <div class="flex-1">
+                                            <p class="font-medium mb-3" v-if="item.qType!=='writing'">{{ item.questionText }}</p>
+                                            
+                                            <div v-if="item.qType==='mcq'" class="space-y-2">
+                                                <div v-for="(choice, cIdx) in item.choices" :key="cIdx" class="flex items-center">
+                                                    <input type="radio" :name="item.id" :value="choice" v-model="answers[item.id]" class="mr-2">
+                                                    <span>{{ choice }}</span>
+                                                </div>
+                                            </div>
+
+                                            <div v-if="item.qType==='tfng'" class="flex gap-4">
+                                                <label><input type="radio" :name="item.id" value="TRUE" v-model="answers[item.id]" class="mr-1"> TRUE</label>
+                                                <label><input type="radio" :name="item.id" value="FALSE" v-model="answers[item.id]" class="mr-1"> FALSE</label>
+                                                <label><input type="radio" :name="item.id" value="NOT GIVEN" v-model="answers[item.id]" class="mr-1"> NOT GIVEN</label>
+                                            </div>
+
+                                            <input v-if="['completion','short_answer', 'map'].includes(item.qType)" type="text" v-model="answers[item.id]" class="w-full border p-2 rounded" placeholder="Type answer...">
+
+                                            <textarea v-if="item.qType==='essay' || item.qType==='task1_chart'" v-model="answers[item.id]" rows="10" class="w-full border p-2 rounded" placeholder="Write here..."></textarea>
+
+                                            <div v-if="sec.type==='speaking'" class="mt-2">
+                                                <button @click="toggleRecord" :class="isRecording ? 'bg-red-500 recording-pulse' : 'bg-indigo-600'" class="text-white px-4 py-2 rounded-full mb-2 transition-all">
+                                                    <i class="fa-solid fa-microphone"></i> {{ isRecording ? 'Recording...' : 'Record Answer' }}
+                                                </button>
+                                                <textarea v-model="answers[item.id]" rows="3" class="w-full border p-2 rounded text-sm text-slate-600" placeholder="Transcript (auto or manual)..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="showResults && resultData" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 overflow-y-auto p-4">
+                    <div class="bg-white rounded-2xl w-full max-w-4xl p-8 shadow-2xl relative my-8">
+                        <button @click="closeResult" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                        
+                        <h2 class="text-3xl font-bold text-center mb-2">Exam Results</h2>
+                        <div v-if="resultData.overall" class="text-center text-5xl font-bold text-indigo-600 mb-8">{{ resultData.overall }} <span class="text-lg text-slate-400 font-normal">Overall Band</span></div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+                            <div class="p-4 bg-blue-50 rounded-xl">
+                                <div class="text-sm text-slate-500">Reading</div>
+                                <div class="text-2xl font-bold">{{ resultData.reading.band !== null ? resultData.reading.band : '—' }}</div>
+                            </div>
+                            <div class="p-4 bg-purple-50 rounded-xl">
+                                <div class="text-sm text-slate-500">Listening</div>
+                                <div class="text-2xl font-bold">{{ resultData.listening.band !== null ? resultData.listening.band : '—' }}</div>
+                            </div>
+                            <div class="p-4 bg-green-50 rounded-xl">
+                                <div class="text-sm text-slate-500">Writing</div>
+                                <div class="text-2xl font-bold">{{ resultData.writing ? resultData.writing.band : '—' }}</div>
+                            </div>
+                            <div class="p-4 bg-orange-50 rounded-xl">
+                                <div class="text-sm text-slate-500">Speaking</div>
+                                <div class="text-2xl font-bold">{{ resultData.speaking ? resultData.speaking.band : '—' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6" v-if="resultData.feedback">
+                            <h3 class="font-bold text-lg mb-2">AI Feedback Summary</h3>
+                            <div class="bg-slate-50 p-4 rounded border">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li v-for="(fb, i) in resultData.feedback.feedback || []" :key="i">{{ fb }}</li>
+                                    <li v-if="resultData.summary">{{ resultData.summary.overallAdvice }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="view==='admin'" class="p-8">
+                    <h2 class="text-2xl font-bold mb-6">User Management</h2>
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 border-b">
+                                <tr>
+                                    <th class="p-4">Username</th>
+                                    <th class="p-4">Role</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="u in adminUsers" :key="u.username" class="border-b">
+                                    <td class="p-4">{{ u.username }}</td>
+                                    <td class="p-4">{{ u.role }}</td>
+                                    <td class="p-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Active</span></td>
+                                    <td class="p-4">
+                                        <button @click="resetQuota(u.username)" class="text-sm bg-slate-100 px-3 py-1 rounded hover:bg-slate-200">Reset Quota</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -197,152 +304,205 @@
 
             </main>
         </div>
-
-        <div v-if="userModal.show" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-                <h3 class="text-xl font-bold mb-4">Create User</h3>
-                <input v-model="userModal.u" placeholder="Username" class="w-full p-3 border rounded-xl mb-3">
-                <input v-model="userModal.p" placeholder="Password" class="w-full p-3 border rounded-xl mb-3">
-                <select v-model="userModal.role" class="w-full p-3 border rounded-xl mb-4 bg-white"><option value="student">Student</option><option value="admin">Admin</option></select>
-                <div class="flex gap-2"><button @click="userModal.show=false" class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 rounded-xl">Cancel</button><button @click="createUser" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl">Create</button></div>
-            </div>
-        </div>
-
     </div>
 
     <script>
-        // ***************************************************************
-        // ⚠️ ใส่ URL Web App จาก Google Apps Script ที่นี่
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwjPXDFjBfqT9ZU8y6oaRH5BDL-mQKDxjS-tkAXSwhKkOBHvCw21OJb3YegBG8uVWzz-Q/exec'; 
-        // ***************************************************************
+        const { createApp, ref, onMounted, reactive } = Vue;
 
-        const { createApp } = Vue;
         createApp({
-            data() {
-                return {
-                    view: 'login', loading: { show: false, title: '', msg: '' },
-                    auth: { u: '', p: '' },
-                    user: { name:'', role:'', xp:0, level:1, qUsed:0, qLimit:0 },
-                    questions: [], currentQ: {}, qIndex: 0, answers: {}, history: [],
-                    modal: { show: false, band: 0, feedback: '', xp: 0 },
-                    adminUsers: [], userModal: { show: false, u: '', p: '', role: 'student' },
-                    isRecording: false, transcript: ''
-                }
-            },
-            watch: { qIndex(val) { this.currentQ = this.questions[val] || {}; this.transcript = ''; } },
-            methods: {
-                async api(payload) {
-                    this.loading = { show: true, title: 'Processing', msg: 'Please wait...' };
-                    try {
-                        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                        const json = await res.json();
-                        return json;
-                    } catch(e) { alert("Connection Error: Check API URL"); return {status:'error'}; }
-                    finally { this.loading.show = false; }
-                },
-                async fetchGet(params) {
-                    this.loading = { show: true, title: 'Loading', msg: 'Fetching data...' };
-                    try {
-                        const res = await fetch(`${API_URL}?${params}`);
-                        return await res.json();
-                    } catch(e) { return {status:'error'}; }
-                    finally { this.loading.show = false; }
-                },
-
-                // --- AUTH ---
-                async handleLogin() {
-                    const res = await this.fetchGet(`op=login&u=${this.auth.u}&p=${this.auth.p}`);
-                    if(res.status=='success') { 
-                        this.user = { name:res.user, role:res.role, xp:res.xp, level:res.level, qUsed:res.quota_used, qLimit:res.quota_limit }; 
-                        this.view = res.role=='admin' ? 'admin' : 'dashboard';
-                        if(this.view=='admin') this.loadAdmin(); else this.loadData();
-                    } else alert(res.message);
-                },
-                logout() { this.view='login'; this.user={}; this.auth={u:'',p:''}; },
-
-                // --- DATA ---
-                async loadData() {
-                    const qRes = await this.fetchGet('op=getQuestions');
-                    this.questions = qRes.data || [];
-                    const hRes = await this.fetchGet(`op=getAnalytics&userId=${this.user.name}`);
-                    this.history = hRes.history || [];
-                },
-                loadExamSelect() {
-                    this.loadData();
-                    this.view = 'exam_select';
-                },
-
-                // --- EXAM ---
-                async generateExam(op) {
-                    if(this.user.qUsed >= this.user.qLimit) return alert("Quota Exceeded!");
-                    this.loading = { show: true, title: 'AI Generating', msg: 'Creating unique content...' };
-                    const res = await fetch(`${API_URL}?op=${op}&userId=${this.user.name}`).then(r=>r.json());
-                    this.loading.show = false;
-                    
-                    if(res.status=='success') { 
-                        alert(res.message); 
-                        // Refresh user data (quota) and questions
-                        await this.handleLogin(); // re-fetch quota
-                    } else alert(res.message);
-                },
-
-                // --- UTILS ---
-                parseChoices(str) { return str ? str.split(',') : [] },
-                hasMedia(t) { return t && t.includes('###MEDIA###'); },
-                getMedia(t) { return t ? t.split('###MEDIA###')[0] : ''; },
-                getText(t) { return t && t.includes('###MEDIA###') ? t.split('###MEDIA###')[1] : t; },
+            setup() {
+                const token = ref(sessionStorage.getItem('IELTS_PRO_TOKEN'));
+                const showSetup = ref(false);
+                const tempApiUrl = ref('');
+                const loading = ref(false);
+                const setupError = ref('');
                 
-                toggleRecord() {
-                    if (!('webkitSpeechRecognition' in window)) return alert("Please use Google Chrome");
-                    if(this.isRecording) { this.recognition.stop(); this.isRecording=false; return; }
-                    this.transcript = '';
-                    this.recognition = new webkitSpeechRecognition();
-                    this.recognition.lang = 'en-US';
-                    this.recognition.onresult = (e) => { this.transcript = e.results[0][0].transcript; };
-                    this.recognition.start(); this.isRecording=true;
-                },
+                const loginForm = reactive({ username: '', password: '' });
+                const errorMsg = ref('');
+                
+                const user = ref({});
+                const userProfile = ref({});
+                const quota = ref({});
+                const view = ref('dashboard');
+                const adminUsers = ref([]);
+                
+                const showSkillSelect = ref(false);
+                const examData = ref(null);
+                const answers = ref({});
+                const timer = ref(0);
+                const timerInterval = ref(null);
+                const isRecording = ref(false);
+                
+                const showResults = ref(false);
+                const resultData = ref(null);
 
-                async submitAnswer() {
-                    let ans = this.answers[this.currentQ.id];
-                    if(this.currentQ.type=='speaking') ans = this.transcript;
-                    if(!ans) return alert("Please answer first");
+                // API Helper
+                const callApi = async (action, payload = {}) => {
+                    const apiUrl = localStorage.getItem('IELTS_PRO_API_URL');
+                    if (!apiUrl) {
+                        showSetup.value = true;
+                        throw new Error("API URL missing");
+                    }
                     
-                    this.loading = { show: true, title: 'AI Grading', msg: 'Analyzing coherence and vocabulary...' };
-                    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({
-                        op: 'submit', userId: this.user.name, qId: this.currentQ.id, 
-                        type: this.currentQ.type, tags: this.currentQ.tags, ans: ans,
-                        question_text: this.currentQ.question_text
-                    })}).then(r=>r.json());
-                    this.loading.show = false;
+                    loading.value = true;
+                    try {
+                        payload.action = action;
+                        payload.token = token.value;
+                        
+                        const formData = new URLSearchParams();
+                        formData.append('payload', JSON.stringify(payload));
 
-                    this.modal = { show: true, band: res.band || (res.score?1:0), feedback: res.feedback, xp: res.xp };
-                    this.user.xp += (res.xp || 0);
-                    this.loadData();
-                },
-                closeModal() { this.modal.show = false; this.view = 'dashboard'; },
+                        const res = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (!data.ok) throw new Error(data.error?.message || 'Unknown error');
+                        return data.data;
+                    } catch (e) {
+                        console.error(e);
+                        errorMsg.value = e.message;
+                        throw e;
+                    } finally {
+                        loading.value = false;
+                    }
+                };
 
-                // --- ADMIN ---
-                async loadAdmin() {
-                    const res = await this.fetchGet(`op=adminGetUsers&adminId=${this.user.name}`);
-                    if(res.status=='success') this.adminUsers = res.data;
-                },
-                openUserModal() { this.userModal = { show:true, u:'', p:'', role:'student' }; },
-                async createUser() {
-                    const res = await this.api({ op:'adminCreateUser', adminId:this.user.name, newUsername:this.userModal.u, newPassword:this.userModal.p, newRole:this.userModal.role });
-                    if(res.status=='success') { this.userModal.show=false; this.loadAdmin(); } else alert(res.message);
-                },
-                async adminAction(action, target) {
-                    if(!confirm(`${action.toUpperCase()} user ${target}?`)) return;
-                    const op = action == 'delete' ? 'adminDeleteUser' : 'adminUpdateUser';
-                    const payload = { op: op, adminId: this.user.name, targetUser: target };
-                    if(action == 'reset') payload.reset = true;
+                const saveApiUrl = async () => {
+                    if (!tempApiUrl.value) return;
+                    loading.value = true;
+                    try {
+                        // Ping check
+                        const formData = new URLSearchParams();
+                        formData.append('payload', JSON.stringify({ action: 'ping' }));
+                        const res = await fetch(tempApiUrl.value, { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.ok) {
+                            localStorage.setItem('IELTS_PRO_API_URL', tempApiUrl.value);
+                            showSetup.value = false;
+                            setupError.value = '';
+                        } else {
+                            throw new Error("Ping failed");
+                        }
+                    } catch (e) {
+                        setupError.value = "Invalid URL or Backend not ready.";
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                const login = async () => {
+                    try {
+                        const data = await callApi('login', loginForm);
+                        token.value = data.token;
+                        user.value = data.user;
+                        sessionStorage.setItem('IELTS_PRO_TOKEN', data.token);
+                        await fetchMe();
+                    } catch (e) {}
+                };
+
+                const fetchMe = async () => {
+                    const data = await callApi('me');
+                    user.value = data.user;
+                    quota.value = data.quota;
+                    userProfile.value = data.profile;
                     
-                    await this.api(payload);
-                    this.loadAdmin();
-                }
+                    if (user.value.role === 'admin') {
+                         const uList = await callApi('adminListUsers');
+                         adminUsers.value = uList.users;
+                    }
+                };
+
+                const logout = () => {
+                    token.value = null;
+                    sessionStorage.removeItem('IELTS_PRO_TOKEN');
+                    user.value = {};
+                    view.value = 'dashboard';
+                };
+
+                const startExamConfig = (mode) => {
+                    if (mode === 'skill') showSkillSelect.value = true;
+                };
+
+                const generateExam = async (mode, skill) => {
+                    showSkillSelect.value = false;
+                    try {
+                        const data = await callApi('genExam', { mode, skill });
+                        examData.value = data;
+                        answers.value = {};
+                        view.value = 'exam_room';
+                        timer.value = 0;
+                        timerInterval.value = setInterval(() => { timer.value++ }, 1000);
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                };
+
+                const submitExam = async () => {
+                    clearInterval(timerInterval.value);
+                    try {
+                        const result = await callApi('submitAnswers', {
+                            examId: examData.value.examId,
+                            answers: answers.value
+                        });
+                        resultData.value = result;
+                        showResults.value = true;
+                        await fetchMe(); // refresh quota
+                    } catch (e) {
+                        alert(e.message);
+                    }
+                };
+
+                const closeResult = () => {
+                    showResults.value = false;
+                    view.value = 'dashboard';
+                    examData.value = null;
+                };
+
+                const formatTime = (seconds) => {
+                    const m = Math.floor(seconds / 60);
+                    const s = seconds % 60;
+                    return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                };
+
+                const playTTS = (text) => {
+                    if (!text) return;
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = 'en-GB';
+                    window.speechSynthesis.speak(u);
+                };
+
+                const toggleRecord = () => {
+                    isRecording.value = !isRecording.value;
+                    // Mock recording UI logic
+                    if(!isRecording.value) alert("Mock recording saved. In a real browser env, this would use MediaRecorder API.");
+                };
+                
+                const resetQuota = async (username) => {
+                    if(confirm('Reset quota for ' + username + '?')) {
+                        await callApi('adminResetQuota', {username});
+                        alert('Reset done');
+                    }
+                };
+
+                onMounted(async () => {
+                    if (!localStorage.getItem('IELTS_PRO_API_URL')) {
+                        showSetup.value = true;
+                    } else if (token.value) {
+                        await fetchMe();
+                    }
+                });
+
+                return {
+                    token, showSetup, tempApiUrl, loading, setupError, loginForm, errorMsg,
+                    user, userProfile, quota, view, adminUsers,
+                    showSkillSelect, examData, answers, timer, isRecording, showResults, resultData,
+                    saveApiUrl, login, logout, startExamConfig, generateExam, submitExam, closeResult,
+                    formatTime, playTTS, toggleRecord, resetQuota
+                };
             }
         }).mount('#app');
     </script>
 </body>
 </html>
-
