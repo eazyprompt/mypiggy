@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   
-  <!-- App Icons / PWA -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -12,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="My Piggy">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -140,13 +139,18 @@
       border: 1px dashed rgba(15,23,42,.18);
       color: rgba(15,23,42,.65);
     }
+
+    #history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
   </style>
 </head>
 
 <body class="p-4 pb-10">
   <div class="max-w-md mx-auto space-y-5 relative">
 
-    <!-- TOP BAR -->
     <div class="glass rounded-[2.2rem] p-5">
       <div class="flex items-center justify-between">
         <div class="space-y-0.5">
@@ -167,8 +171,7 @@
         </button>
       </div>
 
-      <!-- TABS -->
-      <div class="mt-4 grid grid-cols-2 gap-2 p-2 rounded-2xl"
+      <div class="mt-4 grid grid-cols-3 gap-2 p-2 rounded-2xl"
            style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
         <button id="tabBtnInput" class="py-2 rounded-xl font-bold tab-active" onclick="switchTab('input')">
           <i class="fa-solid fa-pen-to-square mr-1"></i> Input
@@ -176,10 +179,12 @@
         <button id="tabBtnDash" class="py-2 rounded-xl font-bold tab-inactive" onclick="switchTab('dashboard')">
           <i class="fa-solid fa-chart-line mr-1"></i> Dashboard
         </button>
+        <button id="tabBtnHistory" class="py-2 rounded-xl font-bold tab-inactive" onclick="switchTab('history')">
+          <i class="fa-solid fa-clock-rotate-left mr-1"></i> History
+        </button>
       </div>
     </div>
 
-    <!-- ========================= TAB: INPUT ========================== -->
     <div id="tab-input" class="space-y-5">
       <div class="glass rounded-[2.2rem] p-6 space-y-4">
         <div class="flex items-center justify-between gap-3 mb-2">
@@ -189,7 +194,6 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <!-- Calendar -->
             <div class="text-right">
               <p class="text-[10px] muted2 mb-1">Date</p>
               <div class="relative">
@@ -202,7 +206,6 @@
               </div>
             </div>
 
-            <!-- ✅ USER: placeholder "-" เลือกไม่ได้ -->
             <div class="text-right">
               <p class="text-[10px] muted2 mb-1">User</p>
               <select id="userName" class="field text-xs rounded-full px-3 py-1" required>
@@ -214,7 +217,6 @@
           </div>
         </div>
 
-        <!-- ✅ Type selector (default: not selected) -->
         <div class="grid grid-cols-2 gap-3">
           <button onclick="setType('Expense')" id="btnExp"
                   class="type-neutral py-3 rounded-2xl font-bold transition-all">
@@ -230,10 +232,6 @@
           * กรุณาเลือก User และเลือกรายจ่าย/รายรับก่อนบันทึก
         </div>
 
-        <!-- desc optional -->
-     
-
-        <!-- ✅ CATEGORY: placeholder "-" เลือกไม่ได้ -->
         <select id="cate" class="field w-full p-4 rounded-2xl" required>
           <option value="" selected disabled>เลือกหมวดหมู่</option>
           <option value="🍱 อาหาร/เครื่องดื่ม">🍱 อาหาร/เครื่องดื่ม</option>
@@ -245,13 +243,12 @@
           <option value="⚙️ อื่นๆ">⚙️ อื่นๆ</option>
         </select>
 
-   <input
+        <input
           type="text"
           id="desc"
           class="field w-full p-4 rounded-2xl"
           placeholder="รายการ... (ไม่จำเป็นต้องกรอก)"
         >
-
         
         <div class="relative">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] chip px-2 py-1 rounded-xl">
@@ -274,7 +271,6 @@
       </div>
     </div>
 
-    <!-- ========================= TAB: DASHBOARD ========================== -->
     <div id="tab-dashboard" class="space-y-5 hidden">
 
       <div class="glass rounded-[2.2rem] p-6 space-y-4">
@@ -304,7 +300,6 @@
           </div>
         </div>
 
-        <!-- KPI -->
         <div class="grid grid-cols-2 gap-4">
           <div class="rounded-[2rem] p-5"
                style="background:linear-gradient(135deg, rgba(37,99,235,.14), rgba(6,182,212,.10)); border:1px solid rgba(37,99,235,.18); box-shadow:0 18px 45px rgba(37,99,235,.10);">
@@ -337,7 +332,6 @@
         </div>
       </div>
 
-      <!-- CHARTS -->
       <div class="glass rounded-[2.2rem] p-6 space-y-4">
         <div class="flex items-center justify-between">
           <h3 class="font-extrabold text-slate-900">Income vs Expense (Monthly)</h3>
@@ -357,43 +351,72 @@
           <canvas id="lineChart" height="150"></canvas>
         </div>
       </div>
-
-      <!-- HISTORY -->
-      <div class="space-y-3">
-        <h3 class="font-bold ml-2 text-slate-800">รายการล่าสุด (ตามตัวกรอง)</h3>
-        <div id="history-list" class="space-y-2"></div>
-      </div>
     </div>
-  </div>
 
-  <!-- ========================= LOADING POPUP ========================== -->
-  <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-slate-900/25 backdrop-blur-sm"></div>
-    <div class="relative h-full w-full flex items-center justify-center p-6">
-      <div class="glass w-full max-w-xs rounded-3xl p-5">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-2xl flex items-center justify-center"
-               style="background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(6,182,212,.10)); border:1px solid rgba(37,99,235,.18);">
-            <div class="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+    <div id="tab-history" class="space-y-5 hidden">
+
+      <div class="glass rounded-[2.2rem] p-6 space-y-6">
+        <div class="flex items-center justify-between pb-4 mb-2" style="border-bottom:1px solid rgba(15,23,42,.06);">
           <div>
-            <p class="text-sm font-extrabold text-slate-900" id="loadingTitle">Loading…</p>
-            <p class="text-[11px] muted" id="loadingSub">Please wait</p>
+            <h2 class="text-lg font-extrabold">History</h2>
+            <p class="text-xs muted">รายการที่บันทึกล่าสุด + ลบได้</p>
+          </div>
+
+          <button id="btnHistRefresh" class="btn btn-primary px-3 py-2 rounded-2xl text-xs font-bold">
+            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
+            <p class="text-[11px] muted2 mb-1">User</p>
+            <select id="histUser" class="field w-full rounded-xl px-3 py-2 text-sm">
+              <option value="All">🌍 All</option>
+              <option value="Nine">👦 Nine</option>
+              <option value="Bow">👧 Bow</option>
+            </select>
+          </div>
+
+          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
+            <p class="text-[11px] muted2 mb-1">Year</p>
+            <select id="histYear" class="field w-full rounded-xl px-3 py-2 text-sm"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h3 class="font-bold ml-2 text-slate-800">รายการล่าสุด</h3>
+        <div id="history-list"></div>
+      </div>
+
+    </div>
+
+    <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden">
+      <div class="absolute inset-0 bg-slate-900/25 backdrop-blur-sm"></div>
+      <div class="relative h-full w-full flex items-center justify-center p-6">
+        <div class="glass w-full max-w-xs rounded-3xl p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center"
+                 style="background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(6,182,212,.10)); border:1px solid rgba(37,99,235,.18);">
+              <div class="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <div>
+              <p class="text-sm font-extrabold text-slate-900" id="loadingTitle">Loading…</p>
+              <p class="text-[11px] muted" id="loadingSub">Please wait</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
   <script>
-
     // =========================
     // GitHub Pages Mode: Hardcoded API URL
     // =========================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwefbQM4or1pIdK1fpr0gX7zCcIUS1Fn-d8QtJcwgNjItZ6umXx3Zxb37vhehrN8T8eKg/exec';
-    // (Optional) Google Sheet URL (for reference / open button if you add one)
-    const SHEET_URL = ''; // e.g. https://docs.google.com/spreadsheets/d/XXXXX/edit#gid=0
-
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzoOjvgoZh32rbSa9Z18bgzRiUeBAr066-1b3qHfcAK_r3jtu_J3Nq0pyoJAGSKwVIzvA/exec';
+    
     async function apiCall(action, params) {
       const body = new URLSearchParams();
       body.append('action', action);
@@ -401,7 +424,6 @@
       const p = params || {};
       Object.keys(p).forEach(k => body.append(k, p[k] == null ? '' : String(p[k])));
 
-      // Important: do NOT set Content-Type to avoid CORS preflight
       const resp = await fetch(API_URL, { method: 'POST', body });
       const text = await resp.text();
 
@@ -413,25 +435,23 @@
       return json;
     }
 
-    // ✅ default: ยังไม่เลือก type
-    let currentType = ''; // '' | 'Expense' | 'Income'
+    let currentType = ''; 
     let barChart = null;
     let lineChart = null;
 
     const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-    // ✅ loading counter กันหลาย request ซ้อนกัน
     let __loadingCount = 0;
 
     window.onload = () => {
       bindGlobalRefresh();
       initDateDefaultToday();
-      initYearSelector();
+      initYearSelector('dashYear');
+      initYearSelector('histYear');
       bindDashboardControls();
+      bindHistoryControls();
 
       refreshDashboard();
 
-      // ✅ ให้หน้า Input เริ่มแบบยังไม่เลือก type และ user เป็น "-"
       resetTypeSelection();
       resetUserSelection();
 
@@ -469,13 +489,12 @@
       if (el && !el.value) el.value = ymdLocal(new Date());
     }
 
-    function initYearSelector(){
-      const sel = document.getElementById('dashYear');
+    function initYearSelector(selectId){
+      const sel = document.getElementById(selectId);
       if (!sel) return;
 
       const now = new Date();
       const currentYear = now.getFullYear();
-
       const start = currentYear - 5;
       const end = currentYear + 1;
 
@@ -494,24 +513,36 @@
     }
 
     // ---------- TABS ----------
+    let __activeTab = 'input';
+    let __historyCache = [];
+
+    function setTabBtnState(btn, isActive){
+      if (!btn) return;
+      btn.classList.toggle('tab-active', isActive);
+      btn.classList.toggle('tab-inactive', !isActive);
+    }
+
     function switchTab(tab) {
+      __activeTab = tab;
+
       const input = document.getElementById('tab-input');
       const dash = document.getElementById('tab-dashboard');
+      const hist = document.getElementById('tab-history');
+
       const bInput = document.getElementById('tabBtnInput');
       const bDash = document.getElementById('tabBtnDash');
+      const bHist = document.getElementById('tabBtnHistory');
 
-      if (tab === 'dashboard') {
-        input.classList.add('hidden');
-        dash.classList.remove('hidden');
-        bDash.classList.add('tab-active'); bDash.classList.remove('tab-inactive');
-        bInput.classList.add('tab-inactive'); bInput.classList.remove('tab-active');
-        refreshDashboard();
-      } else {
-        dash.classList.add('hidden');
-        input.classList.remove('hidden');
-        bInput.classList.add('tab-active'); bInput.classList.remove('tab-inactive');
-        bDash.classList.add('tab-inactive'); bDash.classList.remove('tab-active');
-      }
+      if (input) input.classList.toggle('hidden', tab !== 'input');
+      if (dash)  dash.classList.toggle('hidden', tab !== 'dashboard');
+      if (hist)  hist.classList.toggle('hidden', tab !== 'history');
+
+      setTabBtnState(bInput, tab === 'input');
+      setTabBtnState(bDash, tab === 'dashboard');
+      setTabBtnState(bHist, tab === 'history');
+
+      if (tab === 'dashboard') refreshDashboard();
+      if (tab === 'history') refreshHistory();
     }
 
     // ---------- DASH CONTROLS ----------
@@ -519,6 +550,16 @@
       document.getElementById('dashUser').addEventListener('change', refreshDashboard);
       document.getElementById('dashYear').addEventListener('change', refreshDashboard);
       document.getElementById('btnRefresh').addEventListener('click', refreshDashboard);
+    }
+
+    function bindHistoryControls(){
+      const hu = document.getElementById('histUser');
+      const hy = document.getElementById('histYear');
+      const br = document.getElementById('btnHistRefresh');
+
+      if (hu) hu.addEventListener('change', refreshHistory);
+      if (hy) hy.addEventListener('change', refreshHistory);
+      if (br) br.addEventListener('click', refreshHistory);
     }
 
     // ---------- INPUT TYPE ----------
@@ -545,7 +586,6 @@
         : 'type-neutral py-3 rounded-2xl font-bold transition-all';
     }
 
-    // ✅ USER selection reset (กลับไป "-")
     function resetUserSelection(){
       const u = document.getElementById('userName');
       if (u) u.value = '';
@@ -559,7 +599,7 @@
 
       showLoading('Loading dashboard…', 'กำลังโหลดข้อมูลและสรุปผล');
 
-            try {
+      try {
         const res = await apiCall('getDashboardDataV2', opts);
         updateDashboardV2(res);
       } catch (err) {
@@ -567,7 +607,47 @@
       } finally {
         hideLoading();
       }
+    }
 
+    async function refreshHistory(){
+      const user = (document.getElementById('histUser') && document.getElementById('histUser').value) ? document.getElementById('histUser').value : 'All';
+      const year = Number((document.getElementById('histYear') && document.getElementById('histYear').value) ? document.getElementById('histYear').value : new Date().getFullYear());
+      const opts = { user, mode: 'monthly', year };
+
+      showLoading('Loading history…', 'กำลังโหลดรายการล่าสุด');
+
+      try {
+        const res = await apiCall('getDashboardDataV2', opts);
+        if (!res || res.ok === false) throw new Error((res && res.error) ? res.error : 'โหลดข้อมูลไม่สำเร็จ');
+        __historyCache = res.history || [];
+        renderHistory(__historyCache);
+      } catch (err) {
+        alert('โหลด History ไม่สำเร็จ: ' + (err && err.message ? err.message : err));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function deleteHistoryItem(row){
+      const rowNum = Number(row || 0);
+      if (!rowNum) return;
+
+      const ok = confirm('ต้องการลบรายการนี้ใช่ไหม?');
+      if (!ok) return;
+
+      showLoading('Deleting…', 'กำลังลบรายการ');
+
+      try{
+        const res = await apiCall('deleteData', { row: rowNum });
+        if (res && res.ok === false) throw new Error(res.error || 'ลบไม่สำเร็จ');
+
+        await refreshHistory();
+        await refreshDashboard();
+      }catch(err){
+        alert('ลบไม่สำเร็จ: ' + (err && err.message ? err.message : err));
+      }finally{
+        hideLoading();
+      }
     }
 
     function money(x) {
@@ -590,7 +670,9 @@
       document.getElementById('rangeHint').innerText = `Jan → Dec (${res.filter.year})`;
 
       renderCharts(res.series);
-      renderHistory(res.history || []);
+
+      __historyCache = res.history || [];
+      if (__activeTab === 'history') renderHistory(__historyCache);
     }
 
     function renderCharts(series) {
@@ -647,31 +729,69 @@
       });
     }
 
+    // ============================================
+    // ✅ RENDER HISTORY (SWAPPED DISPLAY)
+    // ============================================
     function renderHistory(items) {
       let html = '';
-      items.forEach(item => {
-        const color = item.type === 'รายรับ' ? 'text-emerald-700' : 'text-red-600';
-        const sign  = item.type === 'รายจ่าย' ? '-' : '+';
-        const icon  = item.user === 'Nine' ? '👦' : (item.user === 'Bow' ? '👧' : '🌍');
+      items.forEach((item) => {
+        const isIncome = item.type === 'รายรับ';
+        const colorClass = isIncome ? 'text-emerald-600' : 'text-rose-600';
+        const bgIndicator = isIncome ? 'bg-emerald-500' : 'bg-rose-500';
+        const sign = isIncome ? '+' : '-';
+        const icon = item.user === 'Nine' ? '👦' : (item.user === 'Bow' ? '👧' : '🌍');
+
+        const rowNum = Number(item.row || 0);
+        const canDelete = rowNum > 0;
+        const extraStyle = canDelete ? "" : "opacity:.45;cursor:not-allowed;";
+        const aria = canDelete ? "" : 'aria-disabled="true"';
+        const onClick = canDelete
+          ? ("deleteHistoryItem(" + rowNum + ")")
+          : "alert('ปุ่มลบยังใช้งานไม่ได้ เพราะ API ยังไม่ส่งค่า row กลับมา')";
 
         html += `
-          <div class="glass p-4 rounded-2xl flex justify-between items-center">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">${icon}</span>
-              <div>
-                <p class="font-bold text-slate-900 text-sm">${escapeHtml(item.desc || '') || '<span class="muted">—</span>'}</p>
-                <p class="text-[10px] muted">
+          <div class="glass relative overflow-hidden p-4 rounded-[1.5rem] flex justify-between items-center transition-all hover:scale-[1.01] active:scale-[0.99]">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${bgIndicator} opacity-80"></div>
+            
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-50 border border-slate-100 shadow-sm text-xl">
+                ${icon}
+              </div>
+              <div class="space-y-0.5">
+                <p class="font-bold text-slate-800 text-[15px] leading-tight">
                   ${escapeHtml(item.category || '')}
-                  • <span class="text-slate-400">${escapeHtml(item.date || '')}</span>
                 </p>
+                
+                <div class="flex items-center gap-2 text-[11px]">
+                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium truncate max-w-[120px]">
+                    ${escapeHtml(item.desc || '') || 'ไม่มีรายละเอียด'}
+                  </span>
+                  
+                  <span class="text-slate-400"><i class="fa-regular fa-calendar-check mr-1"></i>${escapeHtml(item.date || '')}</span>
+                </div>
               </div>
             </div>
-            <p class="font-extrabold ${color}">${sign}${escapeHtml(item.amt || '0')}</p>
+
+            <div class="flex flex-col items-end gap-2">
+              <p class="font-black text-lg ${colorClass} tracking-tight">
+                ${sign}${escapeHtml(item.amt || '0')}
+              </p>
+              <button class="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-rose-50 text-rose-400 hover:text-rose-600 border border-transparent hover:border-rose-100"
+                      style="${extraStyle}"
+                      ${aria}
+                      onclick="${onClick}">
+                <i class="fa-solid fa-trash-can text-[10px]"></i>
+              </button>
+            </div>
           </div>`;
       });
 
       document.getElementById('history-list').innerHTML =
-        html || `<div class="text-sm muted ml-2">ยังไม่มีข้อมูล</div>`;
+        html || `
+          <div class="text-center py-10">
+            <i class="fa-solid fa-folder-open text-slate-200 text-4xl mb-2"></i>
+            <p class="text-sm muted">ยังไม่มีข้อมูลในระบบ</p>
+          </div>`;
     }
 
     function escapeHtml(str) {
@@ -681,7 +801,6 @@
     }
 
     function resetInputs() {
-      // Clear input form fields after save
       const descEl = document.getElementById('desc');
       const amtEl  = document.getElementById('amt');
       const cateEl = document.getElementById('cate');
@@ -690,22 +809,16 @@
       if (cateEl) cateEl.value = '';
       resetTypeSelection();
       resetUserSelection();
-      // keep date as-is; if empty set to today
       initDateDefaultToday();
     }
 
     // ---------- SAVE ----------
     async function saveData() {
       const btn = document.getElementById('saveBtn');
-
-      // ✅ บังคับเลือก User ก่อน (ถ้ายังเป็น "-" = value ว่าง)
       const userVal = document.getElementById('userName').value;
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
-
-      // ✅ บังคับเลือก Type ก่อน
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
 
-      // ✅ บังคับเลือก Category ก่อน
       const cateVal = document.getElementById('cate').value;
       if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
 
@@ -725,7 +838,7 @@
       btn.disabled = true;
       btn.innerText = 'กำลังบันทึก...';
 
-            try {
+      try {
         const res = await apiCall('addData', payload);
         updateDashboardV2(res);
         switchTab('dashboard');
@@ -734,6 +847,8 @@
         alert('บันทึกไม่สำเร็จ: ' + (err && err.message ? err.message : err));
       } finally {
         hideLoading();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูล';
       }
     }
   </script>
