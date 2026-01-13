@@ -893,8 +893,11 @@
     }
 
     function renderHistory(items) {
+      // FIX: Sort items by Row ID Descending (Newest First)
+      const sortedItems = items.slice().sort((a, b) => Number(b.row) - Number(a.row));
+
       let html = '';
-      items.forEach((item) => {
+      sortedItems.forEach((item) => {
         const isIncome = item.type === 'รายรับ';
         const amtColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
         const iconBg = isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600';
