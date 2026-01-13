@@ -7,441 +7,470 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#f8fafc">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="My Piggy">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
+    /* --- Modern Variables --- */
     :root{
-      --bg:#f6f7fb;
-      --bg2:#eef2ff;
-      --card: rgba(255,255,255,.82);
-      --card2: rgba(255,255,255,.92);
-      --stroke: rgba(15,23,42,.08);
-      --text:#0f172a;
-      --muted:#64748b;
-      --muted2:#94a3b8;
-
-      --accent:#2563eb;
-      --accent2:#06b6d4;
-
-      --good:#10b981;
-      --bad:#ef4444;
-      --ring: rgba(37,99,235,.18);
+      --primary: #3b82f6;
+      --primary-soft: #dbeafe;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --bg-body: #f1f5f9;
     }
 
     * { -webkit-tap-highlight-color: transparent; }
-    body{
-      font-family:'Kanit',sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(900px 600px at 15% 0%, rgba(37,99,235,.12), transparent 60%),
-        radial-gradient(900px 600px at 90% 10%, rgba(6,182,212,.10), transparent 55%),
-        radial-gradient(700px 520px at 70% 95%, rgba(16,185,129,.08), transparent 60%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+    
+    body {
+      font-family: 'Kanit', sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-body);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
       min-height: 100vh;
       overscroll-behavior-y: none;
     }
 
-    body:before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(to right, rgba(15,23,42,.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15,23,42,.045) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(closest-side at 50% 10%, black, transparent 70%);
-      opacity: .7;
-      z-index: -1;
+    /* --- UI Components --- */
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.02), 
+        0 10px 15px -3px rgba(0, 0, 0, 0.03),
+        inset 0 0 0 1px rgba(255,255,255,0.5);
     }
 
-    .glass{
-      background: linear-gradient(180deg, var(--card2), var(--card));
-      border: 1px solid var(--stroke);
-      box-shadow:
-        0 18px 45px rgba(2,6,23,.08),
-        inset 0 1px 0 rgba(255,255,255,.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+    /* Inputs */
+    .field {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: var(--text-main);
+      transition: all 0.2s ease;
     }
-
-    .chip{
-      background: rgba(255,255,255,.85);
-      border: 1px solid rgba(15,23,42,.08);
-      color: var(--muted);
-    }
-
-    .btn{
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.92);
-      color: var(--text);
-      box-shadow: 0 12px 30px rgba(2,6,23,.08);
-      transition: transform .12s ease, background .2s ease, border-color .2s ease;
-    }
-    .btn:hover{ border-color: rgba(37,99,235,.22); }
-    .btn:active{ transform: scale(.97); }
-
-    .btn-primary{
-      border: 1px solid rgba(37,99,235,.25);
-      background: linear-gradient(135deg, rgba(37,99,235,.10), rgba(6,182,212,.08));
-    }
-
-    .tab-active{
-      background: linear-gradient(135deg, rgba(37,99,235,.14), rgba(6,182,212,.10));
-      border: 1px solid rgba(37,99,235,.24);
-      color: #0b1224;
-      box-shadow: 0 12px 28px rgba(37,99,235,.10);
-    }
-    .tab-inactive{
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(15,23,42,.08);
-      color: rgba(15,23,42,.70);
-    }
-
-    .type-active-exp{
-      background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(244,63,94,.08)) !important;
-      border-color: rgba(239,68,68,.22) !important;
-      color: #991b1b !important;
-      box-shadow: 0 10px 22px rgba(239,68,68,.08);
-    }
-    .type-active-inc{
-      background: linear-gradient(135deg, rgba(16,185,129,.12), rgba(34,197,94,.08)) !important;
-      border-color: rgba(16,185,129,.22) !important;
-      color: #065f46 !important;
-      box-shadow: 0 10px 22px rgba(16,185,129,.08);
-    }
-
-    .field{
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(15,23,42,.10);
-      color: var(--text);
+    .field:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-soft);
       outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-    }
-    .field::placeholder{ color: rgba(100,116,139,.85); }
-    .field:focus{
-      border-color: rgba(37,99,235,.35);
-      box-shadow: 0 0 0 4px var(--ring);
     }
 
-    .muted{ color: rgba(100,116,139,.95); }
-    .muted2{ color: rgba(148,163,184,.95); }
-
-    .type-neutral{
-      background: rgba(255,255,255,.92);
-      border: 1px dashed rgba(15,23,42,.18);
-      color: rgba(15,23,42,.65);
+    /* --- State Classes for JS Toggle --- */
+    .type-neutral {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid transparent;
+    }
+    
+    .type-active-exp {
+      background: #fee2e2 !important;
+      color: #dc2626 !important;
+      border: 1px solid #fecaca !important;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+    
+    .type-active-inc {
+      background: #d1fae5 !important;
+      color: #059669 !important;
+      border: 1px solid #a7f3d0 !important;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
     }
 
-    #history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* Tabs */
+    .tab-active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
+    .tab-inactive {
+      background: transparent;
+      color: #94a3b8;
+    }
+
+    /* Buttons */
+    .btn-primary-grad {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary-grad:active { transform: scale(0.97); }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    
+    /* Animation for Modal */
+    .modal-enter { opacity: 0; transform: scale(0.95); }
+    .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-exit { opacity: 1; transform: scale(1); }
+    .modal-exit-active { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-in; }
   </style>
 </head>
 
-<body class="p-4 pb-10">
-  <div class="max-w-md mx-auto space-y-5 relative z-10">
+<body class="p-4 pb-12 sm:p-6 lg:p-8 flex justify-center">
 
-    <div class="glass rounded-[2.2rem] p-5">
+  <div class="w-full max-w-md space-y-6 relative z-10">
+
+    <div class="glass rounded-[2rem] p-5 sticky top-2 z-50">
       <div class="flex items-center justify-between">
-        <div class="space-y-0.5">
-          <div class="flex items-center gap-2">
-            <div class="w-9 h-9 rounded-2xl flex items-center justify-center"
-                 style="background:linear-gradient(135deg, rgba(37,99,235,.12), rgba(6,182,212,.10)); border:1px solid rgba(37,99,235,.18);">
-              <i class="fa-solid fa-wallet text-sm" style="color:#1d4ed8;"></i>
-            </div>
-            <div>
-              <h1 class="text-lg font-extrabold leading-tight">My Piggy</h1>
-              <p class="text-xs muted">Nine & Bow</p>
-            </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+            <i class="fa-solid fa-piggy-bank text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">My Piggy</h1>
+            <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Financial Tracker</p>
           </div>
         </div>
 
-        <button id="btnQuickRefresh" class="btn btn-primary px-3 py-2 rounded-2xl text-xs font-bold">
-          <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
+        <button id="btnQuickRefresh" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center justify-center">
+          <i class="fa-solid fa-arrows-rotate text-sm"></i>
         </button>
       </div>
 
-      <div class="mt-4 grid grid-cols-3 gap-2 p-2 rounded-2xl"
-           style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-        <button id="tabBtnInput" class="py-2 rounded-xl font-bold tab-active" onclick="switchTab('input')">
-          <i class="fa-solid fa-pen-to-square mr-1"></i> Input
+      <div class="mt-5 bg-slate-100/80 p-1.5 rounded-2xl grid grid-cols-3 gap-1 relative">
+        <button id="tabBtnInput" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-active" onclick="switchTab('input')">
+          Input
         </button>
-        <button id="tabBtnDash" class="py-2 rounded-xl font-bold tab-inactive" onclick="switchTab('dashboard')">
-          <i class="fa-solid fa-chart-line mr-1"></i> Dashboard
+        <button id="tabBtnDash" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('dashboard')">
+          Dashboard
         </button>
-        <button id="tabBtnHistory" class="py-2 rounded-xl font-bold tab-inactive" onclick="switchTab('history')">
-          <i class="fa-solid fa-clock-rotate-left mr-1"></i> History
+        <button id="tabBtnHistory" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('history')">
+          History
         </button>
       </div>
     </div>
 
-    <div id="tab-input" class="space-y-5">
-      <div class="glass rounded-[2.2rem] p-6 space-y-4">
-        <div class="flex items-center justify-between gap-3 mb-2">
-          <div>
-            <h3 class="font-extrabold text-lg">บันทึกรายการ</h3>
-            
+    <div id="tab-input" class="space-y-4">
+      <div class="glass rounded-[2.5rem] p-6 pt-8 space-y-6 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Date</label>
+            <div class="relative">
+              <input type="date" id="txDate" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-600 appearance-none text-center">
+            </div>
           </div>
-
-          <div class="flex items-center gap-2">
-            <div class="text-right">
-              <p class="text-[10px] muted2 mb-1">Date</p>
-              <div class="relative">
-                <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input
-                  type="date"
-                  id="txDate"
-                  class="field text-xs rounded-full pl-8 pr-3 py-1 w-[160px]"
-                />
-              </div>
-            </div>
-
-            <div class="text-right">
-              <p class="text-[10px] muted2 mb-1">User</p>
-              <select id="userName" class="field text-xs rounded-full px-3 py-1" required>
-                <option value="" selected disabled>-</option>
-                <option value="Nine">👦 Nine</option>
-                <option value="Bow">👧 Bow</option>
-              </select>
-            </div>
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">User</label>
+            <select id="userName" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-600 text-center" required>
+              <option value="" selected disabled>Select User</option>
+              <option value="Nine">👦 Nine</option>
+              <option value="Bow">👧 Bow</option>
+            </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <button onclick="setType('Expense')" id="btnExp"
-                  class="type-neutral py-3 rounded-2xl font-bold transition-all">
+          <button onclick="setType('Expense')" id="btnExp" class="type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-arrow-trend-down text-lg mb-1 opacity-50 group-hover:opacity-100"></i>
             รายจ่าย
           </button>
-          <button onclick="setType('Income')" id="btnInc"
-                  class="type-neutral py-3 rounded-2xl font-bold transition-all">
+          <button onclick="setType('Income')" id="btnInc" class="type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-arrow-trend-up text-lg mb-1 opacity-50 group-hover:opacity-100"></i>
             รายรับ
           </button>
         </div>
 
-        <div class="text-[11px] muted -mt-1">
-          * กรุณาเลือก User และเลือกรายจ่าย/รายรับก่อนบันทึก
+        <div class="relative group">
+          <div class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-light">฿</div>
+          <input type="number" id="amt" inputmode="decimal" 
+                 class="field w-full p-6 pl-10 rounded-[2rem] text-3xl font-bold text-slate-700 placeholder:text-slate-200 text-center tracking-tight focus:ring-4 focus:ring-blue-100" 
+                 placeholder="0">
+          <p class="text-center text-[10px] text-slate-400 mt-2 font-medium">ระบุจำนวนเงิน</p>
         </div>
 
-        <select id="cate" class="field w-full p-4 rounded-2xl" required>
-          <option value="" selected disabled>เลือกหมวดหมู่</option>
-          <option value="🍱 อาหาร/เครื่องดื่ม">🍱 อาหาร/เครื่องดื่ม</option>
-          <option value="🚗 การเดินทาง">🚗 การเดินทาง</option>
-          <option value="🏠 ที่พัก/ของใช้">🏠 ที่พัก/ของใช้</option>
-          <option value="🛍️ ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
-          <option value="💰 เงินเก็บ/ออมเงิน">💰 เงินเก็บ/ออมเงิน</option>
-          <option value="💵 รายรับ/โบนัส">💵 รายรับ/โบนัส</option>
-          <option value="⚙️ อื่นๆ">⚙️ อื่นๆ</option>
-        </select>
+        <div class="space-y-3">
+          <select id="cate" class="field w-full p-4 rounded-2xl text-slate-700 font-medium appearance-none" required>
+            <option value="" selected disabled>📂 เลือกหมวดหมู่...</option>
+            <option value="🍱 อาหาร/เครื่องดื่ม">🍱 อาหาร/เครื่องดื่ม</option>
+            <option value="🚗 การเดินทาง">🚗 การเดินทาง</option>
+            <option value="🏠 ที่พัก/ของใช้">🏠 ที่พัก/ของใช้</option>
+            <option value="🛍️ ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
+            <option value="💰 เงินเก็บ/ออมเงิน">💰 เงินเก็บ/ออมเงิน</option>
+            <option value="💵 รายรับ/โบนัส">💵 รายรับ/โบนัส</option>
+            <option value="⚙️ อื่นๆ">⚙️ อื่นๆ</option>
+          </select>
 
-        <input
-          type="text"
-          id="desc"
-          class="field w-full p-4 rounded-2xl"
-          placeholder="รายการ... (ไม่จำเป็นต้องกรอก)"
-        >
-        
-        <div class="relative">
-          <div class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] chip px-2 py-1 rounded-xl">
-            AMOUNT
+          <div class="relative">
+            <input type="text" id="desc" class="field w-full p-4 pl-12 rounded-2xl text-slate-600" placeholder="บันทึกช่วยจำ (ถ้ามี)">
+            <i class="fa-regular fa-comment-dots absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
           </div>
-          <input type="number" id="amt" inputmode="decimal"
-                 class="field w-full p-4 pl-24 rounded-2xl text-xl font-extrabold"
-                 style="color:#1d4ed8;"
-                 placeholder="0.00">
         </div>
 
-        <button onclick="saveData()" id="saveBtn"
-                class="btn btn-primary w-full font-extrabold py-4 rounded-2xl">
-          <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูล
+        <button onclick="saveData()" id="saveBtn" class="btn btn-primary-grad w-full py-4 rounded-[1.5rem] font-bold text-lg flex items-center justify-center gap-2 mt-4">
+          <span>บันทึกข้อมูล</span>
+          <i class="fa-solid fa-check circle-check"></i>
         </button>
-
-        <div class="text-[11px] muted leading-relaxed">
-          * ต้องกรอก “จำนวนเงิน” เท่านั้น
-        </div>
       </div>
     </div>
 
-    <div id="tab-dashboard" class="space-y-5 hidden">
-
-      <div class="glass rounded-[2.2rem] p-6 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-extrabold">Dashboard</h2>
-            <p class="text-xs muted">Monthly (Jan–Dec) + เลือกปีได้</p>
-          </div>
-          <button id="btnRefresh" class="btn btn-primary px-3 py-2 rounded-2xl text-xs font-bold">
-            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
+    <div id="tab-dashboard" class="hidden space-y-5">
+      <div class="glass rounded-[2rem] p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-700">Overview</h2>
+          <button id="btnRefresh" class="text-xs font-bold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">
+            Refresh
           </button>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <select id="dashUser" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-600">
+            <option value="All">🌍 All Users</option>
+            <option value="Nine">👦 Nine</option>
+            <option value="Bow">👧 Bow</option>
+          </select>
+          <select id="dashYear" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-600"></select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4">
+        <div class="rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-xl shadow-blue-500/20" 
+             style="background: linear-gradient(120deg, #2563eb, #06b6d4);">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+          <p class="text-blue-100 text-xs font-medium uppercase tracking-wide mb-1">Net Balance (Year)</p>
+          <h2 id="kpiNet" class="text-4xl font-bold tracking-tight mb-4">฿ 0</h2>
+          <div class="flex items-center gap-4 text-xs font-medium text-blue-50 bg-white/10 p-2 rounded-xl backdrop-blur-sm inline-flex">
+            <span>Income - Expense</span>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-            <p class="text-[11px] muted2 mb-1">User</p>
-            <select id="dashUser" class="field w-full rounded-xl px-3 py-2 text-sm">
-              <option value="All">🌍 All</option>
-              <option value="Nine">👦 Nine</option>
-              <option value="Bow">👧 Bow</option>
-            </select>
-          </div>
-
-          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-            <p class="text-[11px] muted2 mb-1">Year</p>
-            <select id="dashYear" class="field w-full rounded-xl px-3 py-2 text-sm"></select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="rounded-[2rem] p-5"
-               style="background:linear-gradient(135deg, rgba(37,99,235,.14), rgba(6,182,212,.10)); border:1px solid rgba(37,99,235,.18); box-shadow:0 18px 45px rgba(37,99,235,.10);">
-            <p class="text-xs text-slate-700/80">ยอดสุทธิ (ปีที่เลือก)</p>
-            <h2 id="kpiNet" class="text-2xl font-extrabold text-slate-900">฿ 0</h2>
-            <p class="text-[10px] text-slate-700/70 mt-1">Income - Expense</p>
-          </div>
-
-          <div class="rounded-[2rem] p-5"
-               style="background:rgba(255,255,255,.92); border:1px solid rgba(15,23,42,.08);">
-            <p class="text-xs muted">เงินเก็บรวม (ปีที่เลือก)</p>
-            <h2 id="kpiSavings" class="text-2xl font-extrabold" style="color:#059669;">฿ 0</h2>
-            <p class="text-[10px] muted mt-1">หมวด “เงินเก็บ/ออมเงิน”</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3">
-          <div class="rounded-2xl p-3" style="background:rgba(255,255,255,.92); border:1px solid rgba(15,23,42,.08);">
-            <p class="text-[10px] muted2">Year Income</p>
-            <p id="kpiIncome" class="text-sm font-extrabold" style="color:#059669;">฿ 0</p>
-          </div>
-          <div class="rounded-2xl p-3" style="background:rgba(255,255,255,.92); border:1px solid rgba(15,23,42,.08);">
-            <p class="text-[10px] muted2">Year Expense</p>
-            <p id="kpiExpense" class="text-sm font-extrabold" style="color:#dc2626;">฿ 0</p>
-          </div>
-          <div class="rounded-2xl p-3" style="background:rgba(255,255,255,.92); border:1px solid rgba(15,23,42,.08);">
-            <p class="text-[10px] muted2">Overall Balance</p>
-            <p id="kpiOverallBalance" class="text-sm font-extrabold text-slate-900">฿ 0</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass rounded-[2.2rem] p-6 space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="font-extrabold text-slate-900">Income vs Expense (Monthly)</h3>
-          <span id="rangeHint" class="text-[11px] muted">—</span>
-        </div>
-
-        <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-          <canvas id="barChart" height="170"></canvas>
-        </div>
-
-        <div class="flex items-center justify-between pt-1">
-          <h3 class="font-extrabold text-slate-900">Savings (Monthly)</h3>
-          <span class="text-[11px] muted">Jan–Dec</span>
-        </div>
-
-        <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-          <canvas id="lineChart" height="150"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div id="tab-history" class="space-y-5 hidden">
-
-      <div class="glass rounded-[2.2rem] p-6 space-y-6">
-        <div class="flex items-center justify-between pb-4 mb-2" style="border-bottom:1px solid rgba(15,23,42,.06);">
-          <div>
-            <h2 class="text-lg font-extrabold">History</h2>
-            <p class="text-xs muted">รายการที่บันทึกล่าสุด + ลบได้</p>
-          </div>
-
-          <button id="btnHistRefresh" class="btn btn-primary px-3 py-2 rounded-2xl text-xs font-bold">
-            <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
-          </button>
+           <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm">
+             <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs mb-2">
+               <i class="fa-solid fa-sack-dollar"></i>
+             </div>
+             <p class="text-[10px] text-slate-400 uppercase font-bold">Savings</p>
+             <h3 id="kpiSavings" class="text-lg font-bold text-emerald-600">฿ 0</h3>
+           </div>
+           
+           <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm">
+             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs mb-2">
+               <i class="fa-solid fa-scale-balanced"></i>
+             </div>
+             <p class="text-[10px] text-slate-400 uppercase font-bold">Total Balance</p>
+             <h3 id="kpiOverallBalance" class="text-lg font-bold text-slate-800">฿ 0</h3>
+           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-            <p class="text-[11px] muted2 mb-1">User</p>
-            <select id="histUser" class="field w-full rounded-xl px-3 py-2 text-sm">
-              <option value="All">🌍 All</option>
-              <option value="Nine">👦 Nine</option>
-              <option value="Bow">👧 Bow</option>
-            </select>
+          <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Income</p>
+            <p id="kpiIncome" class="text-base font-bold text-emerald-500">฿ 0</p>
           </div>
-
-          <div class="rounded-2xl p-3" style="background:rgba(15,23,42,.03); border:1px solid rgba(15,23,42,.06);">
-            <p class="text-[11px] muted2 mb-1">Year</p>
-            <select id="histYear" class="field w-full rounded-xl px-3 py-2 text-sm"></select>
+          <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Expense</p>
+            <p id="kpiExpense" class="text-base font-bold text-rose-500">฿ 0</p>
           </div>
         </div>
       </div>
 
-      <div class="space-y-3">
-        <h3 class="font-bold ml-2 text-slate-800">รายการล่าสุด</h3>
-        <div id="history-list"></div>
-      </div>
+      <div class="glass rounded-[2.5rem] p-5 space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-700 text-sm">Monthly Breakdown</h3>
+            <span id="rangeHint" class="text-[10px] text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">-</span>
+          </div>
+          <div class="h-[180px] w-full">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
 
+        <div class="border-t border-slate-100 pt-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-700 text-sm">Savings Trend</h3>
+            <button onclick="openTargetModal()" class="flex items-center gap-1.5 bg-orange-50 text-orange-600 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-100 hover:bg-orange-100 transition-colors">
+              <i class="fa-solid fa-crosshairs"></i> Set Goal
+            </button>
+          </div>
+          <div class="h-[150px] w-full">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-5">
+           <div class="flex items-center justify-between mb-3">
+             <h3 class="font-bold text-slate-700 text-sm">Expense By Category</h3>
+             <span class="text-[10px] text-slate-400">% Share</span>
+           </div>
+           <div class="h-[250px] w-full relative">
+             <canvas id="donutChart"></canvas>
+           </div>
+        </div>
+
+      </div>
     </div>
 
-  </div> <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-all"></div>
-    
-    <div class="relative h-full w-full flex items-center justify-center p-6">
-      <div class="bg-white/90 backdrop-blur-xl border border-white/50 shadow-2xl w-[260px] rounded-[2rem] p-8 text-center transform scale-100 transition-transform">
-        
-        <div class="relative w-16 h-16 mx-auto mb-5">
-          <div class="absolute inset-0 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin"></div>
-          <div class="absolute inset-2 bg-slate-50 rounded-full flex items-center justify-center text-blue-600 shadow-inner">
-            <i class="fa-solid fa-wallet text-xl animate-pulse"></i>
+    <div id="tab-history" class="hidden space-y-5">
+      <div class="glass rounded-[2rem] p-5 sticky top-24 z-40">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold text-slate-700">Transactions</h2>
+          <button id="btnHistRefresh" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-500 transition-colors flex items-center justify-center">
+            <i class="fa-solid fa-rotate-right text-xs"></i>
+          </button>
+        </div>
+        <div class="flex gap-2">
+           <select id="histUser" class="field flex-1 rounded-xl px-2 py-2 text-xs font-bold text-slate-600 text-center">
+              <option value="All">All Users</option>
+              <option value="Nine">Nine</option>
+              <option value="Bow">Bow</option>
+            </select>
+            <select id="histYear" class="field flex-1 rounded-xl px-2 py-2 text-xs font-bold text-slate-600 text-center"></select>
+        </div>
+      </div>
+
+      <div id="history-list" class="space-y-3 pb-10 px-1"></div>
+    </div>
+
+  </div> 
+
+  <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"></div>
+    <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl flex flex-col items-center relative z-10 animate-float">
+      <div class="w-16 h-16 mb-4 relative">
+        <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+        <i class="fa-solid fa-wallet absolute inset-0 m-auto w-fit h-fit text-blue-500 text-xl"></i>
+      </div>
+      <h3 id="loadingTitle" class="font-bold text-slate-800 text-lg">Processing</h3>
+      <p id="loadingSub" class="text-xs text-slate-500 font-medium mt-1">Please wait...</p>
+    </div>
+  </div>
+
+  <div id="targetModal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="closeTargetModal()"></div>
+    <div class="bg-white w-[85%] max-w-sm p-6 rounded-[2rem] shadow-2xl relative z-10 transform transition-all duration-300 scale-95 opacity-0" id="targetModalContent">
+      <div class="flex justify-between items-center mb-5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center">
+            <i class="fa-solid fa-bullseye text-sm"></i>
+          </div>
+          <h3 class="font-bold text-slate-800 text-lg">Set Goals</h3>
+        </div>
+        <button onclick="closeTargetModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <p class="text-xs text-slate-500 mb-4">ระบุยอดเงินเก็บขั้นต่ำต่อเดือน (Minimum Saving)</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">👧 Bow's Target</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">฿</span>
+            <input type="number" id="targetBowInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-700" placeholder="0">
           </div>
         </div>
-
-        <h3 class="text-lg font-extrabold text-slate-800 mb-1 tracking-tight" id="loadingTitle">Processing</h3>
-        <p class="text-xs text-slate-500 font-medium" id="loadingSub">Please wait a moment...</p>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">👦 Nine's Target</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">฿</span>
+            <input type="number" id="targetNineInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-700" placeholder="0">
+          </div>
+        </div>
       </div>
+
+      <button onclick="saveTargets()" class="btn btn-primary-grad w-full py-3 rounded-xl font-bold text-sm mt-6 shadow-lg shadow-blue-500/30">
+        Save Goals
+      </button>
     </div>
   </div>
 
   <script>
-    // =========================
-    // GitHub Pages Mode: Hardcoded API URL
-    // =========================
     const API_URL = 'https://script.google.com/macros/s/AKfycbzoOjvgoZh32rbSa9Z18bgzRiUeBAr066-1b3qHfcAK_r3jtu_J3Nq0pyoJAGSKwVIzvA/exec';
     
     async function apiCall(action, params) {
       const body = new URLSearchParams();
       body.append('action', action);
-
       const p = params || {};
       Object.keys(p).forEach(k => body.append(k, p[k] == null ? '' : String(p[k])));
-
       const resp = await fetch(API_URL, { method: 'POST', body });
       const text = await resp.text();
-
       let json;
       try { json = JSON.parse(text); }
-      catch (e) {
-        throw new Error('API ตอบกลับไม่ใช่ JSON: ' + text.slice(0, 200));
-      }
+      catch (e) { throw new Error('API ตอบกลับไม่ใช่ JSON: ' + text.slice(0, 200)); }
       return json;
     }
 
     let currentType = ''; 
     let barChart = null;
     let lineChart = null;
+    let donutChart = null; 
 
     const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let __loadingCount = 0;
+
+    // --- TARGET SETTINGS LOGIC ---
+    let targetNine = 0;
+    let targetBow = 0;
+
+    function loadTargets() {
+      targetNine = parseFloat(localStorage.getItem('myPiggy_targetNine')) || 0;
+      targetBow = parseFloat(localStorage.getItem('myPiggy_targetBow')) || 0;
+    }
+
+    function openTargetModal() {
+      loadTargets();
+      document.getElementById('targetNineInput').value = targetNine || '';
+      document.getElementById('targetBowInput').value = targetBow || '';
+      
+      const modal = document.getElementById('targetModal');
+      const content = document.getElementById('targetModalContent');
+      
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    function closeTargetModal() {
+      const modal = document.getElementById('targetModal');
+      const content = document.getElementById('targetModalContent');
+      
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 200);
+    }
+
+    function saveTargets() {
+      const n = parseFloat(document.getElementById('targetNineInput').value) || 0;
+      const b = parseFloat(document.getElementById('targetBowInput').value) || 0;
+      
+      localStorage.setItem('myPiggy_targetNine', n);
+      localStorage.setItem('myPiggy_targetBow', b);
+      
+      targetNine = n;
+      targetBow = b;
+      
+      closeTargetModal();
+      if(document.getElementById('tab-dashboard').classList.contains('hidden') === false) {
+        refreshDashboard();
+      }
+    }
 
     window.onload = () => {
       bindGlobalRefresh();
@@ -450,28 +479,24 @@
       initYearSelector('histYear');
       bindDashboardControls();
       bindHistoryControls();
+      
+      loadTargets();
 
       refreshDashboard();
-
       resetTypeSelection();
       resetUserSelection();
-
       switchTab('input');
     };
 
-    // ---------- LOADING (Lock Body Scroll) ----------
     function showLoading(title, sub) {
       __loadingCount++;
       const o = document.getElementById('loadingOverlay');
       const t = document.getElementById('loadingTitle');
       const s = document.getElementById('loadingSub');
-      
       if (t) t.textContent = title || 'Loading…';
       if (s) s.textContent = sub || 'Please wait';
-      
       if (o) {
         o.classList.remove('hidden');
-        // Lock scroll on body
         document.body.style.overflow = 'hidden';
       }
     }
@@ -482,12 +507,10 @@
       const o = document.getElementById('loadingOverlay');
       if (o) {
         o.classList.add('hidden');
-        // Unlock scroll on body
         document.body.style.overflow = '';
       }
     }
 
-    // ---------- UTILS ----------
     function ymdLocal(d) {
       const yyyy = d.getFullYear();
       const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -503,12 +526,10 @@
     function initYearSelector(selectId){
       const sel = document.getElementById(selectId);
       if (!sel) return;
-
       const now = new Date();
       const currentYear = now.getFullYear();
       const start = currentYear - 5;
       const end = currentYear + 1;
-
       sel.innerHTML = '';
       for (let y = end; y >= start; y--) {
         const opt = document.createElement('option');
@@ -523,7 +544,6 @@
       document.getElementById('btnQuickRefresh').addEventListener('click', () => refreshDashboard());
     }
 
-    // ---------- TABS ----------
     let __activeTab = 'input';
     let __historyCache = [];
 
@@ -535,11 +555,9 @@
 
     function switchTab(tab) {
       __activeTab = tab;
-
       const input = document.getElementById('tab-input');
       const dash = document.getElementById('tab-dashboard');
       const hist = document.getElementById('tab-history');
-
       const bInput = document.getElementById('tabBtnInput');
       const bDash = document.getElementById('tabBtnDash');
       const bHist = document.getElementById('tabBtnHistory');
@@ -556,7 +574,6 @@
       if (tab === 'history') refreshHistory();
     }
 
-    // ---------- DASH CONTROLS ----------
     function bindDashboardControls() {
       document.getElementById('dashUser').addEventListener('change', refreshDashboard);
       document.getElementById('dashYear').addEventListener('change', refreshDashboard);
@@ -567,34 +584,32 @@
       const hu = document.getElementById('histUser');
       const hy = document.getElementById('histYear');
       const br = document.getElementById('btnHistRefresh');
-
       if (hu) hu.addEventListener('change', refreshHistory);
       if (hy) hy.addEventListener('change', refreshHistory);
       if (br) br.addEventListener('click', refreshHistory);
     }
 
-    // ---------- INPUT TYPE ----------
     function resetTypeSelection(){
       currentType = '';
       const exp = document.getElementById('btnExp');
       const inc = document.getElementById('btnInc');
-      exp.className = 'type-neutral py-3 rounded-2xl font-bold transition-all';
-      inc.className = 'type-neutral py-3 rounded-2xl font-bold transition-all';
+      const baseClass = 'type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group';
+      exp.className = baseClass;
+      inc.className = baseClass;
     }
 
     function setType(type) {
       currentType = type;
-
       const exp = document.getElementById('btnExp');
       const inc = document.getElementById('btnInc');
-
-      exp.className = (type === 'Expense')
-        ? 'type-active-exp py-3 rounded-2xl border font-bold transition-all'
-        : 'type-neutral py-3 rounded-2xl font-bold transition-all';
-
-      inc.className = (type === 'Income')
-        ? 'type-active-inc py-3 rounded-2xl border font-bold transition-all'
-        : 'type-neutral py-3 rounded-2xl font-bold transition-all';
+      const baseClass = 'py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group ';
+      if (type === 'Expense') {
+        exp.className = baseClass + 'type-active-exp';
+        inc.className = baseClass + 'type-neutral';
+      } else {
+        exp.className = baseClass + 'type-neutral';
+        inc.className = baseClass + 'type-active-inc';
+      }
     }
 
     function resetUserSelection(){
@@ -602,14 +617,11 @@
       if (u) u.value = '';
     }
 
-    // ---------- DASHBOARD LOAD ----------
     async function refreshDashboard() {
       const user = document.getElementById('dashUser').value;
       const year = Number(document.getElementById('dashYear').value);
       const opts = { user, mode: 'monthly', year };
-
-      showLoading('Loading dashboard…', 'กำลังโหลดข้อมูลและสรุปผล');
-
+      showLoading('Loading...', 'Updating Dashboard');
       try {
         const res = await apiCall('getDashboardDataV2', opts);
         updateDashboardV2(res);
@@ -622,16 +634,24 @@
 
     async function refreshHistory(){
       const user = (document.getElementById('histUser') && document.getElementById('histUser').value) ? document.getElementById('histUser').value : 'All';
-      const year = Number((document.getElementById('histYear') && document.getElementById('histYear').value) ? document.getElementById('histYear').value : new Date().getFullYear());
+      const yearVal = (document.getElementById('histYear') && document.getElementById('histYear').value) ? document.getElementById('histYear').value : new Date().getFullYear();
+      const year = Number(yearVal);
+      
       const opts = { user, mode: 'monthly', year };
-
-      showLoading('Loading history…', 'กำลังโหลดรายการล่าสุด');
-
+      showLoading('History', 'Fetching transactions...');
       try {
         const res = await apiCall('getDashboardDataV2', opts);
         if (!res || res.ok === false) throw new Error((res && res.error) ? res.error : 'โหลดข้อมูลไม่สำเร็จ');
-        __historyCache = res.history || [];
+        
+        let allItems = res.history || [];
+        const filteredItems = allItems.filter(item => {
+          if (!item.date) return false;
+          return String(item.date).includes(String(year));
+        });
+
+        __historyCache = filteredItems;
         renderHistory(__historyCache);
+        
       } catch (err) {
         alert('โหลด History ไม่สำเร็จ: ' + (err && err.message ? err.message : err));
       } finally {
@@ -642,16 +662,12 @@
     async function deleteHistoryItem(row){
       const rowNum = Number(row || 0);
       if (!rowNum) return;
-
       const ok = confirm('ต้องการลบรายการนี้ใช่ไหม?');
       if (!ok) return;
-
-      showLoading('Deleting…', 'กำลังลบรายการ');
-
+      showLoading('Deleting', 'Removing item...');
       try{
         const res = await apiCall('deleteData', { row: rowNum });
         if (res && res.ok === false) throw new Error(res.error || 'ลบไม่สำเร็จ');
-
         await refreshHistory();
         await refreshDashboard();
       }catch(err){
@@ -671,138 +687,266 @@
         alert((res && res.error) ? res.error : 'โหลดข้อมูลไม่สำเร็จ');
         return;
       }
-
       document.getElementById('kpiNet').innerText = money(res.period.net);
       document.getElementById('kpiSavings').innerText = money(res.period.savings);
       document.getElementById('kpiIncome').innerText = money(res.period.income);
       document.getElementById('kpiExpense').innerText = money(res.period.expense);
       document.getElementById('kpiOverallBalance').innerText = money(res.overall.balance);
+      document.getElementById('rangeHint').innerText = `Year: ${res.filter.year}`;
+      
+      const currentUser = document.getElementById('dashUser').value;
+      renderCharts(res.series, currentUser);
+      
+      const yStr = String(res.filter.year);
+      const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
 
-      document.getElementById('rangeHint').innerText = `Jan → Dec (${res.filter.year})`;
+      // Calculate Expense Categories for Donut
+      const donutData = calculateDonutData(yearFilteredHistory);
+      renderDonutChart(donutData);
 
-      renderCharts(res.series);
-
-      __historyCache = res.history || [];
-      if (__activeTab === 'history') renderHistory(__historyCache);
+      if(res.history) {
+         __historyCache = yearFilteredHistory;
+         if (__activeTab === 'history') renderHistory(__historyCache);
+      }
     }
 
-    function renderCharts(series) {
+    // --- FIX: Robust Data Calculation ---
+    function calculateDonutData(historyItems) {
+      const totals = {};
+      historyItems.forEach(item => {
+        // Safe check for type
+        const t = (item.type || '').toString().trim();
+        if (t === 'รายจ่าย') {
+          const cat = (item.category || 'อื่นๆ').toString().trim();
+          
+          // FIX: Handle commas in numbers (e.g. "1,200")
+          let rawAmt = item.amt;
+          if (typeof rawAmt === 'string') {
+            rawAmt = rawAmt.replace(/,/g, '');
+          }
+          const amt = parseFloat(rawAmt) || 0;
+
+          if (!totals[cat]) totals[cat] = 0;
+          totals[cat] += amt;
+        }
+      });
+      return totals;
+    }
+
+    function renderDonutChart(dataObj) {
+        const labels = Object.keys(dataObj);
+        const data = Object.values(dataObj);
+        const total = data.reduce((a, b) => a + b, 0);
+        
+        const ctx = document.getElementById('donutChart');
+        if (donutChart) donutChart.destroy();
+
+        if (data.length === 0) {
+            // Optional: Render empty state or handle no data
+            return;
+        }
+
+        const colors = [
+          '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
+          '#10b981', '#06b6d4', '#3b82f6', '#6366f1',
+          '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'
+        ];
+
+        donutChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 10, bottom: 10 } },
+                plugins: {
+                    legend: { 
+                      position: 'right', 
+                      labels: { 
+                        font: { family: "'Kanit', sans-serif", size: 10 }, 
+                        boxWidth: 10,
+                        padding: 15,
+                        color: '#475569'
+                      } 
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        padding: 12,
+                        titleFont: { family: "'Kanit', sans-serif", size: 13 },
+                        bodyFont: { family: "'Kanit', sans-serif", size: 12 },
+                        cornerRadius: 10,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                let pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                                return ` ${label}: ฿${value.toLocaleString()} (${pct})`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderCharts(series, currentUser) {
       const labels = MONTH_LABELS.slice();
       const income = series.income || [];
       const expense = series.expense || [];
       const savings = series.savings || [];
-
       if (barChart) barChart.destroy();
       if (lineChart) lineChart.destroy();
-
+      
+      const fontConfig = { family: "'Kanit', sans-serif", size: 10 };
       const commonOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: true, labels: { color: 'rgba(15,23,42,.78)' } },
+          legend: { display: false },
           tooltip: {
-            backgroundColor: 'rgba(255,255,255,.98)',
-            titleColor: 'rgba(15,23,42,.92)',
-            bodyColor: 'rgba(15,23,42,.85)',
-            borderColor: 'rgba(15,23,42,.12)',
-            borderWidth: 1
+            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+            padding: 10,
+            titleFont: { family: "'Kanit', sans-serif" },
+            bodyFont: { family: "'Kanit', sans-serif" },
+            cornerRadius: 8,
+            displayColors: false
           }
         },
         scales: {
-          x: { ticks: { color: 'rgba(15,23,42,.65)', maxRotation: 0, autoSkip: false }, grid: { color: 'rgba(15,23,42,.06)' } },
-          y: { beginAtZero: true, ticks: { color: 'rgba(15,23,42,.65)' }, grid: { color: 'rgba(15,23,42,.06)' } }
+          x: { ticks: { font: fontConfig, color: '#94a3b8' }, grid: { display: false } },
+          y: { 
+            beginAtZero: true, 
+            ticks: { font: fontConfig, color: '#94a3b8', maxTicksLimit: 5 }, 
+            grid: { color: '#f1f5f9', drawBorder: false } 
+          }
         }
       };
 
       barChart = new Chart(document.getElementById('barChart'), {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Income', data: income }, { label: 'Expense', data: expense }] },
+        data: { 
+          labels, 
+          datasets: [
+            { label: 'Income', data: income, backgroundColor: '#10b981', borderRadius: 4 }, 
+            { label: 'Expense', data: expense, backgroundColor: '#ef4444', borderRadius: 4 }
+          ] 
+        },
         options: commonOptions
       });
+
+      let targetValue = 0;
+      if (currentUser === 'Nine') {
+        targetValue = targetNine;
+      } else if (currentUser === 'Bow') {
+        targetValue = targetBow;
+      } else {
+        targetValue = targetNine + targetBow;
+      }
+
+      const targetData = labels.map(() => targetValue);
 
       lineChart = new Chart(document.getElementById('lineChart'), {
         type: 'line',
         data: {
           labels,
-          datasets: [{
-            label: 'Savings',
-            data: savings,
-            tension: 0.35,
-            borderColor: '#22c55e',
-            backgroundColor: 'rgba(34,197,94,0.22)',
-            pointBackgroundColor: '#22c55e',
-            pointBorderColor: '#22c55e',
-            pointRadius: 3,
-            fill: true
-          }]
+          datasets: [
+            {
+              label: 'Savings',
+              data: savings,
+              tension: 0.4,
+              borderColor: '#3b82f6',
+              borderWidth: 2,
+              backgroundColor: (ctx) => {
+                const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
+                gradient.addColorStop(0, "rgba(59, 130, 246, 0.2)");
+                gradient.addColorStop(1, "rgba(59, 130, 246, 0)");
+                return gradient;
+              },
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#3b82f6',
+              pointBorderWidth: 2,
+              pointRadius: 3,
+              fill: true
+            },
+            {
+              label: 'Min Goal',
+              data: targetData,
+              borderColor: '#f97316', 
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointRadius: 0,
+              fill: false,
+              tension: 0
+            }
+          ]
         },
         options: commonOptions
       });
     }
 
-    // ============================================
-    // ✅ RENDER HISTORY (SWAPPED DISPLAY)
-    // ============================================
     function renderHistory(items) {
       let html = '';
       items.forEach((item) => {
         const isIncome = item.type === 'รายรับ';
-        const colorClass = isIncome ? 'text-emerald-600' : 'text-rose-600';
-        const bgIndicator = isIncome ? 'bg-emerald-500' : 'bg-rose-500';
+        const amtColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
+        const iconBg = isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600';
         const sign = isIncome ? '+' : '-';
-        const icon = item.user === 'Nine' ? '👦' : (item.user === 'Bow' ? '👧' : '🌍');
+        
+        let catIcon = '<i class="fa-solid fa-tag"></i>';
+        if(item.category.includes('อาหาร')) catIcon = '<i class="fa-solid fa-utensils"></i>';
+        else if(item.category.includes('เดินทาง')) catIcon = '<i class="fa-solid fa-car"></i>';
+        else if(item.category.includes('ที่พัก')) catIcon = '<i class="fa-solid fa-house"></i>';
+        else if(item.category.includes('ช้อปปิ้ง')) catIcon = '<i class="fa-solid fa-bag-shopping"></i>';
+        else if(item.category.includes('ออมเงิน')) catIcon = '<i class="fa-solid fa-piggy-bank"></i>';
+        else if(item.category.includes('รายรับ')) catIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
 
         const rowNum = Number(item.row || 0);
         const canDelete = rowNum > 0;
-        const extraStyle = canDelete ? "" : "opacity:.45;cursor:not-allowed;";
-        const aria = canDelete ? "" : 'aria-disabled="true"';
-        const onClick = canDelete
-          ? ("deleteHistoryItem(" + rowNum + ")")
-          : "alert('ปุ่มลบยังใช้งานไม่ได้ เพราะ API ยังไม่ส่งค่า row กลับมา')";
+        const deleteBtn = canDelete 
+          ? `<button onclick="deleteHistoryItem(${rowNum})" 
+                     class="w-11 h-11 rounded-full bg-rose-50 text-rose-500 shadow-sm flex items-center justify-center transition-all active:scale-90 hover:bg-rose-100 ml-2">
+               <i class="fa-solid fa-trash-can text-lg"></i>
+             </button>`
+          : ``;
 
         html += `
-          <div class="glass relative overflow-hidden p-4 rounded-[1.5rem] flex justify-between items-center transition-all hover:scale-[1.01] active:scale-[0.99]">
-            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${bgIndicator} opacity-80"></div>
-            
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-50 border border-slate-100 shadow-sm text-xl">
-                ${icon}
+          <div class="bg-white p-4 rounded-[1.5rem] flex items-center justify-between shadow-sm border border-slate-50 transition-transform active:scale-[0.99]">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 min-w-[44px] rounded-2xl ${iconBg} flex items-center justify-center text-lg">
+                ${catIcon}
               </div>
-              <div class="space-y-0.5">
-                <p class="font-bold text-slate-800 text-[15px] leading-tight">
-                  ${escapeHtml(item.category || '')}
-                </p>
-                
-                <div class="flex items-center gap-2 text-[11px]">
-                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium truncate max-w-[120px]">
-                    ${escapeHtml(item.desc || '') || 'ไม่มีรายละเอียด'}
-                  </span>
-                  
-                  <span class="text-slate-400"><i class="fa-regular fa-calendar-check mr-1"></i>${escapeHtml(item.date || '')}</span>
+              <div class="overflow-hidden">
+                <p class="font-bold text-slate-700 text-sm leading-tight truncate pr-2">${escapeHtml(item.category)}</p>
+                <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                  <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 font-medium whitespace-nowrap">${item.user}</span>
+                  <span class="truncate">${escapeHtml(item.desc || '-')}</span>
                 </div>
               </div>
             </div>
-
-            <div class="flex flex-col items-end gap-2">
-              <p class="font-black text-lg ${colorClass} tracking-tight">
-                ${sign}${escapeHtml(item.amt || '0')}
-              </p>
-              <button class="flex items-center justify-center w-8 h-8 rounded-full transition-colors hover:bg-rose-50 text-rose-400 hover:text-rose-600 border border-transparent hover:border-rose-100"
-                      style="${extraStyle}"
-                      ${aria}
-                      onclick="${onClick}">
-                <i class="fa-solid fa-trash-can text-[10px]"></i>
-              </button>
+            
+            <div class="flex items-center">
+              <div class="text-right mr-1">
+                <p class="font-bold ${amtColor} text-base whitespace-nowrap">${sign}${escapeHtml(item.amt)}</p>
+                <span class="text-[10px] text-slate-300 block">${item.date}</span>
+              </div>
+              ${deleteBtn}
             </div>
           </div>`;
       });
 
-      document.getElementById('history-list').innerHTML =
-        html || `
-          <div class="text-center py-10">
-            <i class="fa-solid fa-folder-open text-slate-200 text-4xl mb-2"></i>
-            <p class="text-sm muted">ยังไม่มีข้อมูลในระบบ</p>
-          </div>`;
+      document.getElementById('history-list').innerHTML = html || 
+        `<div class="flex flex-col items-center justify-center py-12 text-slate-300">
+           <i class="fa-regular fa-folder-open text-4xl mb-2"></i>
+           <p class="text-xs">ไม่พบรายการในปีที่เลือก</p>
+         </div>`;
     }
 
     function escapeHtml(str) {
@@ -812,28 +956,23 @@
     }
 
     function resetInputs() {
-      const descEl = document.getElementById('desc');
-      const amtEl  = document.getElementById('amt');
-      const cateEl = document.getElementById('cate');
-      if (descEl) descEl.value = '';
-      if (amtEl) amtEl.value = '';
-      if (cateEl) cateEl.value = '';
+      document.getElementById('desc').value = '';
+      document.getElementById('amt').value = '';
+      document.getElementById('cate').value = '';
       resetTypeSelection();
       resetUserSelection();
       initDateDefaultToday();
     }
 
-    // ---------- SAVE ----------
     async function saveData() {
       const btn = document.getElementById('saveBtn');
       const userVal = document.getElementById('userName').value;
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
-
       const cateVal = document.getElementById('cate').value;
       if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
-
       const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
+      
       const payload = {
         entryDate: dateVal,
         userName: userVal,
@@ -842,13 +981,10 @@
         description: (document.getElementById('desc').value || '').trim(),
         amount: document.getElementById('amt').value
       };
-
       if (!payload.amount) return alert('กรอก “จำนวนเงิน” ก่อนจ้า');
 
-      showLoading('Saving…', 'กำลังบันทึกข้อมูล');
+      showLoading('Saving', 'Writing data...');
       btn.disabled = true;
-      btn.innerText = 'กำลังบันทึก...';
-
       try {
         const res = await apiCall('addData', payload);
         updateDashboardV2(res);
@@ -859,7 +995,6 @@
       } finally {
         hideLoading();
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูล';
       }
     }
   </script>
