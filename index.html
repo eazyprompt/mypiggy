@@ -710,7 +710,42 @@
       }
     }
 
-    // --- Robust Data Calculation ---
+    // --- FIX: Trend Line Calculation ---
+    function calculateTrendLine(data) {
+       // Filter only up to the last non-zero or current month to avoid dipping
+       // Simple approach: find last index > 0
+       let lastIndex = data.length - 1;
+       while(lastIndex >= 0 && data[lastIndex] === 0) {
+           lastIndex--;
+       }
+       if (lastIndex < 1) return Array(12).fill(null); // Not enough data
+
+       let x = [];
+       let y = [];
+       for (let i = 0; i <= lastIndex; i++) {
+           x.push(i);
+           y.push(data[i]);
+       }
+
+       let n = x.length;
+       let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+       for (let i = 0; i < n; i++) {
+           sumX += x[i];
+           sumY += y[i];
+           sumXY += x[i] * y[i];
+           sumXX += x[i] * x[i];
+       }
+
+       let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+       let intercept = (sumY - slope * sumX) / n;
+
+       let trendData = [];
+       for (let i = 0; i < 12; i++) {
+           trendData.push(slope * i + intercept);
+       }
+       return trendData;
+    }
+
     function calculateDonutData(historyItems) {
       const totals = {};
       historyItems.forEach(item => {
@@ -840,6 +875,7 @@
         options: commonOptions
       });
 
+      // Target Line
       let targetValue = 0;
       if (currentUser === 'Nine') {
         targetValue = targetNine;
@@ -848,8 +884,10 @@
       } else {
         targetValue = targetNine + targetBow;
       }
-
       const targetData = labels.map(() => targetValue);
+
+      // Calculate Trend Line
+      const trendData = calculateTrendLine(savings);
 
       lineChart = new Chart(document.getElementById('lineChart'), {
         type: 'line',
@@ -883,6 +921,16 @@
               pointRadius: 0,
               fill: false,
               tension: 0
+            },
+            {
+              label: 'Trend',
+              data: trendData,
+              borderColor: '#a855f7', // Purple
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              tension: 0,
+              borderDash: [2, 2] // Fine dots
             }
           ]
         },
