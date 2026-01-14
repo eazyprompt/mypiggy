@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  
+
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -20,19 +20,18 @@
 
   <style>
     :root{
-      /* Unified, modern palette */
-      --primary: #2563eb;         /* blue-600 */
-      --primary-2: #06b6d4;       /* cyan-500 */
+      --primary: #2563eb;
+      --primary-2: #06b6d4;
       --primary-soft: rgba(37, 99, 235, 0.16);
 
-      --success: #10b981;         /* emerald-500 */
-      --danger: #ef4444;          /* rose-500 */
+      --success: #10b981;
+      --danger: #ef4444;
 
-      --text-main: #0f172a;       /* slate-900 */
-      --text-muted: #64748b;      /* slate-500 */
-      --text-faint: #94a3b8;      /* slate-400 */
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-faint: #94a3b8;
 
-      --bg-body: #f6f8fc;         /* slightly cleaner than slate-100 */
+      --bg-body: #f6f8fc;
       --surface: rgba(255,255,255,0.82);
 
       --border: rgba(15, 23, 42, 0.08);
@@ -52,7 +51,6 @@
       font-family: 'Kanit', sans-serif;
       color: var(--text-main);
       background-color: var(--bg-body);
-      /* modern soft gradient + subtle grid */
       background-image:
         radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.10) 0%, transparent 42%),
         radial-gradient(circle at 86% 78%, rgba(6, 182, 212, 0.10) 0%, transparent 44%),
@@ -64,7 +62,6 @@
       overscroll-behavior-y: none;
     }
 
-    /* Modern glass surface */
     .glass {
       background: var(--surface);
       backdrop-filter: blur(18px);
@@ -88,9 +85,7 @@
       transition: all 0.18s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
     }
-    .field:hover {
-      border-color: rgba(37, 99, 235, 0.25);
-    }
+    .field:hover { border-color: rgba(37, 99, 235, 0.25); }
     .field:focus {
       background: #ffffff;
       border-color: rgba(37, 99, 235, 0.65);
@@ -98,7 +93,6 @@
       outline: none;
     }
 
-    /* Dropdown Custom Styles */
     .custom-select-trigger { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
     .custom-options {
@@ -131,15 +125,8 @@
       transition: background 0.15s ease, transform 0.15s ease;
       color: var(--text-main);
     }
-    .custom-option:hover {
-      background: rgba(2, 6, 23, 0.04);
-      transform: translateY(-1px);
-    }
-    .custom-option.selected {
-      background: rgba(37, 99, 235, 0.10);
-      color: var(--primary);
-      font-weight: 600;
-    }
+    .custom-option:hover { background: rgba(2, 6, 23, 0.04); transform: translateY(-1px); }
+    .custom-option.selected { background: rgba(37, 99, 235, 0.10); color: var(--primary); font-weight: 600; }
 
     .option-icon {
       width: 2rem; height: 2rem;
@@ -178,11 +165,9 @@
     .btn-primary-grad:hover { filter: brightness(1.02); box-shadow: 0 18px 34px rgba(37, 99, 235, 0.26); }
     .btn-primary-grad:active { transform: scale(0.985); }
 
-    /* Cleaner card hover */
     .card-hover { transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease; }
     .card-hover:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(2, 6, 23, 0.08); border-color: rgba(37, 99, 235, 0.16); }
 
-    /* Reduce motion */
     @media (prefers-reduced-motion: reduce){
       * { transition: none !important; animation: none !important; }
     }
@@ -240,17 +225,16 @@
           <div class="space-y-1.5 relative">
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">User</label>
 
-            <!-- Native select stays for logic (id=userName) but hidden. NO EMOJI in list -->
             <select id="userName" class="hidden" required>
               <option value="" selected disabled>Select User</option>
               <option value="Nine">Nine</option>
               <option value="Bow">Bow</option>
             </select>
 
-            <!-- Custom UI (options use class="custom-option") -->
             <div id="custom-user-trigger" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-800 custom-select-trigger" onclick="toggleCustomSelect(event,'user')">
               <span class="flex items-center gap-3">
-                <span id="user-trigger-icon" class="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-sm">
+                <!-- ✅ user-trigger-icon สีเดียวกันกับ dashUser-trigger-icon -->
+                <span id="user-trigger-icon" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
                   <i class="fa-solid fa-user text-sm"></i>
                 </span>
                 <span id="user-trigger-text" class="text-slate-400">Select User</span>
@@ -288,7 +272,13 @@
             <option value="🚗 การเดินทาง">การเดินทาง / ค่าน้ำมัน</option>
             <option value="🏠 ที่พัก/ของใช้">ที่พัก / ของใช้ส่วนตัว</option>
             <option value="🛍️ ช้อปปิ้ง">ช้อปปิ้ง / บันเทิง</option>
-            <option value="💰 เงินเก็บ/ออมเงิน">เงินเก็บ / ออมเงิน</option>
+
+            <!-- ✅ 4 หมวดเงินออม -->
+            <option value="💰 เงินออมแบบเงินตราไทย THB">เงินออมแบบเงินตราไทย THB</option>
+            <option value="💵 เงินออมแบบเงินตราต่างประเทศ USD">เงินออมแบบเงินตราต่างประเทศ USD</option>
+            <option value="🛡️ เงินออมแบบประกันสะสมทรัพย์">เงินออมแบบประกันสะสมทรัพย์</option>
+            <option value="🪙 ออมทอง">ออมทอง</option>
+
             <option value="💵 รายรับ/โบนัส">รายรับ / เงินเดือน / โบนัส</option>
             <option value="⚙️ อื่นๆ">อื่นๆ</option>
           </select>
@@ -327,14 +317,12 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <!-- Native select stays for logic (id=dashUser) but hidden. NO EMOJI in list -->
           <select id="dashUser" class="hidden">
             <option value="All" selected>All Users</option>
             <option value="Nine">Nine</option>
             <option value="Bow">Bow</option>
           </select>
 
-          <!-- Custom UI (options use class="custom-option") -->
           <div class="relative">
             <div id="custom-dashUser-trigger" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-700 custom-select-trigger" onclick="toggleCustomSelect(event,'dashUser')">
               <span class="flex items-center gap-2">
@@ -353,7 +341,6 @@
       </div>
 
       <div class="grid grid-cols-1 gap-4">
-        <!-- Add isolation + z-0 to avoid any accidental overlay issues -->
         <div class="rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-xl shadow-blue-500/20 isolation-isolate z-0"
              style="background: linear-gradient(120deg, #2563eb, #06b6d4);">
           <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
@@ -423,6 +410,7 @@
           </div>
         </div>
 
+        <!-- ✅ Expense By Category: เฉพาะรายจ่ายที่ "ไม่ใช่" เงินออม -->
         <div class="border-t border-slate-100/80 pt-5">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-bold text-slate-800 text-sm">Expense By Category</h3>
@@ -432,6 +420,18 @@
             <canvas id="donutChart"></canvas>
           </div>
         </div>
+
+        <!-- ✅ Donut ใหม่: สัดส่วนเงินออมแต่ละชนิด -->
+        <div class="border-t border-slate-100/80 pt-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-800 text-sm">Savings By Type</h3>
+            <span class="text-[10px] text-slate-400">% Share</span>
+          </div>
+          <div class="h-[220px] w-full relative">
+            <canvas id="savingsDonutChart"></canvas>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -446,14 +446,12 @@
         </div>
 
         <div class="flex gap-2">
-          <!-- Native select stays for logic (id=histUser) but hidden. NO EMOJI in list -->
           <select id="histUser" class="hidden">
             <option value="All" selected>All Users</option>
             <option value="Nine">Nine</option>
             <option value="Bow">Bow</option>
           </select>
 
-          <!-- Custom UI (options use class="custom-option") -->
           <div class="relative flex-1">
             <div id="custom-histUser-trigger" class="field w-full rounded-xl px-2 py-2 text-xs font-bold text-slate-700 text-center custom-select-trigger" onclick="toggleCustomSelect(event,'histUser')">
               <span class="flex items-center gap-2">
@@ -474,7 +472,7 @@
       <div id="history-list" class="space-y-3 pb-10 px-1"></div>
     </div>
 
-  </div> 
+  </div>
 
   <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"></div>
@@ -503,7 +501,7 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      
+
       <p class="text-xs text-slate-500 mb-4">ระบุยอดเงินเก็บขั้นต่ำต่อเดือน (Minimum Saving)</p>
 
       <div class="space-y-4">
@@ -533,20 +531,68 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxgkbL2m2MUJK961BET63zNnQO9LnzuGC_kEHSB0wN_DR_bqO_YNLNc8zsb5S_CsCw8Fw/exec';
-    
-    // Config for Custom Dropdown (Matches Sheet Values)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxlu8-6d2n5E2Vl873BqSjeysICNvATNc3OTNmyQnKPIWCckxSWHhVstWkXdgoGTGY-Cw/exec';
+
+    // ✅ Savings categories (ใช้สำหรับกรอง donut)
+    const SAVINGS_CATEGORIES = [
+      "เงินออมแบบเงินตราไทย THB",
+      "เงินออมแบบเงินตราต่างประเทศ USD",
+      "เงินออมแบบประกันสะสมทรัพย์",
+      "ออมทอง"
+    ];
+
+function _expensePinkToRedStops() {
+  return [
+    '#FB7185', // Rose-400: (เริ่มที่นี่ เข้มกว่าเดิมนิดนึง)
+    '#F43F5E', // Rose-500
+    '#E11D48', // Rose-600
+    '#BE123C', // Rose-700
+    '#9F1239', // Rose-800
+    '#881337', // Rose-900
+    '#7F1D1D', // Red-900: (เปลี่ยนโทนเป็นแดงเข้ม)
+    '#450A0A', // Red-950: (แดงเลือดหมู)
+    '#360808', // Deep Red: (กดให้มืดลงอีก)
+    '#200303'  // Almost Black: (เกือบดำ)
+  ];
+}
+
+// ✅ Savings: เริ่มที่ฟ้าสด (Sky-400) ไล่ไปน้ำเงินลึก
+function _savingsLightBlueToDeepStops() {
+  return [
+    '#38BDF8', // Sky-400: (เริ่มที่นี่ ไม่สว่างจ้าจนเกินไป)
+    '#0EA5E9', // Sky-500
+    '#0284C7', // Sky-600
+    '#0369A1', // Sky-700
+    '#1D4ED8', // Blue-700: (ข้ามมาน้ำเงินสด)
+    '#1E40AF', // Blue-800
+    '#1E3A8A', // Blue-900
+    '#172554', // Blue-950: (น้ำเงินกรมท่า)
+    '#0F172A', // Slate-900: (น้ำเงินเทาเข้ม)
+    '#020617'  // Slate-950: (ดำอมน้ำเงินลึกสุด)
+  ];
+}
+
+    function isSavingsCategory(cat) {
+      const s = String(cat || '');
+      return SAVINGS_CATEGORIES.some(k => s.includes(k));
+    }
+
     const CATEGORIES = [
       { val: "🍱 อาหาร/เครื่องดื่ม", label: "อาหาร / เครื่องดื่ม", icon: "fa-utensils" },
       { val: "🚗 การเดินทาง", label: "การเดินทาง / น้ำมัน", icon: "fa-gas-pump" },
       { val: "🏠 ที่พัก/ของใช้", label: "ที่พัก / ของใช้", icon: "fa-house-chimney" },
       { val: "🛍️ ช้อปปิ้ง", label: "ช้อปปิ้ง / บันเทิง", icon: "fa-bag-shopping" },
-      { val: "💰 เงินเก็บ/ออมเงิน", label: "เงินเก็บ / ออมเงิน", icon: "fa-piggy-bank" },
+
+      { val: "💰 เงินออมแบบเงินตราไทย THB",           label: "เงินออมแบบเงินตราไทย THB",           icon: "fa-piggy-bank" },
+      { val: "💵 เงินออมแบบเงินตราต่างประเทศ USD",   label: "เงินออมแบบเงินตราต่างประเทศ USD",   icon: "fa-dollar-sign" },
+      { val: "🛡️ เงินออมแบบประกันสะสมทรัพย์",        label: "เงินออมแบบประกันสะสมทรัพย์",        icon: "fa-shield-halved" },
+      { val: "🪙 ออมทอง",                              label: "ออมทอง",                              icon: "fa-coins" },
+
       { val: "💵 รายรับ/โบนัส", label: "รายรับ / โบนัส", icon: "fa-money-bill-wave" },
       { val: "⚙️ อื่นๆ", label: "อื่นๆ", icon: "fa-layer-group" }
     ];
 
-    // NO EMOJI: User lists for userName, dashUser, histUser
+    // NO EMOJI: User lists
     const USER_LIST = [
       { val: "Nine", label: "Nine", icon: "fa-user" },
       { val: "Bow",  label: "Bow",  icon: "fa-user" }
@@ -575,10 +621,11 @@
       return json;
     }
 
-    let currentType = ''; 
+    let currentType = '';
     let barChart = null;
     let lineChart = null;
     let donutChart = null;
+    let savingsDonutChart = null;
 
     const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let __loadingCount = 0;
@@ -589,13 +636,13 @@
 
     function loadTargets() {
       targetNine = parseFloat(localStorage.getItem('myPiggy_targetNine')) || 0;
-      targetBow = parseFloat(localStorage.getItem('myPiggy_targetBow')) || 0;
+      targetBow  = parseFloat(localStorage.getItem('myPiggy_targetBow'))  || 0;
     }
 
     function openTargetModal() {
       loadTargets();
       document.getElementById('targetNineInput').value = targetNine || '';
-      document.getElementById('targetBowInput').value = targetBow || '';
+      document.getElementById('targetBowInput').value  = targetBow  || '';
       const modal = document.getElementById('targetModal');
       const content = document.getElementById('targetModalContent');
       modal.classList.remove('hidden');
@@ -615,15 +662,13 @@
 
     function saveTargets() {
       const n = parseFloat(document.getElementById('targetNineInput').value) || 0;
-      const b = parseFloat(document.getElementById('targetBowInput').value) || 0;
+      const b = parseFloat(document.getElementById('targetBowInput').value)  || 0;
       localStorage.setItem('myPiggy_targetNine', n);
       localStorage.setItem('myPiggy_targetBow', b);
       targetNine = n;
-      targetBow = b;
+      targetBow  = b;
       closeTargetModal();
-      if(document.getElementById('tab-dashboard').classList.contains('hidden') === false) {
-        refreshDashboard();
-      }
+      if (!document.getElementById('tab-dashboard').classList.contains('hidden')) refreshDashboard();
     }
 
     // ===========================================
@@ -636,8 +681,8 @@
       initYearSelector('histYear');
       bindDashboardControls();
       bindHistoryControls();
-      initCustomDropdown();       // Category dropdown (existing)
-      initUserSelectDropdowns();  // NEW: userName/dashUser/histUser (custom-option list; no emoji)
+      initCustomDropdown();
+      initUserSelectDropdowns();
       loadTargets();
 
       refreshDashboard();
@@ -647,7 +692,7 @@
     };
 
     // ===========================================
-    // CATEGORY DROPDOWN (original)
+    // CATEGORY DROPDOWN
     // ===========================================
     function initCustomDropdown() {
       const container = document.getElementById('custom-cate-options');
@@ -666,7 +711,7 @@
 
     function toggleCustomDropdown(e) {
       e.stopPropagation();
-      closeAllCustomSelects(); // close others (user/dash/hist)
+      closeAllCustomSelects();
       const opts = document.getElementById('custom-cate-options');
       const arrow = document.getElementById('trigger-arrow');
       opts.classList.toggle('open');
@@ -695,10 +740,7 @@
     }
 
     // ===========================================
-    // NEW: USER/DASH/HIST CUSTOM SELECTS
-    // - Native selects keep IDs + values => NO FUNCTION CHANGE
-    // - Custom option items use class="custom-option"
-    // - No emoji in the list
+    // USER/DASH/HIST CUSTOM SELECTS
     // ===========================================
     const __customSelectRegistry = {
       user: {
@@ -738,7 +780,7 @@
 
     function initUserSelectDropdowns(){
       Object.keys(__customSelectRegistry).forEach(key => buildCustomSelect(key));
-      // click outside closes all dropdowns (including category)
+
       document.addEventListener('click', (e) => {
         const cateTrigger = document.getElementById('custom-cate-trigger');
         const cateOptions = document.getElementById('custom-cate-options');
@@ -747,11 +789,9 @@
           const a = document.getElementById('trigger-arrow');
           if (a) a.style.transform = 'rotate(0deg)';
         }
-        // user/dash/hist
         closeAllCustomSelects();
       });
 
-      // keep UI synced when native select changes (e.g. code resets value)
       ['user','dashUser','histUser'].forEach(key=>{
         const cfg = __customSelectRegistry[key];
         const sel = document.getElementById(cfg.selectId);
@@ -771,7 +811,7 @@
       optionsBox.innerHTML = '';
       cfg.items.forEach(it=>{
         const div = document.createElement('div');
-        div.className = 'custom-option'; // REQUIRED
+        div.className = 'custom-option';
         div.onclick = (ev) => {
           ev.stopPropagation();
           sel.value = it.val;
@@ -790,14 +830,12 @@
 
     function toggleCustomSelect(e, key){
       e.stopPropagation();
-      // close category dropdown first
       const cateOptions = document.getElementById('custom-cate-options');
       if (cateOptions) {
         cateOptions.classList.remove('open');
         const a = document.getElementById('trigger-arrow');
         if (a) a.style.transform = 'rotate(0deg)';
       }
-      // close other custom selects
       Object.keys(__customSelectRegistry).forEach(k => { if(k !== key) closeCustomSelect(k); });
 
       const cfg = __customSelectRegistry[key];
@@ -832,7 +870,6 @@
       const val = sel.value || '';
       const found = cfg.items.find(x => x.val === val);
 
-      // update selected state highlight
       if(optionsBox){
         const nodes = optionsBox.querySelectorAll('.custom-option');
         nodes.forEach((n) => n.classList.remove('selected'));
@@ -843,24 +880,19 @@
       }
 
       if(!val || !found){
-        // placeholder
         iconEl.innerHTML = `<i class="fa-solid ${cfg.placeholderIcon} text-sm"></i>`;
-
-        // ONLY for user dropdown: keep it colorful even when not selected
-        if (key === 'user') {
-          iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-sm";
-        } else {
-          iconEl.className = "w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200";
-        }
-
+        iconEl.className = (key === 'dashUser' || key === 'histUser')
+          ? "w-7 h-7 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200"
+          : "w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200";
         textEl.textContent = cfg.placeholder;
         textEl.className = "text-slate-400";
         return;
       }
 
-      // selected
       iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
-      iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
+      iconEl.className = (key === 'dashUser' || key === 'histUser')
+        ? "w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100"
+        : "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
       textEl.textContent = found.label;
       textEl.className = "text-slate-900 font-bold";
     }
@@ -1017,7 +1049,7 @@
       try {
         const res = await apiCall('getDashboardDataV2', opts);
         if (!res || res.ok === false) throw new Error((res && res.error) ? res.error : 'โหลดข้อมูลไม่สำเร็จ');
-        
+
         let allItems = res.history || [];
         const filteredItems = allItems.filter(item => {
           if (!item.date) return false;
@@ -1066,14 +1098,20 @@
       document.getElementById('kpiExpense').innerText = money(res.period.expense);
       document.getElementById('kpiOverallBalance').innerText = money(res.overall.balance);
       document.getElementById('rangeHint').innerText = `Year: ${res.filter.year}`;
-      
+
       const currentUser = document.getElementById('dashUser').value;
       renderCharts(res.series, currentUser);
-      
+
       const yStr = String(res.filter.year);
       const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
-      const donutData = calculateDonutData(yearFilteredHistory);
+
+      // ✅ Donut 1: รายจ่ายที่ไม่ใช่เงินออม
+      const donutData = calculateExpenseDonutData(yearFilteredHistory);
       renderDonutChart(donutData);
+
+      // ✅ Donut 2: สัดส่วนเงินออมแต่ละชนิด
+      const savingsDonutData = calculateSavingsDonutData(yearFilteredHistory);
+      renderSavingsDonutChart(savingsDonutData);
 
       if(res.history) {
         __historyCache = yearFilteredHistory;
@@ -1102,92 +1140,80 @@
       return trendData;
     }
 
-    function calculateDonutData(historyItems) {
+    // ✅ Donut สำหรับ "รายจ่าย" ที่ไม่ใช่เงินออม
+    function calculateExpenseDonutData(historyItems) {
       const totals = {};
       historyItems.forEach(item => {
         const t = (item.type || '').toString().trim();
-        if (t === 'รายจ่าย') {
-          const cat = (item.category || 'อื่นๆ').toString().trim();
-          let rawAmt = item.amt;
-          if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
-          const amt = parseFloat(rawAmt) || 0;
-          if (!totals[cat]) totals[cat] = 0;
-          totals[cat] += amt;
-        }
+        if (t !== 'รายจ่าย') return;
+
+        const cat = (item.category || 'อื่นๆ').toString().trim();
+        if (isSavingsCategory(cat)) return; // ตัดเงินออมออก
+
+        let rawAmt = item.amt;
+        if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
+        const amt = parseFloat(rawAmt) || 0;
+        if (!totals[cat]) totals[cat] = 0;
+        totals[cat] += amt;
       });
       return totals;
     }
 
-    // --- Chart Rendering (Chart.js) ---
-    function renderDonutChart(dataObj) {
-      const labels = Object.keys(dataObj);
-      const data = Object.values(dataObj);
-      const total = data.reduce((a, b) => a + b, 0);
-      
-      const ctx = document.getElementById('donutChart');
-      if (donutChart) donutChart.destroy();
+    // ✅ Donut สำหรับ "เงินออม" แยกตามชนิด (รวมทุก type ที่เลือกหมวดเงินออม)
+    function calculateSavingsDonutData(historyItems) {
+      const totals = {};
+      historyItems.forEach(item => {
+        const cat = (item.category || '').toString().trim();
+        if (!isSavingsCategory(cat)) return;
 
-      if (data.length === 0) return;
-
-      const colors = [
-        '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
-        '#10b981', '#06b6d4', '#3b82f6', '#6366f1',
-        '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'
-      ];
-
-      donutChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: data,
-            backgroundColor: colors,
-            borderWidth: 0,
-            hoverOffset: 10
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: { padding: { top: 10, bottom: 10 } },
-          plugins: {
-            legend: { 
-              position: 'right', 
-              labels: { 
-                font: { family: "'Kanit', sans-serif", size: 10 }, 
-                boxWidth: 10,
-                padding: 15,
-                color: '#475569'
-              } 
-            },
-            tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.92)',
-              padding: 12,
-              titleFont: { family: "'Kanit', sans-serif", size: 13 },
-              bodyFont: { family: "'Kanit', sans-serif", size: 12 },
-              cornerRadius: 10,
-              callbacks: {
-                label: function(context) {
-                  let label = context.label || '';
-                  let value = context.raw || 0;
-                  let pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
-                  return ` ${label}: ฿${value.toLocaleString()} (${pct})`;
-                }
-              }
-            }
-          }
-        }
+        let rawAmt = item.amt;
+        if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
+        const amt = Math.abs(parseFloat(rawAmt) || 0);
+        if (!totals[cat]) totals[cat] = 0;
+        totals[cat] += amt;
       });
+      return totals;
     }
 
+    // ===========================================
+    // BLUE GRADIENT THEME (Charts)
+    // ===========================================
+    function _blueStops() {
+      return [
+        '#0b3b9e', '#0d4ac2', '#0f5fe0', '#1673ff',
+        '#1b86ff', '#2a9cff', '#34b3ff', '#4cc8ff',
+        '#67d9ff', '#86e6ff', '#a5f0ff', '#c3f7ff'
+      ];
+    }
+
+    function _makeLinearBlue(ctx, area, a1 = 0.95, a2 = 0.25, dir = 'v') {
+      const g = (dir === 'h')
+        ? ctx.createLinearGradient(area.left, 0, area.right, 0)
+        : ctx.createLinearGradient(0, area.top, 0, area.bottom);
+
+      g.addColorStop(0, `rgba(37, 99, 235, ${a1})`);
+      g.addColorStop(0.55, `rgba(29, 78, 216, ${(a1 + a2) / 2})`);
+      g.addColorStop(1, `rgba(14, 165, 233, ${a2})`);
+      return g;
+    }
+
+    function _makeLinearBlueSoft(ctx, area, a1 = 0.35, a2 = 0.02) {
+      const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
+      g.addColorStop(0, `rgba(37, 99, 235, ${a1})`);
+      g.addColorStop(1, `rgba(37, 99, 235, ${a2})`);
+      return g;
+    }
+
+    // --- Chart Rendering (Chart.js) ---
     function renderCharts(series, currentUser) {
       const labels = MONTH_LABELS.slice();
       const income = series.income || [];
       const expense = series.expense || [];
       const savings = series.savings || [];
+
       if (barChart) barChart.destroy();
       if (lineChart) lineChart.destroy();
-      
+
       const fontConfig = { family: "'Kanit', sans-serif", size: 10 };
       const commonOptions = {
         responsive: true,
@@ -1205,22 +1231,39 @@
         },
         scales: {
           x: { ticks: { font: fontConfig, color: '#94a3b8' }, grid: { display: false } },
-          y: { 
-            beginAtZero: true, 
-            ticks: { font: fontConfig, color: '#94a3b8', maxTicksLimit: 5 }, 
-            grid: { color: '#f1f5f9', drawBorder: false } 
+          y: {
+            beginAtZero: true,
+            ticks: { font: fontConfig, color: '#94a3b8', maxTicksLimit: 5 },
+            grid: { color: '#f1f5f9', drawBorder: false }
           }
         }
       };
 
+      const barIncomeBg = (context) => {
+        const chart = context.chart;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return 'rgba(37, 99, 235, 0.85)';
+        return _makeLinearBlue(ctx, chartArea, 0.95, 0.25, 'v');
+      };
+
+      const barExpenseBg = (context) => {
+        const chart = context.chart;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return 'rgba(14, 165, 233, 0.70)';
+        const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+        g.addColorStop(0, 'rgba(14, 165, 233, 0.85)');
+        g.addColorStop(1, 'rgba(14, 165, 233, 0.25)');
+        return g;
+      };
+
       barChart = new Chart(document.getElementById('barChart'), {
         type: 'bar',
-        data: { 
-          labels, 
+        data: {
+          labels,
           datasets: [
-            { label: 'Income', data: income, backgroundColor: '#10b981', borderRadius: 6 }, 
-            { label: 'Expense', data: expense, backgroundColor: '#ef4444', borderRadius: 6 }
-          ] 
+            { label: 'Income', data: income, backgroundColor: barIncomeBg, borderRadius: 6, borderWidth: 0 },
+            { label: 'Expense', data: expense, backgroundColor: barExpenseBg, borderRadius: 6, borderWidth: 0 }
+          ]
         },
         options: commonOptions
       });
@@ -1229,13 +1272,13 @@
       if (currentUser === 'Nine') targetValue = targetNine;
       else if (currentUser === 'Bow') targetValue = targetBow;
       else targetValue = targetNine + targetBow;
-      
+
       const targetData = labels.map(() => targetValue);
       const trendData = calculateTrendLine(savings);
 
       let lastSaveIndex = savings.length - 1;
-      while(lastSaveIndex >= 0 && savings[lastSaveIndex] === 0) lastSaveIndex--;
-      
+      while (lastSaveIndex >= 0 && savings[lastSaveIndex] === 0) lastSaveIndex--;
+
       const emojiEl = document.getElementById('trendEmoji');
       if (targetValue > 0 && lastSaveIndex >= 0) {
         const currentSaving = savings[lastSaveIndex];
@@ -1248,26 +1291,50 @@
         emojiEl.innerHTML = '';
       }
 
+      const savingsFill = (context) => {
+        const chart = context.chart;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return 'rgba(37, 99, 235, 0.15)';
+        return _makeLinearBlueSoft(ctx, chartArea, 0.25, 0.02);
+      };
+
       lineChart = new Chart(document.getElementById('lineChart'), {
         type: 'line',
         data: {
           labels,
           datasets: [
             {
-              label: 'Savings', data: savings, tension: 0.4, borderColor: '#2563eb', borderWidth: 2,
-              backgroundColor: (ctx) => {
-                const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
-                gradient.addColorStop(0, "rgba(37, 99, 235, 0.22)");
-                gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
-                return gradient;
-              },
-              pointBackgroundColor: '#ffffff', pointBorderColor: '#2563eb', pointBorderWidth: 2, pointRadius: 3, fill: true
+              label: 'Savings',
+              data: savings,
+              tension: 0.4,
+              borderColor: 'rgba(37, 99, 235, 0.95)',
+              borderWidth: 2,
+              backgroundColor: savingsFill,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: 'rgba(37, 99, 235, 0.95)',
+              pointBorderWidth: 2,
+              pointRadius: 3,
+              fill: true
             },
             {
-              label: 'Min Goal', data: targetData, borderColor: '#f97316', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false, tension: 0
+              label: 'Min Goal',
+              data: targetData,
+              borderColor: 'rgba(59, 130, 246, 0.70)',
+              borderWidth: 2,
+              borderDash: [6, 6],
+              pointRadius: 0,
+              fill: false,
+              tension: 0
             },
             {
-              label: 'Trend', data: trendData, borderColor: '#a855f7', borderWidth: 2, pointRadius: 0, fill: false, tension: 0, borderDash: [2, 2]
+              label: 'Trend',
+              data: trendData,
+              borderColor: 'rgba(14, 165, 233, 0.70)',
+              borderWidth: 2,
+              borderDash: [2, 4],
+              pointRadius: 0,
+              fill: false,
+              tension: 0
             }
           ]
         },
@@ -1275,7 +1342,121 @@
       });
     }
 
-    function renderHistory(items) {
+function renderDonutChart(dataObj) {
+    const labels = Object.keys(dataObj);
+    const data = Object.values(dataObj);
+    const total = data.reduce((a, b) => a + b, 0);
+
+    const canvas = document.getElementById('donutChart');
+    if (donutChart) donutChart.destroy();
+    if (!canvas || data.length === 0) return;
+
+    const colors = _expensePinkToRedStops();
+
+    donutChart = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 10, bottom: 10 } },
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: { family: "'Kanit', sans-serif", size: 10 },
+              boxWidth: 10,
+              padding: 15,
+              color: '#475569'
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            padding: 12,
+            titleFont: { family: "'Kanit', sans-serif", size: 13 },
+            bodyFont: { family: "'Kanit', sans-serif", size: 12 },
+            cornerRadius: 10,
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                return ` ${label}: ฿${Number(value).toLocaleString()} (${pct})`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ✅ Replace เดิม: Savings By Type donut (ฟ้าอ่อน -> ฟ้าเข้ม)
+  function renderSavingsDonutChart(dataObj) {
+    const labels = Object.keys(dataObj);
+    const data = Object.values(dataObj);
+    const total = data.reduce((a, b) => a + b, 0);
+
+    const canvas = document.getElementById('savingsDonutChart');
+    if (!canvas) return;
+
+    if (savingsDonutChart) savingsDonutChart.destroy();
+    if (data.length === 0) return;
+
+    const colors = _savingsLightBlueToDeepStops();
+
+    savingsDonutChart = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 10, bottom: 10 } },
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: { family: "'Kanit', sans-serif", size: 10 },
+              boxWidth: 10,
+              padding: 15,
+              color: '#475569'
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            padding: 12,
+            titleFont: { family: "'Kanit', sans-serif", size: 13 },
+            bodyFont: { family: "'Kanit', sans-serif", size: 12 },
+            cornerRadius: 10,
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                return ` ${label}: ฿${Number(value).toLocaleString()} (${pct})`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+        function renderHistory(items) {
       const sortedItems = items.slice().sort((a, b) => Number(b.row) - Number(a.row));
 
       let html = '';
@@ -1284,18 +1465,22 @@
         const amtColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
         const iconBg = isIncome ? 'bg-emerald-100 text-emerald-600 border border-emerald-200/60' : 'bg-rose-100 text-rose-600 border border-rose-200/60';
         const sign = isIncome ? '+' : '-';
-        
+
         let catIcon = '<i class="fa-solid fa-tag"></i>';
-        if(item.category.includes('อาหาร')) catIcon = '<i class="fa-solid fa-utensils"></i>';
-        else if(item.category.includes('เดินทาง')) catIcon = '<i class="fa-solid fa-gas-pump"></i>';
-        else if(item.category.includes('ที่พัก')) catIcon = '<i class="fa-solid fa-house"></i>';
-        else if(item.category.includes('ช้อปปิ้ง')) catIcon = '<i class="fa-solid fa-bag-shopping"></i>';
-        else if(item.category.includes('ออมเงิน')) catIcon = '<i class="fa-solid fa-piggy-bank"></i>';
-        else if(item.category.includes('รายรับ')) catIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
+        const c = String(item.category || '');
+        if(c.includes('อาหาร')) catIcon = '<i class="fa-solid fa-utensils"></i>';
+        else if(c.includes('เดินทาง')) catIcon = '<i class="fa-solid fa-gas-pump"></i>';
+        else if(c.includes('ที่พัก')) catIcon = '<i class="fa-solid fa-house"></i>';
+        else if(c.includes('ช้อปปิ้ง')) catIcon = '<i class="fa-solid fa-bag-shopping"></i>';
+        else if(c.includes('เงินออมแบบเงินตราไทย THB')) catIcon = '<i class="fa-solid fa-piggy-bank"></i>';
+        else if(c.includes('เงินออมแบบเงินตราต่างประเทศ USD')) catIcon = '<i class="fa-solid fa-dollar-sign"></i>';
+        else if(c.includes('ประกันสะสมทรัพย์')) catIcon = '<i class="fa-solid fa-shield-halved"></i>';
+        else if(c.includes('ออมทอง')) catIcon = '<i class="fa-solid fa-coins"></i>';
+        else if(c.includes('รายรับ')) catIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
 
         const rowNum = Number(item.row || 0);
         const canDelete = rowNum > 0;
-        const deleteBtn = canDelete 
+        const deleteBtn = canDelete
           ? `<button onclick="deleteHistoryItem(${rowNum})" class="w-11 h-11 rounded-full bg-rose-50 text-rose-500 border border-rose-100 shadow-sm flex items-center justify-center transition-all active:scale-90 hover:bg-rose-100 ml-2"><i class="fa-solid fa-trash-can text-lg"></i></button>` : ``;
 
         html += `
@@ -1322,7 +1507,7 @@
           </div>`;
       });
 
-      document.getElementById('history-list').innerHTML = html || 
+      document.getElementById('history-list').innerHTML = html ||
         `<div class="flex flex-col items-center justify-center py-12 text-slate-300">
            <i class="fa-regular fa-folder-open text-4xl mb-2"></i>
            <p class="text-xs">ไม่พบรายการในปีที่เลือก</p>
@@ -1350,7 +1535,7 @@
       const cateVal = document.getElementById('cate').value;
       if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
       const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
-      
+
       const payload = {
         entryDate: dateVal,
         userName: userVal,
