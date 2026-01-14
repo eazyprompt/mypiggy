@@ -19,106 +19,180 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    /* --- Modern Variables --- */
     :root{
-      --primary: #3b82f6;
-      --primary-soft: #dbeafe;
-      --success: #10b981;
-      --danger: #ef4444;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --bg-body: #f1f5f9;
+      /* Unified, modern palette */
+      --primary: #2563eb;         /* blue-600 */
+      --primary-2: #06b6d4;       /* cyan-500 */
+      --primary-soft: rgba(37, 99, 235, 0.16);
+
+      --success: #10b981;         /* emerald-500 */
+      --danger: #ef4444;          /* rose-500 */
+
+      --text-main: #0f172a;       /* slate-900 */
+      --text-muted: #64748b;      /* slate-500 */
+      --text-faint: #94a3b8;      /* slate-400 */
+
+      --bg-body: #f6f8fc;         /* slightly cleaner than slate-100 */
+      --surface: rgba(255,255,255,0.82);
+
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 12px 30px rgba(2, 6, 23, 0.08);
+      --shadow-soft: 0 8px 20px rgba(2, 6, 23, 0.06);
+
+      --ring: 0 0 0 4px var(--primary-soft);
+
+      --radius-xl: 2rem;
+      --radius-lg: 1.5rem;
+      --radius-md: 1rem;
     }
 
     * { -webkit-tap-highlight-color: transparent; }
-    
+
     body {
       font-family: 'Kanit', sans-serif;
       color: var(--text-main);
       background-color: var(--bg-body);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+      /* modern soft gradient + subtle grid */
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.10) 0%, transparent 42%),
+        radial-gradient(circle at 86% 78%, rgba(6, 182, 212, 0.10) 0%, transparent 44%),
+        linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+      background-size: auto, auto, 24px 24px, 24px 24px;
+      background-position: center, center, center, center;
       min-height: 100vh;
       overscroll-behavior-y: none;
     }
 
-    /* --- UI Components --- */
+    /* Modern glass surface */
     .glass {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 
-        0 4px 6px -1px rgba(0, 0, 0, 0.02), 
-        0 10px 15px -3px rgba(0, 0, 0, 0.03),
-        inset 0 0 0 1px rgba(255,255,255,0.5);
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+    .glass::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius: inherit;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
     }
 
-    /* Inputs */
     .field {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.35);
       color: var(--text-main);
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+    .field:hover {
+      border-color: rgba(37, 99, 235, 0.25);
     }
     .field:focus {
       background: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-soft);
+      border-color: rgba(37, 99, 235, 0.65);
+      box-shadow: var(--ring);
       outline: none;
     }
 
     /* Dropdown Custom Styles */
     .custom-select-trigger { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+
     .custom-options {
-      position: absolute; top: 105%; left: 0; right: 0;
-      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
-      border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      z-index: 50; opacity: 0; visibility: hidden;
-      transform: translateY(-10px); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      max-height: 300px; overflow-y: auto; padding: 0.5rem;
+      position: absolute; top: 108%; left: 0; right: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(15, 23, 42, 0.10);
+      box-shadow: var(--shadow);
+      z-index: 999;
+      opacity: 0; visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.6) transparent;
     }
     .custom-options.open { opacity: 1; visibility: visible; transform: translateY(0); }
+
     .custom-option {
-      padding: 0.75rem 1rem; border-radius: 1rem; cursor: pointer;
-      display: flex; align-items: center; gap: 0.75rem; transition: background 0.2s; color: var(--text-main);
+      padding: 0.75rem 0.9rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: background 0.15s ease, transform 0.15s ease;
+      color: var(--text-main);
     }
-    .custom-option:hover { background: #f1f5f9; }
-    .custom-option.selected { background: #eff6ff; color: var(--primary); font-weight: 500; }
+    .custom-option:hover {
+      background: rgba(2, 6, 23, 0.04);
+      transform: translateY(-1px);
+    }
+    .custom-option.selected {
+      background: rgba(37, 99, 235, 0.10);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
     .option-icon {
-      width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;
-      border-radius: 0.75rem; background: #f8fafc; color: #94a3b8; transition: all 0.2s;
+      width: 2rem; height: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 0.75rem;
+      background: rgba(148, 163, 184, 0.14);
+      color: rgba(100, 116, 139, 0.9);
+      transition: all 0.15s ease;
+      border: 1px solid rgba(15, 23, 42, 0.06);
     }
-    .custom-option.selected .option-icon { background: #dbeafe; color: var(--primary); }
+    .custom-option.selected .option-icon {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--primary);
+      border-color: rgba(37, 99, 235, 0.18);
+    }
 
-    /* State Classes */
-    .type-neutral { background: #f1f5f9; color: #64748b; border: 1px solid transparent; }
-    .type-active-exp { background: #fee2e2 !important; color: #dc2626 !important; border: 1px solid #fecaca !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
-    .type-active-inc { background: #d1fae5 !important; color: #059669 !important; border: 1px solid #a7f3d0 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+    .type-neutral { background: rgba(2, 6, 23, 0.04); color: var(--text-muted); border: 1px solid transparent; }
+    .type-active-exp { background: rgba(239, 68, 68, 0.12) !important; color: #dc2626 !important; border: 1px solid rgba(239, 68, 68, 0.22) !important; box-shadow: 0 10px 22px rgba(239, 68, 68, 0.12); }
+    .type-active-inc { background: rgba(16, 185, 129, 0.14) !important; color: #059669 !important; border: 1px solid rgba(16, 185, 129, 0.24) !important; box-shadow: 0 10px 22px rgba(16, 185, 129, 0.12); }
 
-    /* Tabs */
-    .tab-active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .tab-inactive { background: transparent; color: #94a3b8; }
+    .tab-active {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(6, 182, 212, 0.10));
+      color: var(--text-main);
+      box-shadow: 0 6px 16px rgba(2, 6, 23, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+    }
+    .tab-inactive { background: transparent; color: rgba(100, 116, 139, 0.85); }
 
-    /* Buttons */
     .btn-primary-grad {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); border: none; transition: all 0.2s;
+      background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 55%, var(--primary-2) 130%);
+      color: white;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+      border: none;
+      transition: transform 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;
     }
-    .btn-primary-grad:active { transform: scale(0.97); }
+    .btn-primary-grad:hover { filter: brightness(1.02); box-shadow: 0 18px 34px rgba(37, 99, 235, 0.26); }
+    .btn-primary-grad:active { transform: scale(0.985); }
+
+    /* Cleaner card hover */
+    .card-hover { transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease; }
+    .card-hover:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(2, 6, 23, 0.08); border-color: rgba(37, 99, 235, 0.16); }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      * { transition: none !important; animation: none !important; }
+    }
 
     @keyframes float {
-      0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); }
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
     }
     .animate-float { animation: float 3s ease-in-out infinite; }
-    
-    /* Animation for Modal */
-    .modal-enter { opacity: 0; transform: scale(0.95); }
-    .modal-enter-active { opacity: 1; transform: scale(1); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-    .modal-exit { opacity: 1; transform: scale(1); }
-    .modal-exit-active { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-in; }
   </style>
 </head>
 
@@ -129,51 +203,62 @@
     <div class="glass rounded-[2rem] p-5 sticky top-2 z-50">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-600/20">
             <i class="fa-solid fa-piggy-bank text-lg"></i>
           </div>
           <div>
-            <h1 class="text-xl font-bold tracking-tight text-slate-800">My Piggy</h1>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900">My Piggy</h1>
             <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Financial Tracker</p>
           </div>
         </div>
 
-        <button id="btnQuickRefresh" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center justify-center">
+        <button id="btnQuickRefresh" class="w-9 h-9 rounded-full bg-white/70 border border-slate-200 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center justify-center shadow-sm">
           <i class="fa-solid fa-arrows-rotate text-sm"></i>
         </button>
       </div>
 
-      <div class="mt-5 bg-slate-100/80 p-1.5 rounded-2xl grid grid-cols-3 gap-1 relative">
-        <button id="tabBtnInput" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-active" onclick="switchTab('input')">
-          Input
-        </button>
-        <button id="tabBtnDash" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('dashboard')">
-          Dashboard
-        </button>
-        <button id="tabBtnHistory" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('history')">
-          History
-        </button>
+      <div class="mt-5 bg-white/60 border border-slate-200/60 p-1.5 rounded-2xl grid grid-cols-3 gap-1 relative">
+        <button id="tabBtnInput" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-active" onclick="switchTab('input')">Input</button>
+        <button id="tabBtnDash" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('dashboard')">Dashboard</button>
+        <button id="tabBtnHistory" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('history')">History</button>
       </div>
     </div>
 
+    <!-- ===================== INPUT TAB ===================== -->
     <div id="tab-input" class="space-y-4">
       <div class="glass rounded-[2.5rem] p-6 pt-8 space-y-6 relative">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1.5">
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Date</label>
             <div class="relative">
-              <input type="date" id="txDate" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-600 appearance-none text-center">
+              <input type="date" id="txDate" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-700 appearance-none text-center">
             </div>
           </div>
-          <div class="space-y-1.5">
+
+          <div class="space-y-1.5 relative">
             <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">User</label>
-            <select id="userName" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-600 text-center" required>
+
+            <!-- Native select stays for logic (id=userName) but hidden. NO EMOJI in list -->
+            <select id="userName" class="hidden" required>
               <option value="" selected disabled>Select User</option>
-              <option value="Nine">👦 Nine</option>
-              <option value="Bow">👧 Bow</option>
+              <option value="Nine">Nine</option>
+              <option value="Bow">Bow</option>
             </select>
+
+            <!-- Custom UI (options use class="custom-option") -->
+            <div id="custom-user-trigger" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-800 custom-select-trigger" onclick="toggleCustomSelect(event,'user')">
+              <span class="flex items-center gap-3">
+                <span id="user-trigger-icon" class="w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-sm">
+                  <i class="fa-solid fa-user text-sm"></i>
+                </span>
+                <span id="user-trigger-text" class="text-slate-400">Select User</span>
+              </span>
+              <i id="user-trigger-arrow" class="fa-solid fa-chevron-down text-slate-300 text-xs transition-transform"></i>
+            </div>
+
+            <div id="custom-user-options" class="custom-options"></div>
           </div>
         </div>
 
@@ -190,8 +275,8 @@
 
         <div class="relative group">
           <div class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-light">฿</div>
-          <input type="number" id="amt" inputmode="decimal" 
-                 class="field w-full p-6 pl-10 rounded-[2rem] text-3xl font-bold text-slate-700 placeholder:text-slate-200 text-center tracking-tight focus:ring-4 focus:ring-blue-100" 
+          <input type="number" id="amt" inputmode="decimal"
+                 class="field w-full p-6 pl-10 rounded-[2rem] text-3xl font-bold text-slate-800 placeholder:text-slate-200 text-center tracking-tight focus:ring-4 focus:ring-blue-100"
                  placeholder="0">
           <p class="text-center text-[10px] text-slate-400 mt-2 font-medium">ระบุจำนวนเงิน</p>
         </div>
@@ -208,10 +293,10 @@
             <option value="⚙️ อื่นๆ">อื่นๆ</option>
           </select>
 
-          <div id="custom-cate-trigger" class="field w-full p-4 rounded-2xl text-slate-700 font-medium custom-select-trigger" onclick="toggleCustomDropdown(event)">
+          <div id="custom-cate-trigger" class="field w-full p-4 rounded-2xl text-slate-800 font-medium custom-select-trigger" onclick="toggleCustomDropdown(event)">
             <span class="flex items-center gap-3">
-              <span id="trigger-icon" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center">
-                <i class="fa-solid fa-folder-open text-sm"></i>
+              <span id="trigger-icon" class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-folder-open text-sm drop-shadow-sm"></i>
               </span>
               <span id="trigger-text" class="text-slate-400">เลือกหมวดหมู่...</span>
             </span>
@@ -221,7 +306,7 @@
           <div id="custom-cate-options" class="custom-options"></div>
 
           <div class="relative mt-3">
-            <input type="text" id="desc" class="field w-full p-4 pl-12 rounded-2xl text-slate-600" placeholder="บันทึกช่วยจำ (ถ้ามี)">
+            <input type="text" id="desc" class="field w-full p-4 pl-12 rounded-2xl text-slate-700" placeholder="บันทึกช่วยจำ (ถ้ามี)">
             <i class="fa-regular fa-comment-dots absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
           </div>
         </div>
@@ -233,64 +318,80 @@
       </div>
     </div>
 
+    <!-- ===================== DASHBOARD TAB ===================== -->
     <div id="tab-dashboard" class="hidden space-y-5">
-      <div class="glass rounded-[2rem] p-5">
+      <div class="glass rounded-[2rem] p-5 relative z-[60] overflow-visible">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-slate-700">Overview</h2>
-          <button id="btnRefresh" class="text-xs font-bold text-blue-500 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">
-            Refresh
-          </button>
+          <h2 class="text-lg font-bold text-slate-800">Overview</h2>
+          <button id="btnRefresh" class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">Refresh</button>
         </div>
+
         <div class="grid grid-cols-2 gap-3">
-          <select id="dashUser" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-600">
-            <option value="All">🌍 All Users</option>
-            <option value="Nine">👦 Nine</option>
-            <option value="Bow">👧 Bow</option>
+          <!-- Native select stays for logic (id=dashUser) but hidden. NO EMOJI in list -->
+          <select id="dashUser" class="hidden">
+            <option value="All" selected>All Users</option>
+            <option value="Nine">Nine</option>
+            <option value="Bow">Bow</option>
           </select>
-          <select id="dashYear" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-600"></select>
+
+          <!-- Custom UI (options use class="custom-option") -->
+          <div class="relative">
+            <div id="custom-dashUser-trigger" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-700 custom-select-trigger" onclick="toggleCustomSelect(event,'dashUser')">
+              <span class="flex items-center gap-2">
+                <span id="dashUser-trigger-icon" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+                  <i class="fa-solid fa-users text-xs"></i>
+                </span>
+                <span id="dashUser-trigger-text" class="text-slate-900 font-bold">All Users</span>
+              </span>
+              <i id="dashUser-trigger-arrow" class="fa-solid fa-chevron-down text-slate-300 text-[10px] transition-transform"></i>
+            </div>
+            <div id="custom-dashUser-options" class="custom-options"></div>
+          </div>
+
+          <select id="dashYear" class="field w-full rounded-xl px-3 py-2 text-xs font-bold text-slate-700"></select>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4">
-        <div class="rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-xl shadow-blue-500/20" 
+        <!-- Add isolation + z-0 to avoid any accidental overlay issues -->
+        <div class="rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-xl shadow-blue-500/20 isolation-isolate z-0"
              style="background: linear-gradient(120deg, #2563eb, #06b6d4);">
           <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-          
           <i class="fa-solid fa-rocket absolute top-4 right-5 text-7xl text-white/10 rotate-45 pointer-events-none"></i>
 
           <p class="text-blue-100 text-xs font-medium uppercase tracking-wide mb-1">Net Balance (Year)</p>
           <h2 id="kpiNet" class="text-4xl font-bold tracking-tight mb-4">฿ 0</h2>
-          <div class="flex items-center gap-4 text-xs font-medium text-blue-50 bg-white/10 p-2 rounded-xl backdrop-blur-sm inline-flex">
+          <div class="flex items-center gap-4 text-xs font-medium text-blue-50 bg-white/10 p-2 rounded-xl backdrop-blur-sm inline-flex border border-white/10">
             <span>Income - Expense</span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-           <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm">
-             <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs mb-2">
-               <i class="fa-solid fa-sack-dollar"></i>
-             </div>
-             <p class="text-[10px] text-slate-400 uppercase font-bold">Savings</p>
-             <h3 id="kpiSavings" class="text-lg font-bold text-emerald-600">฿ 0</h3>
-           </div>
-           
-           <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm">
-             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs mb-2">
-               <i class="fa-solid fa-scale-balanced"></i>
-             </div>
-             <p class="text-[10px] text-slate-400 uppercase font-bold">Total Balance</p>
-             <h3 id="kpiOverallBalance" class="text-lg font-bold text-slate-800">฿ 0</h3>
-           </div>
+          <div class="bg-white/90 backdrop-blur p-4 rounded-[1.5rem] border border-slate-100 shadow-sm card-hover">
+            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs mb-2 border border-emerald-200/60">
+              <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold">Savings</p>
+            <h3 id="kpiSavings" class="text-lg font-bold text-emerald-600">฿ 0</h3>
+          </div>
+
+          <div class="bg-white/90 backdrop-blur p-4 rounded-[1.5rem] border border-slate-100 shadow-sm card-hover">
+            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs mb-2 border border-slate-200/70">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Balance</p>
+            <h3 id="kpiOverallBalance" class="text-lg font-bold text-slate-900">฿ 0</h3>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div class="bg-white/90 backdrop-blur p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between card-hover">
             <p class="text-[10px] text-slate-400 uppercase font-bold">Total Income</p>
-            <p id="kpiIncome" class="text-base font-bold text-emerald-500">฿ 0</p>
+            <p id="kpiIncome" class="text-base font-bold text-emerald-600">฿ 0</p>
           </div>
-          <div class="bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div class="bg-white/90 backdrop-blur p-4 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between card-hover">
             <p class="text-[10px] text-slate-400 uppercase font-bold">Total Expense</p>
-            <p id="kpiExpense" class="text-base font-bold text-rose-500">฿ 0</p>
+            <p id="kpiExpense" class="text-base font-bold text-rose-600">฿ 0</p>
           </div>
         </div>
       </div>
@@ -298,21 +399,21 @@
       <div class="glass rounded-[2.5rem] p-5 space-y-6">
         <div>
           <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-slate-700 text-sm">Monthly Breakdown</h3>
-            <span id="rangeHint" class="text-[10px] text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">-</span>
+            <h3 class="font-bold text-slate-800 text-sm">Monthly Breakdown</h3>
+            <span id="rangeHint" class="text-[10px] text-slate-500 bg-white/70 border border-slate-200 px-2 py-1 rounded-lg">-</span>
           </div>
           <div class="h-[200px] w-full">
             <canvas id="barChart"></canvas>
           </div>
         </div>
 
-        <div class="border-t border-slate-100 pt-5">
+        <div class="border-t border-slate-100/80 pt-5">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
-              <h3 class="font-bold text-slate-700 text-sm">Savings Trend</h3>
+              <h3 class="font-bold text-slate-800 text-sm">Savings Trend</h3>
               <span id="trendEmoji" class="text-base"></span>
             </div>
-            
+
             <button onclick="openTargetModal()" class="flex items-center gap-1.5 bg-orange-50 text-orange-600 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-100 hover:bg-orange-100 transition-colors">
               <i class="fa-solid fa-crosshairs"></i> Set Goal
             </button>
@@ -322,34 +423,51 @@
           </div>
         </div>
 
-        <div class="border-t border-slate-100 pt-5">
-           <div class="flex items-center justify-between mb-3">
-             <h3 class="font-bold text-slate-700 text-sm">Expense By Category</h3>
-             <span class="text-[10px] text-slate-400">% Share</span>
-           </div>
-           <div class="h-[220px] w-full relative">
-             <canvas id="donutChart"></canvas>
-           </div>
+        <div class="border-t border-slate-100/80 pt-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-800 text-sm">Expense By Category</h3>
+            <span class="text-[10px] text-slate-400">% Share</span>
+          </div>
+          <div class="h-[220px] w-full relative">
+            <canvas id="donutChart"></canvas>
+          </div>
         </div>
-
       </div>
     </div>
 
+    <!-- ===================== HISTORY TAB ===================== -->
     <div id="tab-history" class="hidden space-y-5">
       <div class="glass rounded-[2rem] p-5 sticky top-24 z-40">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-lg font-bold text-slate-700">Transactions</h2>
-          <button id="btnHistRefresh" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-500 transition-colors flex items-center justify-center">
+          <h2 class="text-lg font-bold text-slate-800">Transactions</h2>
+          <button id="btnHistRefresh" class="w-9 h-9 rounded-full bg-white/70 border border-slate-200 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors flex items-center justify-center shadow-sm">
             <i class="fa-solid fa-rotate-right text-xs"></i>
           </button>
         </div>
+
         <div class="flex gap-2">
-           <select id="histUser" class="field flex-1 rounded-xl px-2 py-2 text-xs font-bold text-slate-600 text-center">
-              <option value="All">All Users</option>
-              <option value="Nine">Nine</option>
-              <option value="Bow">Bow</option>
-            </select>
-            <select id="histYear" class="field flex-1 rounded-xl px-2 py-2 text-xs font-bold text-slate-600 text-center"></select>
+          <!-- Native select stays for logic (id=histUser) but hidden. NO EMOJI in list -->
+          <select id="histUser" class="hidden">
+            <option value="All" selected>All Users</option>
+            <option value="Nine">Nine</option>
+            <option value="Bow">Bow</option>
+          </select>
+
+          <!-- Custom UI (options use class="custom-option") -->
+          <div class="relative flex-1">
+            <div id="custom-histUser-trigger" class="field w-full rounded-xl px-2 py-2 text-xs font-bold text-slate-700 text-center custom-select-trigger" onclick="toggleCustomSelect(event,'histUser')">
+              <span class="flex items-center gap-2">
+                <span id="histUser-trigger-icon" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+                  <i class="fa-regular fa-user text-xs"></i>
+                </span>
+                <span id="histUser-trigger-text" class="text-slate-900 font-bold">All Users</span>
+              </span>
+              <i id="histUser-trigger-arrow" class="fa-solid fa-chevron-down text-slate-300 text-[10px] transition-transform"></i>
+            </div>
+            <div id="custom-histUser-options" class="custom-options"></div>
+          </div>
+
+          <select id="histYear" class="field flex-1 rounded-xl px-2 py-2 text-xs font-bold text-slate-700 text-center"></select>
         </div>
       </div>
 
@@ -360,28 +478,28 @@
 
   <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"></div>
-    <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl flex flex-col items-center relative z-10 animate-float">
+    <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl flex flex-col items-center relative z-10 animate-float border border-white/60">
       <div class="w-16 h-16 mb-4 relative">
         <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-        <div class="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-        <i class="fa-solid fa-wallet absolute inset-0 m-auto w-fit h-fit text-blue-500 text-xl"></i>
+        <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+        <i class="fa-solid fa-wallet absolute inset-0 m-auto w-fit h-fit text-blue-600 text-xl"></i>
       </div>
-      <h3 id="loadingTitle" class="font-bold text-slate-800 text-lg">Processing</h3>
+      <h3 id="loadingTitle" class="font-bold text-slate-900 text-lg">Processing</h3>
       <p id="loadingSub" class="text-xs text-slate-500 font-medium mt-1">Please wait...</p>
     </div>
   </div>
 
   <div id="targetModal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="closeTargetModal()"></div>
-    <div class="bg-white w-[85%] max-w-sm p-6 rounded-[2rem] shadow-2xl relative z-10 transform transition-all duration-300 scale-95 opacity-0" id="targetModalContent">
+    <div class="bg-white w-[85%] max-w-sm p-6 rounded-[2rem] shadow-2xl relative z-10 transform transition-all duration-300 scale-95 opacity-0 border border-white/70" id="targetModalContent">
       <div class="flex justify-between items-center mb-5">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center border border-orange-200/60">
             <i class="fa-solid fa-bullseye text-sm"></i>
           </div>
-          <h3 class="font-bold text-slate-800 text-lg">Set Goals</h3>
+          <h3 class="font-bold text-slate-900 text-lg">Set Goals</h3>
         </div>
-        <button onclick="closeTargetModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 flex items-center justify-center">
+        <button onclick="closeTargetModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border border-slate-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -390,17 +508,17 @@
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">👧 Bow's Target</label>
+          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">Bow's Target</label>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">฿</span>
-            <input type="number" id="targetBowInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-700" placeholder="0">
+            <input type="number" id="targetBowInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-800" placeholder="0">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">👦 Nine's Target</label>
+          <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">Nine's Target</label>
           <div class="relative">
             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">฿</span>
-            <input type="number" id="targetNineInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-700" placeholder="0">
+            <input type="number" id="targetNineInput" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-800" placeholder="0">
           </div>
         </div>
       </div>
@@ -415,7 +533,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzoOjvgoZh32rbSa9Z18bgzRiUeBAr066-1b3qHfcAK_r3jtu_J3Nq0pyoJAGSKwVIzvA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxgkbL2m2MUJK961BET63zNnQO9LnzuGC_kEHSB0wN_DR_bqO_YNLNc8zsb5S_CsCw8Fw/exec';
     
     // Config for Custom Dropdown (Matches Sheet Values)
     const CATEGORIES = [
@@ -426,6 +544,22 @@
       { val: "💰 เงินเก็บ/ออมเงิน", label: "เงินเก็บ / ออมเงิน", icon: "fa-piggy-bank" },
       { val: "💵 รายรับ/โบนัส", label: "รายรับ / โบนัส", icon: "fa-money-bill-wave" },
       { val: "⚙️ อื่นๆ", label: "อื่นๆ", icon: "fa-layer-group" }
+    ];
+
+    // NO EMOJI: User lists for userName, dashUser, histUser
+    const USER_LIST = [
+      { val: "Nine", label: "Nine", icon: "fa-user" },
+      { val: "Bow",  label: "Bow",  icon: "fa-user" }
+    ];
+    const DASH_USER_LIST = [
+      { val: "All",  label: "All Users", icon: "fa-users" },
+      { val: "Nine", label: "Nine",      icon: "fa-user" },
+      { val: "Bow",  label: "Bow",       icon: "fa-user" }
+    ];
+    const HIST_USER_LIST = [
+      { val: "All",  label: "All Users", icon: "fa-users" },
+      { val: "Nine", label: "Nine",      icon: "fa-user" },
+      { val: "Bow",  label: "Bow",       icon: "fa-user" }
     ];
 
     async function apiCall(action, params) {
@@ -502,8 +636,9 @@
       initYearSelector('histYear');
       bindDashboardControls();
       bindHistoryControls();
-      initCustomDropdown(); // Dropdown Setup
-      loadTargets(); // Load saved targets
+      initCustomDropdown();       // Category dropdown (existing)
+      initUserSelectDropdowns();  // NEW: userName/dashUser/histUser (custom-option list; no emoji)
+      loadTargets();
 
       refreshDashboard();
       resetTypeSelection();
@@ -511,7 +646,9 @@
       switchTab('input');
     };
 
-    // --- Dropdown Logic ---
+    // ===========================================
+    // CATEGORY DROPDOWN (original)
+    // ===========================================
     function initCustomDropdown() {
       const container = document.getElementById('custom-cate-options');
       container.innerHTML = '';
@@ -525,18 +662,11 @@
         `;
         container.appendChild(div);
       });
-      document.addEventListener('click', (e) => {
-        const trigger = document.getElementById('custom-cate-trigger');
-        const options = document.getElementById('custom-cate-options');
-        if (!trigger.contains(e.target) && !options.contains(e.target)) {
-          options.classList.remove('open');
-          document.getElementById('trigger-arrow').style.transform = 'rotate(0deg)';
-        }
-      });
     }
 
     function toggleCustomDropdown(e) {
       e.stopPropagation();
+      closeAllCustomSelects(); // close others (user/dash/hist)
       const opts = document.getElementById('custom-cate-options');
       const arrow = document.getElementById('trigger-arrow');
       opts.classList.toggle('open');
@@ -547,24 +677,197 @@
       document.getElementById('cate').value = value;
       const iconEl = document.getElementById('trigger-icon');
       const textEl = document.getElementById('trigger-text');
-      iconEl.innerHTML = `<i class="fa-solid ${iconClass} text-blue-500"></i>`;
-      iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center";
+      iconEl.innerHTML = `<i class="fa-solid ${iconClass} text-blue-600"></i>`;
+      iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
       textEl.innerText = label;
-      textEl.className = "text-slate-800 font-bold";
-      document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('selected'));
+      textEl.className = "text-slate-900 font-bold";
+      document.querySelectorAll('#custom-cate-options .custom-option').forEach(el => el.classList.remove('selected'));
       document.getElementById('custom-cate-options').classList.remove('open');
       document.getElementById('trigger-arrow').style.transform = 'rotate(0deg)';
     }
 
     function resetCustomDropdown() {
       document.getElementById('cate').value = "";
-      document.getElementById('trigger-icon').innerHTML = `<i class="fa-solid fa-folder-open text-sm"></i>`;
-      document.getElementById('trigger-icon').className = "w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center";
+      document.getElementById('trigger-icon').innerHTML = `<i class="fa-solid fa-folder-open text-sm drop-shadow-sm"></i>`;
+      document.getElementById('trigger-icon').className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
       document.getElementById('trigger-text').innerText = "เลือกหมวดหมู่...";
       document.getElementById('trigger-text').className = "text-slate-400";
     }
 
-    // --- Loading & Utils ---
+    // ===========================================
+    // NEW: USER/DASH/HIST CUSTOM SELECTS
+    // - Native selects keep IDs + values => NO FUNCTION CHANGE
+    // - Custom option items use class="custom-option"
+    // - No emoji in the list
+    // ===========================================
+    const __customSelectRegistry = {
+      user: {
+        selectId: 'userName',
+        triggerId: 'custom-user-trigger',
+        optionsId: 'custom-user-options',
+        iconId: 'user-trigger-icon',
+        textId: 'user-trigger-text',
+        arrowId: 'user-trigger-arrow',
+        items: USER_LIST,
+        placeholder: 'Select User',
+        placeholderIcon: 'fa-user'
+      },
+      dashUser: {
+        selectId: 'dashUser',
+        triggerId: 'custom-dashUser-trigger',
+        optionsId: 'custom-dashUser-options',
+        iconId: 'dashUser-trigger-icon',
+        textId: 'dashUser-trigger-text',
+        arrowId: 'dashUser-trigger-arrow',
+        items: DASH_USER_LIST,
+        placeholder: 'All Users',
+        placeholderIcon: 'fa-users'
+      },
+      histUser: {
+        selectId: 'histUser',
+        triggerId: 'custom-histUser-trigger',
+        optionsId: 'custom-histUser-options',
+        iconId: 'histUser-trigger-icon',
+        textId: 'histUser-trigger-text',
+        arrowId: 'histUser-trigger-arrow',
+        items: HIST_USER_LIST,
+        placeholder: 'All Users',
+        placeholderIcon: 'fa-users'
+      }
+    };
+
+    function initUserSelectDropdowns(){
+      Object.keys(__customSelectRegistry).forEach(key => buildCustomSelect(key));
+      // click outside closes all dropdowns (including category)
+      document.addEventListener('click', (e) => {
+        const cateTrigger = document.getElementById('custom-cate-trigger');
+        const cateOptions = document.getElementById('custom-cate-options');
+        if (cateTrigger && cateOptions && !cateTrigger.contains(e.target) && !cateOptions.contains(e.target)) {
+          cateOptions.classList.remove('open');
+          const a = document.getElementById('trigger-arrow');
+          if (a) a.style.transform = 'rotate(0deg)';
+        }
+        // user/dash/hist
+        closeAllCustomSelects();
+      });
+
+      // keep UI synced when native select changes (e.g. code resets value)
+      ['user','dashUser','histUser'].forEach(key=>{
+        const cfg = __customSelectRegistry[key];
+        const sel = document.getElementById(cfg.selectId);
+        if(sel){
+          sel.addEventListener('change', () => syncCustomSelectUI(key));
+          syncCustomSelectUI(key);
+        }
+      });
+    }
+
+    function buildCustomSelect(key){
+      const cfg = __customSelectRegistry[key];
+      const sel = document.getElementById(cfg.selectId);
+      const optionsBox = document.getElementById(cfg.optionsId);
+      if(!sel || !optionsBox) return;
+
+      optionsBox.innerHTML = '';
+      cfg.items.forEach(it=>{
+        const div = document.createElement('div');
+        div.className = 'custom-option'; // REQUIRED
+        div.onclick = (ev) => {
+          ev.stopPropagation();
+          sel.value = it.val;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          closeCustomSelect(key);
+          syncCustomSelectUI(key);
+        };
+        div.innerHTML = `
+          <div class="option-icon"><i class="fa-solid ${it.icon}"></i></div>
+          <span class="font-medium text-sm">${escapeHtml(it.label)}</span>
+        `;
+        optionsBox.appendChild(div);
+      });
+      syncCustomSelectUI(key);
+    }
+
+    function toggleCustomSelect(e, key){
+      e.stopPropagation();
+      // close category dropdown first
+      const cateOptions = document.getElementById('custom-cate-options');
+      if (cateOptions) {
+        cateOptions.classList.remove('open');
+        const a = document.getElementById('trigger-arrow');
+        if (a) a.style.transform = 'rotate(0deg)';
+      }
+      // close other custom selects
+      Object.keys(__customSelectRegistry).forEach(k => { if(k !== key) closeCustomSelect(k); });
+
+      const cfg = __customSelectRegistry[key];
+      const box = document.getElementById(cfg.optionsId);
+      const arrow = document.getElementById(cfg.arrowId);
+      if(!box || !arrow) return;
+
+      box.classList.toggle('open');
+      arrow.style.transform = box.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function closeCustomSelect(key){
+      const cfg = __customSelectRegistry[key];
+      const box = document.getElementById(cfg.optionsId);
+      const arrow = document.getElementById(cfg.arrowId);
+      if(box) box.classList.remove('open');
+      if(arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+
+    function closeAllCustomSelects(){
+      Object.keys(__customSelectRegistry).forEach(k => closeCustomSelect(k));
+    }
+
+    function syncCustomSelectUI(key){
+      const cfg = __customSelectRegistry[key];
+      const sel = document.getElementById(cfg.selectId);
+      const iconEl = document.getElementById(cfg.iconId);
+      const textEl = document.getElementById(cfg.textId);
+      const optionsBox = document.getElementById(cfg.optionsId);
+      if(!sel || !iconEl || !textEl) return;
+
+      const val = sel.value || '';
+      const found = cfg.items.find(x => x.val === val);
+
+      // update selected state highlight
+      if(optionsBox){
+        const nodes = optionsBox.querySelectorAll('.custom-option');
+        nodes.forEach((n) => n.classList.remove('selected'));
+        if(found){
+          const idx = cfg.items.findIndex(x => x.val === val);
+          if(idx >= 0 && nodes[idx]) nodes[idx].classList.add('selected');
+        }
+      }
+
+      if(!val || !found){
+        // placeholder
+        iconEl.innerHTML = `<i class="fa-solid ${cfg.placeholderIcon} text-sm"></i>`;
+
+        // ONLY for user dropdown: keep it colorful even when not selected
+        if (key === 'user') {
+          iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-sm";
+        } else {
+          iconEl.className = "w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200";
+        }
+
+        textEl.textContent = cfg.placeholder;
+        textEl.className = "text-slate-400";
+        return;
+      }
+
+      // selected
+      iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
+      iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
+      textEl.textContent = found.label;
+      textEl.className = "text-slate-900 font-bold";
+    }
+
+    // ===========================================
+    // Loading & Utils
+    // ===========================================
     function showLoading(title, sub) {
       __loadingCount++;
       const o = document.getElementById('loadingOverlay');
@@ -686,6 +989,7 @@
     function resetUserSelection(){
       const u = document.getElementById('userName');
       if (u) u.value = '';
+      syncCustomSelectUI('user');
     }
 
     // --- Data Fetching ---
@@ -766,37 +1070,36 @@
       const currentUser = document.getElementById('dashUser').value;
       renderCharts(res.series, currentUser);
       
-      // Calculate Donut
       const yStr = String(res.filter.year);
       const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
       const donutData = calculateDonutData(yearFilteredHistory);
       renderDonutChart(donutData);
 
       if(res.history) {
-         __historyCache = yearFilteredHistory;
-         if (__activeTab === 'history') renderHistory(__historyCache);
+        __historyCache = yearFilteredHistory;
+        if (__activeTab === 'history') renderHistory(__historyCache);
       }
     }
 
     // --- Calculation Functions ---
     function calculateTrendLine(data) {
-       let lastIndex = data.length - 1;
-       while(lastIndex >= 0 && data[lastIndex] === 0) lastIndex--;
-       if (lastIndex < 1) return Array(12).fill(null);
+      let lastIndex = data.length - 1;
+      while(lastIndex >= 0 && data[lastIndex] === 0) lastIndex--;
+      if (lastIndex < 1) return Array(12).fill(null);
 
-       let x = [], y = [];
-       for (let i = 0; i <= lastIndex; i++) { x.push(i); y.push(data[i]); }
+      let x = [], y = [];
+      for (let i = 0; i <= lastIndex; i++) { x.push(i); y.push(data[i]); }
 
-       let n = x.length, sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-       for (let i = 0; i < n; i++) {
-           sumX += x[i]; sumY += y[i]; sumXY += x[i]*y[i]; sumXX += x[i]*x[i];
-       }
-       let slope = (n*sumXY - sumX*sumY) / (n*sumXX - sumX*sumX);
-       let intercept = (sumY - slope*sumX) / n;
+      let n = x.length, sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+      for (let i = 0; i < n; i++) {
+        sumX += x[i]; sumY += y[i]; sumXY += x[i]*y[i]; sumXX += x[i]*x[i];
+      }
+      let slope = (n*sumXY - sumX*sumY) / (n*sumXX - sumX*sumX);
+      let intercept = (sumY - slope*sumX) / n;
 
-       let trendData = [];
-       for (let i = 0; i < 12; i++) trendData.push(slope*i + intercept);
-       return trendData;
+      let trendData = [];
+      for (let i = 0; i < 12; i++) trendData.push(slope*i + intercept);
+      return trendData;
     }
 
     function calculateDonutData(historyItems) {
@@ -817,64 +1120,64 @@
 
     // --- Chart Rendering (Chart.js) ---
     function renderDonutChart(dataObj) {
-        const labels = Object.keys(dataObj);
-        const data = Object.values(dataObj);
-        const total = data.reduce((a, b) => a + b, 0);
-        
-        const ctx = document.getElementById('donutChart');
-        if (donutChart) donutChart.destroy();
+      const labels = Object.keys(dataObj);
+      const data = Object.values(dataObj);
+      const total = data.reduce((a, b) => a + b, 0);
+      
+      const ctx = document.getElementById('donutChart');
+      if (donutChart) donutChart.destroy();
 
-        if (data.length === 0) return;
+      if (data.length === 0) return;
 
-        const colors = [
-          '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
-          '#10b981', '#06b6d4', '#3b82f6', '#6366f1',
-          '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'
-        ];
+      const colors = [
+        '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
+        '#10b981', '#06b6d4', '#3b82f6', '#6366f1',
+        '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'
+      ];
 
-        donutChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors,
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
+      donutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 10, bottom: 10 } },
+          plugins: {
+            legend: { 
+              position: 'right', 
+              labels: { 
+                font: { family: "'Kanit', sans-serif", size: 10 }, 
+                boxWidth: 10,
+                padding: 15,
+                color: '#475569'
+              } 
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { top: 10, bottom: 10 } },
-                plugins: {
-                    legend: { 
-                      position: 'right', 
-                      labels: { 
-                        font: { family: "'Kanit', sans-serif", size: 10 }, 
-                        boxWidth: 10,
-                        padding: 15,
-                        color: '#475569'
-                      } 
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                        padding: 12,
-                        titleFont: { family: "'Kanit', sans-serif", size: 13 },
-                        bodyFont: { family: "'Kanit', sans-serif", size: 12 },
-                        cornerRadius: 10,
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                let value = context.raw || 0;
-                                let pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
-                                return ` ${label}: ฿${value.toLocaleString()} (${pct})`;
-                            }
-                        }
-                    }
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.92)',
+              padding: 12,
+              titleFont: { family: "'Kanit', sans-serif", size: 13 },
+              bodyFont: { family: "'Kanit', sans-serif", size: 12 },
+              cornerRadius: 10,
+              callbacks: {
+                label: function(context) {
+                  let label = context.label || '';
+                  let value = context.raw || 0;
+                  let pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                  return ` ${label}: ฿${value.toLocaleString()} (${pct})`;
                 }
+              }
             }
-        });
+          }
+        }
+      });
     }
 
     function renderCharts(series, currentUser) {
@@ -892,7 +1195,7 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
             padding: 10,
             titleFont: { family: "'Kanit', sans-serif" },
             bodyFont: { family: "'Kanit', sans-serif" },
@@ -915,8 +1218,8 @@
         data: { 
           labels, 
           datasets: [
-            { label: 'Income', data: income, backgroundColor: '#10b981', borderRadius: 4 }, 
-            { label: 'Expense', data: expense, backgroundColor: '#ef4444', borderRadius: 4 }
+            { label: 'Income', data: income, backgroundColor: '#10b981', borderRadius: 6 }, 
+            { label: 'Expense', data: expense, backgroundColor: '#ef4444', borderRadius: 6 }
           ] 
         },
         options: commonOptions
@@ -930,22 +1233,19 @@
       const targetData = labels.map(() => targetValue);
       const trendData = calculateTrendLine(savings);
 
-      // --- EMOJI LOGIC (Updated to FontAwesome Minimal Icons) ---
       let lastSaveIndex = savings.length - 1;
       while(lastSaveIndex >= 0 && savings[lastSaveIndex] === 0) lastSaveIndex--;
       
       const emojiEl = document.getElementById('trendEmoji');
       if (targetValue > 0 && lastSaveIndex >= 0) {
-         const currentSaving = savings[lastSaveIndex];
-         if (currentSaving >= targetValue) {
-             // Green Smile
-             emojiEl.innerHTML = '<i class="fa-regular fa-face-smile text-emerald-500 text-lg"></i>';
-         } else {
-             // Red Frown
-             emojiEl.innerHTML = '<i class="fa-regular fa-face-frown text-rose-500 text-lg"></i>';
-         }
+        const currentSaving = savings[lastSaveIndex];
+        if (currentSaving >= targetValue) {
+          emojiEl.innerHTML = '<i class="fa-regular fa-face-smile text-emerald-500 text-lg"></i>';
+        } else {
+          emojiEl.innerHTML = '<i class="fa-regular fa-face-frown text-rose-500 text-lg"></i>';
+        }
       } else {
-         emojiEl.innerHTML = '';
+        emojiEl.innerHTML = '';
       }
 
       lineChart = new Chart(document.getElementById('lineChart'), {
@@ -954,14 +1254,14 @@
           labels,
           datasets: [
             {
-              label: 'Savings', data: savings, tension: 0.4, borderColor: '#3b82f6', borderWidth: 2,
+              label: 'Savings', data: savings, tension: 0.4, borderColor: '#2563eb', borderWidth: 2,
               backgroundColor: (ctx) => {
                 const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
-                gradient.addColorStop(0, "rgba(59, 130, 246, 0.2)");
-                gradient.addColorStop(1, "rgba(59, 130, 246, 0)");
+                gradient.addColorStop(0, "rgba(37, 99, 235, 0.22)");
+                gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
                 return gradient;
               },
-              pointBackgroundColor: '#ffffff', pointBorderColor: '#3b82f6', pointBorderWidth: 2, pointRadius: 3, fill: true
+              pointBackgroundColor: '#ffffff', pointBorderColor: '#2563eb', pointBorderWidth: 2, pointRadius: 3, fill: true
             },
             {
               label: 'Min Goal', data: targetData, borderColor: '#f97316', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false, tension: 0
@@ -976,14 +1276,13 @@
     }
 
     function renderHistory(items) {
-      // Sort Newest First
       const sortedItems = items.slice().sort((a, b) => Number(b.row) - Number(a.row));
 
       let html = '';
       sortedItems.forEach((item) => {
         const isIncome = item.type === 'รายรับ';
         const amtColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
-        const iconBg = isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600';
+        const iconBg = isIncome ? 'bg-emerald-100 text-emerald-600 border border-emerald-200/60' : 'bg-rose-100 text-rose-600 border border-rose-200/60';
         const sign = isIncome ? '+' : '-';
         
         let catIcon = '<i class="fa-solid fa-tag"></i>';
@@ -997,19 +1296,18 @@
         const rowNum = Number(item.row || 0);
         const canDelete = rowNum > 0;
         const deleteBtn = canDelete 
-          ? `<button onclick="deleteHistoryItem(${rowNum})" class="w-11 h-11 rounded-full bg-rose-50 text-rose-500 shadow-sm flex items-center justify-center transition-all active:scale-90 hover:bg-rose-100 ml-2"><i class="fa-solid fa-trash-can text-lg"></i></button>` : ``;
+          ? `<button onclick="deleteHistoryItem(${rowNum})" class="w-11 h-11 rounded-full bg-rose-50 text-rose-500 border border-rose-100 shadow-sm flex items-center justify-center transition-all active:scale-90 hover:bg-rose-100 ml-2"><i class="fa-solid fa-trash-can text-lg"></i></button>` : ``;
 
-        // Text Wrap applied here
         html += `
-          <div class="bg-white p-4 rounded-[1.5rem] flex items-center justify-between shadow-sm border border-slate-50 transition-transform active:scale-[0.99]">
+          <div class="bg-white/92 backdrop-blur p-4 rounded-[1.5rem] flex items-center justify-between shadow-sm border border-slate-100 card-hover">
             <div class="flex items-center gap-3 flex-1 min-w-0">
               <div class="w-11 h-11 min-w-[44px] rounded-2xl ${iconBg} flex items-center justify-center text-lg self-start">
                 ${catIcon}
               </div>
               <div class="overflow-hidden flex-1">
-                <p class="font-bold text-slate-700 text-sm leading-tight truncate pr-2">${escapeHtml(item.category)}</p>
+                <p class="font-bold text-slate-800 text-sm leading-tight truncate pr-2">${escapeHtml(item.category)}</p>
                 <div class="flex items-start gap-2 text-[11px] text-slate-400 mt-1">
-                  <span class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 font-medium whitespace-nowrap h-fit mt-0.5">${item.user}</span>
+                  <span class="bg-white/70 border border-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-semibold whitespace-nowrap h-fit mt-0.5">${escapeHtml(item.user)}</span>
                   <span class="break-words whitespace-normal leading-tight flex-1">${escapeHtml(item.desc || '-')}</span>
                 </div>
               </div>
@@ -1017,7 +1315,7 @@
             <div class="flex items-center pl-2 self-start mt-1">
               <div class="text-right mr-1">
                 <p class="font-bold ${amtColor} text-base whitespace-nowrap">${sign}${escapeHtml(item.amt)}</p>
-                <span class="text-[10px] text-slate-300 block">${item.date}</span>
+                <span class="text-[10px] text-slate-300 block">${escapeHtml(item.date)}</span>
               </div>
               ${deleteBtn}
             </div>
