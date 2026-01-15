@@ -1037,7 +1037,7 @@ function _savingsLightBlueToDeepStops() {
         textId: 'payMethod-trigger-text',
         arrowId: 'payMethod-trigger-arrow',
         items: PAY_METHOD_LIST,
-        placeholder: 'เลือกการใช้จ่าย',
+        placeholder: 'เลือกช่องทางใช้จ่าย',
         placeholderIcon: 'fa-credit-card'
       }
     };
@@ -1144,6 +1144,15 @@ function _savingsLightBlueToDeepStops() {
       }
 
       if(!val || !found){
+        // UI only: keep Payment Method icon in the same orange tone as Category trigger icon
+        if(key === 'payMethod'){
+          iconEl.innerHTML = `<i class="fa-solid ${cfg.placeholderIcon} text-sm drop-shadow-sm"></i>`;
+          iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
+          textEl.textContent = cfg.placeholder;
+          textEl.className = "text-slate-400";
+          return;
+        }
+
         iconEl.innerHTML = `<i class="fa-solid ${cfg.placeholderIcon} text-sm"></i>`;
         iconEl.className = (key === 'dashUser' || key === 'histUser')
           ? "w-7 h-7 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200"
@@ -1153,10 +1162,16 @@ function _savingsLightBlueToDeepStops() {
         return;
       }
 
-      iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
-      iconEl.className = (key === 'dashUser' || key === 'histUser')
-        ? "w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100"
-        : "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
+      // UI only: keep Payment Method icon in the same orange tone as Category trigger icon
+      if(key === 'payMethod'){
+        iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-sm drop-shadow-sm"></i>`;
+        iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
+      } else {
+        iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
+        iconEl.className = (key === 'dashUser' || key === 'histUser')
+          ? "w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100"
+          : "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
+      }
       textEl.textContent = found.label;
       textEl.className = "text-slate-900 font-bold";
     }
@@ -1805,9 +1820,11 @@ function renderDonutChart(dataObj) {
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
-      if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
+    
+  if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
             const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
-      if (!pmVal) return alert('กรุณาเลือกการใช้จ่ายก่อนจ้า');
+
+      if (!pmVal) return alert('กรุณาเลือกช่องทางใช้จ่ายก่อนจ้า');
 const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
 
       const payload = {
