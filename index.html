@@ -432,7 +432,7 @@
             <div id="custom-user-trigger" class="field w-full rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-800 custom-select-trigger" onclick="toggleCustomSelect(event,'user')">
               <span class="flex items-center gap-3">
                 <!-- ✅ user-trigger-icon สีเดียวกันกับ dashUser-trigger-icon -->
-                <span id="user-trigger-icon" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+                <span id="user-trigger-icon" class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm">
                   <i class="fa-solid fa-user text-sm"></i>
                 </span>
                 <span id="user-trigger-text" class="text-slate-400">Select User</span>
@@ -1037,7 +1037,7 @@ function _savingsLightBlueToDeepStops() {
         textId: 'payMethod-trigger-text',
         arrowId: 'payMethod-trigger-arrow',
         items: PAY_METHOD_LIST,
-        placeholder: 'เลือกช่องทางใช้จ่าย',
+        placeholder: 'เลือกการใช้จ่าย',
         placeholderIcon: 'fa-credit-card'
       }
     };
@@ -1145,7 +1145,7 @@ function _savingsLightBlueToDeepStops() {
 
       if(!val || !found){
         // UI only: keep Payment Method icon in the same orange tone as Category trigger icon
-        if(key === 'payMethod'){
+        if(key === 'payMethod' || key === 'user'){
           iconEl.innerHTML = `<i class="fa-solid ${cfg.placeholderIcon} text-sm drop-shadow-sm"></i>`;
           iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
           textEl.textContent = cfg.placeholder;
@@ -1163,7 +1163,7 @@ function _savingsLightBlueToDeepStops() {
       }
 
       // UI only: keep Payment Method icon in the same orange tone as Category trigger icon
-      if(key === 'payMethod'){
+      if(key === 'payMethod' || key === 'user'){
         iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-sm drop-shadow-sm"></i>`;
         iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
       } else {
@@ -1820,11 +1820,9 @@ function renderDonutChart(dataObj) {
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
-    
-  if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
+      if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
             const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
-
-      if (!pmVal) return alert('กรุณาเลือกช่องทางใช้จ่ายก่อนจ้า');
+      if (!pmVal) return alert('กรุณาเลือกการใช้จ่ายก่อนจ้า');
 const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
 
       const payload = {
