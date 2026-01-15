@@ -1162,10 +1162,11 @@ function _savingsLightBlueToDeepStops() {
         return;
       }
 
-      // UI only: keep Payment Method icon in the same orange tone as Category trigger icon
+      // UI only: keep Payment Method/User icon orange when NOT selected, but match Category select effect when selected
       if(key === 'payMethod' || key === 'user'){
-        iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-sm drop-shadow-sm"></i>`;
-        iconEl.className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
+        // Selected state -> turn blue (same behavior as Category trigger icon)
+        iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
+        iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
       } else {
         iconEl.innerHTML = `<i class="fa-solid ${found.icon} text-blue-600"></i>`;
         iconEl.className = (key === 'dashUser' || key === 'histUser')
@@ -1226,7 +1227,7 @@ function _savingsLightBlueToDeepStops() {
     }
 
     function bindGlobalRefresh(){
-      document.getElementById('btnQuickRefresh').addEventListener('click', () => refreshDashboard());
+      document.getElementById('btnQuickRefresh').addEventListener('click', () => { refreshDashboard(); try { resetInputs(); } catch(e) {} });
     }
 
     let __activeTab = 'input';
@@ -1820,9 +1821,10 @@ function renderDonutChart(dataObj) {
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
-      if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
             const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
       if (!pmVal) return alert('กรุณาเลือกการใช้จ่ายก่อนจ้า');
+      if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
+
 const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
 
       const payload = {
