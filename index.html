@@ -463,7 +463,34 @@
           <p class="text-center text-[10px] text-slate-400 mt-2 font-medium">ระบุจำนวนเงิน</p>
         </div>
 
-        <div class="space-y-3 relative">
+        
+        <!-- Payment Method -->
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Payment Method</label>
+
+          <!-- hidden select (source of truth) -->
+          <select id="payMethod" class="hidden">
+            <option value="" disabled selected>เลือกการใช้จ่าย</option>
+            <option value="เงินสด">เงินสด</option>
+            <option value="เงิน Digital">เงิน Digital</option>
+          </select>
+
+          <!-- custom trigger (UI only) -->
+          <div class="relative">
+            <div id="custom-payMethod-trigger" class="field w-full p-4 rounded-2xl text-slate-800 font-medium custom-select-trigger" onclick="toggleCustomSelect(event,'payMethod')">
+              <span class="flex items-center gap-3">
+                <span id="payMethod-trigger-icon" class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm">
+                  <i class="fa-solid fa-credit-card text-sm"></i>
+                </span>
+                <span id="payMethod-trigger-text" class="text-slate-400">เลือกการใช้จ่าย</span>
+              </span>
+              <i id="payMethod-trigger-arrow" class="fa-solid fa-chevron-down text-slate-300 text-xs transition-transform"></i>
+            </div>
+            <div id="custom-payMethod-options" class="custom-options"></div>
+          </div>
+        </div>
+
+<div class="space-y-3 relative">
           <select id="cate" class="hidden">
             <option value="" disabled selected>Select Category</option>
             <option value="🍱 อาหาร/เครื่องดื่ม">อาหาร / เครื่องดื่ม</option>
@@ -544,10 +571,32 @@
           <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
           <i class="fa-solid fa-rocket absolute top-4 right-5 text-7xl text-white/10 rotate-45 pointer-events-none"></i>
 
-          <p class="text-blue-100 text-xs font-medium uppercase tracking-wide mb-1">Net Balance (Year)</p>
-          <h2 id="kpiNet" class="text-4xl font-bold tracking-tight mb-4">฿ 0</h2>
-          <div class="flex items-center gap-4 text-xs font-medium text-blue-50 bg-white/10 p-2 rounded-xl backdrop-blur-sm inline-flex border border-white/10">
-            <span>Income - Expense</span>
+                    <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <p class="text-blue-100 text-xs font-medium uppercase tracking-wide mb-1">Net Balance (Year)</p>
+              <h2 id="kpiNet" class="text-4xl font-bold tracking-tight mb-4">฿ 0</h2>
+              <div class="flex items-center gap-4 text-xs font-medium text-blue-50 bg-white/10 p-2 rounded-xl backdrop-blur-sm inline-flex border border-white/10">
+                <span>Income - Expense</span>
+              </div>
+            </div>
+
+            <!-- Breakdown: Cash / Digital -->
+            <div class="shrink-0 w-[44%] max-w-[175px]">
+              <div class="bg-white/10 p-3 rounded-[1.25rem] backdrop-blur-sm border border-white/10">
+                <p class="text-[10px] text-blue-100/90 font-bold uppercase tracking-wide">Breakdown</p>
+                <div class="mt-2 space-y-2">
+                  <div class="flex items-center justify-between text-xs font-bold">
+                    <span class="text-blue-50/90">เงินสด</span>
+                    <span id="kpiNetCash" class="text-white whitespace-nowrap">฿ 0</span>
+                  </div>
+                  <div class="h-px bg-white/10"></div>
+                  <div class="flex items-center justify-between text-xs font-bold">
+                    <span class="text-blue-50/90">เงิน Digital</span>
+                    <span id="kpiNetDigital" class="text-white whitespace-nowrap">฿ 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -729,7 +778,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxlu8-6d2n5E2Vl873BqSjeysICNvATNc3OTNmyQnKPIWCckxSWHhVstWkXdgoGTGY-Cw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw93WqGQKvqsTY_0BEYrsYThJwtOMpwJ-jOl3Rpf8dGkWkf3YxzVlniBmuLRTylM_Ac0Q/exec';
 
     // ✅ Savings categories (ใช้สำหรับกรอง donut)
     const SAVINGS_CATEGORIES = [
@@ -805,6 +854,12 @@ function _savingsLightBlueToDeepStops() {
       { val: "Nine", label: "Nine",      icon: "fa-user" },
       { val: "Bow",  label: "Bow",       icon: "fa-user" }
     ];
+
+    const PAY_METHOD_LIST = [
+      { val: "เงินสด",      label: "เงินสด",      icon: "fa-coins" },
+      { val: "เงิน Digital", label: "เงิน Digital", icon: "fa-mobile-screen" }
+    ];
+
 
     async function apiCall(action, params) {
       const body = new URLSearchParams();
@@ -973,6 +1028,17 @@ function _savingsLightBlueToDeepStops() {
         items: HIST_USER_LIST,
         placeholder: 'All Users',
         placeholderIcon: 'fa-users'
+      },
+      payMethod: {
+        selectId: 'payMethod',
+        triggerId: 'custom-payMethod-trigger',
+        optionsId: 'custom-payMethod-options',
+        iconId: 'payMethod-trigger-icon',
+        textId: 'payMethod-trigger-text',
+        arrowId: 'payMethod-trigger-arrow',
+        items: PAY_METHOD_LIST,
+        placeholder: 'เลือกการใช้จ่าย',
+        placeholderIcon: 'fa-credit-card'
       }
     };
 
@@ -990,7 +1056,7 @@ function _savingsLightBlueToDeepStops() {
         closeAllCustomSelects();
       });
 
-      ['user','dashUser','histUser'].forEach(key=>{
+      ['user','dashUser','histUser','payMethod'].forEach(key=>{
         const cfg = __customSelectRegistry[key];
         const sel = document.getElementById(cfg.selectId);
         if(sel){
@@ -1291,6 +1357,13 @@ function _savingsLightBlueToDeepStops() {
         return;
       }
       document.getElementById('kpiNet').innerText = money(res.period.net);
+      // Payment Method breakdown (Cash/Digital)
+      const cashNet = (res && res.periodMethods && res.periodMethods.cash) ? Number(res.periodMethods.cash.net || 0) : 0;
+      const digitalNet = (res && res.periodMethods && res.periodMethods.digital) ? Number(res.periodMethods.digital.net || 0) : 0;
+      const elCash = document.getElementById('kpiNetCash');
+      const elDigital = document.getElementById('kpiNetDigital');
+      if (elCash) elCash.innerText = money(cashNet);
+      if (elDigital) elDigital.innerText = money(digitalNet);
       document.getElementById('kpiSavings').innerText = money(res.period.savings);
       document.getElementById('kpiIncome').innerText = money(res.period.income);
       document.getElementById('kpiExpense').innerText = money(res.period.expense);
@@ -1719,6 +1792,7 @@ function renderDonutChart(dataObj) {
     function resetInputs() {
       document.getElementById('desc').value = '';
       document.getElementById('amt').value = '';
+      const pm = document.getElementById('payMethod'); if (pm) { pm.value = ''; try { syncCustomSelectUI('payMethod'); } catch(e) {} }
       resetCustomDropdown();
       resetTypeSelection();
       resetUserSelection();
@@ -1732,11 +1806,14 @@ function renderDonutChart(dataObj) {
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
       if (!cateVal) return alert('กรุณาเลือกหมวดหมู่ก่อนจ้า');
-      const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
+            const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
+      if (!pmVal) return alert('กรุณาเลือกการใช้จ่ายก่อนจ้า');
+const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
 
       const payload = {
         entryDate: dateVal,
         userName: userVal,
+        paymentMethod: pmVal,
         type: currentType === 'Expense' ? 'รายจ่าย' : 'รายรับ',
         category: cateVal,
         description: (document.getElementById('desc').value || '').trim(),
