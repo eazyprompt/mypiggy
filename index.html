@@ -1239,6 +1239,20 @@ function _savingsLightBlueToDeepStops() {
     function playInputRunner(){
       const el = document.getElementById('inputRunner');
       if (!el) return;
+
+      // Center the runner inside the Input tab area (UI only)
+      const tab = document.getElementById('tab-input');
+      if (tab){
+        const r = tab.getBoundingClientRect();
+        el.style.left = (r.left + (r.width / 2)) + 'px';
+        el.style.top  = (r.top  + (r.height / 2)) + 'px';
+        el.style.bottom = 'auto';
+      } else {
+        el.style.left = '50%';
+        el.style.top  = '50%';
+        el.style.bottom = 'auto';
+      }
+
       el.classList.remove('is-running');
       // force reflow to restart animation
       void el.offsetWidth;
@@ -1874,18 +1888,20 @@ const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
   <style id="inputRunnerStyle">
     #inputRunner{
       position: fixed;
-      left: -280px;
-      bottom: 110px;
-      width: 220px;
+      left: 50%;
+      top: 50%;
+      bottom: auto;
+      width: 240px;
       height: auto;
       z-index: 9999;
       pointer-events: none;
       opacity: 0;
-      transform: translateX(0) translateY(0) scale(1);
       will-change: transform, opacity;
       display: none;
+      transform: translate(-50%, -50%);
     }
-    #inputRunner.show{
+    #inputRunner.show,
+    #inputRunner.is-running{
       display: block;
       animation: inputRunnerDash 2.7s ease-in-out forwards;
     }
@@ -1898,7 +1914,12 @@ const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
       -webkit-user-drag: none;
     }
     @keyframes inputRunnerDash{
-      0%   { opacity: 0; transform: translateX(0) translateY(0) scale(.95); }
+      0%   { opacity: 0; transform: translate(-50%, -50%) translateX(-420px) translateY(0) scale(.95); }
+      18%  { opacity: 1; transform: translate(-50%, -50%) translateX(0) translateY(0) scale(1); }
+      75%  { opacity: 1; transform: translate(-50%, -50%) translateX(0) translateY(-6px) scale(1); }
+      82%  { opacity: 1; transform: translate(-50%, -50%) translateX(0) translateY(0) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translateX(420px) translateY(0) scale(.98); }
+    }
       12%  { opacity: 1; transform: translateX(300px) translateY(0) scale(1); }
       55%  { opacity: 1; transform: translateX(330px) translateY(-6px) scale(1); }
       70%  { opacity: 1; transform: translateX(330px) translateY(0) scale(1); }
