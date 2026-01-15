@@ -421,7 +421,7 @@
           </div>
 
           <div class="space-y-1.5 relative">
-            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">User</label>
+            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Bank Accounts</label>
 
             <select id="userName" class="hidden" required>
               <option value="" selected disabled>Select User</option>
@@ -1849,7 +1849,7 @@ function renderDonutChart(dataObj) {
     async function saveData() {
       const btn = document.getElementById('saveBtn');
       const userVal = document.getElementById('userName').value;
-      if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
+      if (!userVal) return alert('กรุณาเลือก บัญชี ก่อนจ้า');
       if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
             const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
