@@ -181,6 +181,14 @@
   backdrop-filter: none !important;
 }
 
+    .type-active-trf {
+  background: #3b82f6 !important; /* solid blue */
+  color: rgba(255,255,255,0.98) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow: 0 14px 30px rgba(59, 130, 246, 0.35) !important;
+  backdrop-filter: none !important;
+}
+
     .tab-active {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(6, 182, 212, 0.18));
   color: rgba(226, 232, 240, 0.98);
@@ -323,8 +331,10 @@
 /* === UI override: Expense/Income buttons (inactive = light tone) === */
 #btnExp.type-neutral,
 #btnInc.type-neutral,
-#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-neutral),
-#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-neutral) {
+#btnTrf.type-neutral,
+#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral),
+#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral),
+#btnTrf:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral) {
   background: rgba(255, 255, 255, 0.92) !important;
   color: rgba(15, 23, 42, 0.96) !important;
   border: 1px solid rgba(15, 23, 42, 0.18) !important;
@@ -334,15 +344,17 @@
 }
 
 /* Force solid active colors for Expense/Income buttons (no blur) */
-#btnExp.type-active-exp, #btnInc.type-active-inc {
+#btnExp.type-active-exp, #btnInc.type-active-inc, #btnTrf.type-active-trf {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
 #btnExp.type-neutral:hover,
 #btnInc.type-neutral:hover,
-#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-neutral):hover,
-#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-neutral):hover {
+#btnTrf.type-neutral:hover,
+#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral):hover,
+#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral):hover,
+#btnTrf:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral):hover {
   background: rgba(255, 255, 255, 0.98) !important;
   border-color: rgba(15, 23, 42, 0.26) !important;
   transform: translateY(-1px);
@@ -350,8 +362,10 @@
 
 #btnExp.type-neutral i,
 #btnInc.type-neutral i,
-#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-neutral) i,
-#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-neutral) i {
+#btnTrf.type-neutral i,
+#btnExp:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral) i,
+#btnInc:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral) i,
+#btnTrf:not(.type-active-exp):not(.type-active-inc):not(.type-active-trf):not(.type-neutral) i {
   color: rgba(2, 6, 23, 0.72) !important;
   opacity: 0.75 !important;
 }
@@ -444,7 +458,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <button onclick="setType('Expense')" id="btnExp" class="type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group">
             <i class="fa-solid fa-arrow-trend-down text-lg mb-1 opacity-50 group-hover:opacity-100"></i>
             รายจ่าย
@@ -452,6 +466,10 @@
           <button onclick="setType('Income')" id="btnInc" class="type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group">
             <i class="fa-solid fa-arrow-trend-up text-lg mb-1 opacity-50 group-hover:opacity-100"></i>
             รายรับ
+          </button>
+          <button onclick="setType('Transfer')" id="btnTrf" class="type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group">
+            <i class="fa-solid fa-right-left text-lg mb-1 opacity-50 group-hover:opacity-100"></i>
+            โอนเงิน
           </button>
         </div>
 
@@ -504,6 +522,7 @@
             <option value="🛡️ เงินออมแบบประกันสะสมทรัพย์">เงินออมแบบประกันสะสมทรัพย์</option>
             <option value="🪙 ออมทอง">ออมทอง</option>
 
+            <option value="🔁 โอนไปยังบัญชีอื่น">โอนไปยังบัญชีอื่น</option>
             <option value="💵 รายรับ/โบนัส">รายรับ / เงินเดือน / โบนัส</option>
             <option value="⚙️ อื่นๆ">อื่นๆ</option>
           </select>
@@ -780,6 +799,52 @@
     </div>
   </div>
 
+  <!-- ===================== TRANSFER MODAL ===================== -->
+  <div id="transferModal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center">
+    <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="closeTransferModal()"></div>
+    <div class="bg-white w-[85%] max-w-sm p-6 rounded-[2rem] shadow-2xl relative z-10 transform transition-all duration-300 scale-95 opacity-0 border border-white/70" id="transferModalContent">
+      <div class="flex justify-between items-center mb-5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center border border-blue-200/60">
+            <i class="fa-solid fa-right-left text-sm"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg">Transfer</h3>
+        </div>
+        <button onclick="closeTransferModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border border-slate-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500 mb-4">ต้องการ Transfer ไปยังผู้ใช้ใด?</p>
+
+      <div class="space-y-3">
+        <select id="transferTo" class="hidden">
+          <option value="" selected disabled>Select User</option>
+          <option value="Nine">Nine</option>
+          <option value="Bow">Bow</option>
+        </select>
+
+        <div class="relative">
+          <div id="custom-transferTo-trigger" class="field w-full rounded-2xl px-3 py-3 text-sm font-bold text-slate-700 custom-select-trigger" onclick="toggleCustomSelect(event,'transferTo')">
+            <span class="flex items-center gap-3">
+              <span id="transferTo-trigger-icon" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+                <i class="fa-regular fa-user text-sm"></i>
+              </span>
+              <span id="transferTo-trigger-text" class="text-slate-400">Select User</span>
+            </span>
+            <i id="transferTo-trigger-arrow" class="fa-solid fa-chevron-down text-slate-300 text-xs transition-transform"></i>
+          </div>
+          <div id="custom-transferTo-options" class="custom-options"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mt-6">
+        <button onclick="closeTransferModal()" class="btn w-full py-3 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200">ยกเลิก</button>
+        <button id="btnConfirmTransfer" onclick="confirmTransfer()" class="btn btn-primary-grad w-full py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/30">บันทึก</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ===========================================
     // CONFIG & UTILS
@@ -841,9 +906,16 @@ function _savingsLightBlueToDeepStops() {
       { val: "🛡️ เงินออมแบบประกันสะสมทรัพย์",        label: "เงินออมแบบประกันสะสมทรัพย์",        icon: "fa-shield-halved" },
       { val: "🪙 ออมทอง",                              label: "ออมทอง",                              icon: "fa-coins" },
 
+      { val: "🔁 โอนไปยังบัญชีอื่น", label: "โอนไปยังบัญชีอื่น", icon: "fa-right-left" },
+
       { val: "💵 รายรับ/โบนัส", label: "รายรับ / โบนัส", icon: "fa-money-bill-wave" },
       { val: "⚙️ อื่นๆ", label: "อื่นๆ", icon: "fa-layer-group" }
     ];
+
+    // Transfer mode can use only this category
+    const TRANSFER_CATEGORY_VAL = "🔁 โอนไปยังบัญชีอื่น";
+    // Destination account will receive this category for income
+    const TRANSFER_DEST_CATEGORY_VAL = "💵 รายรับ/โบนัส";
 
     // NO EMOJI: User lists
     const USER_LIST = [
@@ -919,6 +991,124 @@ function _savingsLightBlueToDeepStops() {
       setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
+    // --- TRANSFER MODAL LOGIC ---
+    let __pendingTransfer = null;
+    // Guard against double-submit / duplicate transfer writes
+    let __transferInFlight = false;
+
+    function openTransferModal(sourceUser){
+      // prepare target list (exclude source)
+      try {
+        const cfg = __customSelectRegistry && __customSelectRegistry.transferTo;
+        if (cfg) {
+          cfg.items = USER_LIST.filter(u => u.val !== sourceUser);
+          buildCustomSelect('transferTo');
+        }
+      } catch(e) {}
+
+      const sel = document.getElementById('transferTo');
+      if (sel) sel.value = '';
+      try { syncCustomSelectUI('transferTo'); } catch(e) {}
+
+      const modal = document.getElementById('transferModal');
+      const content = document.getElementById('transferModalContent');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    function closeTransferModal(){
+      const modal = document.getElementById('transferModal');
+      const content = document.getElementById('transferModalContent');
+      content.classList.remove('scale-100', 'opacity-100');
+      content.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => { modal.classList.add('hidden'); }, 200);
+      __pendingTransfer = null;
+    }
+
+    // Hide modal UI immediately (do not clear pending payload)
+    function hideTransferModalNow(){
+      const modal = document.getElementById('transferModal');
+      const content = document.getElementById('transferModalContent');
+      if (content) {
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+      }
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function confirmTransfer(){
+      const toUser = document.getElementById('transferTo') ? document.getElementById('transferTo').value : '';
+      if (!toUser) { alert('กรุณาเลือกผู้รับปลายทาง'); return; }
+      if (!__pendingTransfer) { closeTransferModal(); return; }
+      if (toUser === __pendingTransfer.sourceUser) { alert('ไม่สามารถ Transfer ไปยังตัวเองได้'); return; }
+
+      // Prevent accidental double submit (double click / tap)
+      if (__transferInFlight) return;
+      __transferInFlight = true;
+
+      // Freeze a local copy and clear pending immediately to prevent duplicate writes
+      const pt = __pendingTransfer;
+      __pendingTransfer = null;
+
+      const btn = document.getElementById('btnConfirmTransfer');
+      if (btn) btn.disabled = true;
+
+      // Requirement: hide popup immediately after user confirms
+      hideTransferModalNow();
+
+      showLoading('Transfer', 'กำลังบันทึก...');
+      try {
+        // 1) source: expense
+        const srcPayload = {
+          entryDate: pt.date,
+          userName: pt.sourceUser,
+          type: 'รายจ่าย',
+          category: pt.category,
+          description: `Transfer to ${toUser}` + (pt.desc ? ` — ${pt.desc}` : ''),
+          amount: pt.amount,
+          paymentMethod: pt.paymentMethod
+        };
+        const r1 = await apiCall('addData', srcPayload);
+        if (r1 && r1.ok === false) throw new Error(r1.error || 'บันทึกฝั่งต้นทางไม่สำเร็จ');
+
+        // 2) destination: income
+        const dstPayload = {
+          entryDate: pt.date,
+          userName: toUser,
+          type: 'รายรับ',
+          category: TRANSFER_DEST_CATEGORY_VAL,
+          description: `Transfer from ${pt.sourceUser}` + (pt.desc ? ` — ${pt.desc}` : ''),
+          amount: pt.amount,
+          paymentMethod: pt.paymentMethod
+        };
+        const r2 = await apiCall('addData', dstPayload);
+        if (r2 && r2.ok === false) throw new Error(r2.error || 'บันทึกฝั่งปลายทางไม่สำเร็จ');
+
+        // update UI using latest response
+        try { updateDashboardV2(r2); } catch(e) {}
+        resetTypeSelection();
+        resetUserSelection();
+        resetCustomDropdown();
+        document.getElementById('amt').value = '';
+        document.getElementById('desc').value = '';
+        document.getElementById('payMethod').value = '';
+        try { syncCustomSelectUI('payMethod'); } catch(e) {}
+
+        alert('Transfer สำเร็จ!');
+        closeTransferModal();
+        switchTab('dashboard');
+      } catch(err){
+        alert('Transfer ไม่สำเร็จ: ' + (err && err.message ? err.message : err));
+      } finally {
+        hideLoading();
+        __transferInFlight = false;
+        if (btn) btn.disabled = false;
+      }
+    }
+
     function saveTargets() {
       const n = parseFloat(document.getElementById('targetNineInput').value) || 0;
       const b = parseFloat(document.getElementById('targetBowInput').value)  || 0;
@@ -960,11 +1150,48 @@ function _savingsLightBlueToDeepStops() {
     // CATEGORY DROPDOWN
     // ===========================================
     function initCustomDropdown() {
+      // initial render
+      refreshCategoryDropdownByType();
+    }
+
+    function __allowedCategoriesByCurrentType(){
+      // Transfer: only "โอนไปยังบัญชีอื่น"
+      if (currentType === 'Transfer') {
+        return CATEGORIES.filter(c => c.val === TRANSFER_CATEGORY_VAL);
+      }
+
+      // Income: only "รายรับ/โบนัส" and "อื่นๆ"
+      if (currentType === 'Income') {
+        return CATEGORIES.filter(c => c.val === TRANSFER_DEST_CATEGORY_VAL || c.val === '⚙️ อื่นๆ');
+      }
+
+      // Expense: cannot choose "รายรับ/โบนัส"
+      if (currentType === 'Expense') {
+        return CATEGORIES.filter(c => c.val !== TRANSFER_DEST_CATEGORY_VAL);
+      }
+
+      return CATEGORIES;
+    }
+
+    function refreshCategoryDropdownByType(){
       const container = document.getElementById('custom-cate-options');
+      if (!container) return;
       container.innerHTML = '';
-      CATEGORIES.forEach(cat => {
+
+      const allowed = __allowedCategoriesByCurrentType();
+
+      // If current selected category is not allowed in this type, reset to placeholder
+      try {
+        const selectedVal = document.getElementById('cate').value;
+        const allowedSet = new Set(allowed.map(c => c.val));
+        if (selectedVal && !allowedSet.has(selectedVal)) {
+          resetCustomDropdown();
+        }
+      } catch(e) {}
+      allowed.forEach(cat => {
         const div = document.createElement('div');
         div.className = 'custom-option';
+        div.dataset.value = cat.val;
         div.onclick = () => selectCustomOption(cat.val, cat.label, cat.icon);
         div.innerHTML = `
           <div class="option-icon"><i class="fa-solid ${cat.icon}"></i></div>
@@ -972,6 +1199,26 @@ function _savingsLightBlueToDeepStops() {
         `;
         container.appendChild(div);
       });
+
+      // If Transfer: force category to Income/Bonus only
+      if (currentType === 'Transfer') {
+        const current = document.getElementById('cate').value;
+        if (current !== TRANSFER_CATEGORY_VAL) {
+          const bonus = CATEGORIES.find(c => c.val === TRANSFER_CATEGORY_VAL);
+          if (bonus) selectCustomOption(bonus.val, bonus.label, bonus.icon);
+        } else {
+          const bonus = CATEGORIES.find(c => c.val === TRANSFER_CATEGORY_VAL);
+          if (bonus) selectCustomOption(bonus.val, bonus.label, bonus.icon);
+        }
+      }
+
+      // re-apply selected highlight
+      try {
+        const v = document.getElementById('cate').value;
+        document.querySelectorAll('#custom-cate-options .custom-option').forEach(el => {
+          el.classList.toggle('selected', el.dataset.value === v);
+        });
+      } catch(e) {}
     }
 
     function toggleCustomDropdown(e) {
@@ -991,7 +1238,9 @@ function _savingsLightBlueToDeepStops() {
       iconEl.className = "w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100";
       textEl.innerText = label;
       textEl.className = "text-slate-900 font-bold";
-      document.querySelectorAll('#custom-cate-options .custom-option').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#custom-cate-options .custom-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.value === value);
+      });
       document.getElementById('custom-cate-options').classList.remove('open');
       document.getElementById('trigger-arrow').style.transform = 'rotate(0deg)';
     }
@@ -1015,6 +1264,17 @@ function _savingsLightBlueToDeepStops() {
         iconId: 'user-trigger-icon',
         textId: 'user-trigger-text',
         arrowId: 'user-trigger-arrow',
+        items: USER_LIST,
+        placeholder: 'Select User',
+        placeholderIcon: 'fa-user'
+      },
+      transferTo: {
+        selectId: 'transferTo',
+        triggerId: 'custom-transferTo-trigger',
+        optionsId: 'custom-transferTo-options',
+        iconId: 'transferTo-trigger-icon',
+        textId: 'transferTo-trigger-text',
+        arrowId: 'transferTo-trigger-arrow',
         items: USER_LIST,
         placeholder: 'Select User',
         placeholderIcon: 'fa-user'
@@ -1316,23 +1576,41 @@ function _savingsLightBlueToDeepStops() {
       currentType = '';
       const exp = document.getElementById('btnExp');
       const inc = document.getElementById('btnInc');
+      const trf = document.getElementById('btnTrf');
       const baseClass = 'type-neutral py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group';
       exp.className = baseClass;
       inc.className = baseClass;
+      if (trf) trf.className = baseClass;
+
+      // reset category list back to normal
+      try { refreshCategoryDropdownByType(); } catch(e) {}
     }
 
     function setType(type) {
       currentType = type;
       const exp = document.getElementById('btnExp');
       const inc = document.getElementById('btnInc');
+      const trf = document.getElementById('btnTrf');
       const baseClass = 'py-4 rounded-2xl font-bold text-sm transition-all flex flex-col items-center gap-1 group ';
       if (type === 'Expense') {
         exp.className = baseClass + 'type-active-exp';
         inc.className = baseClass + 'type-neutral';
+        if (trf) trf.className = baseClass + 'type-neutral';
       } else {
-        exp.className = baseClass + 'type-neutral';
-        inc.className = baseClass + 'type-active-inc';
+        if (type === 'Income') {
+          exp.className = baseClass + 'type-neutral';
+          inc.className = baseClass + 'type-active-inc';
+          if (trf) trf.className = baseClass + 'type-neutral';
+        } else {
+          // Transfer
+          exp.className = baseClass + 'type-neutral';
+          inc.className = baseClass + 'type-neutral';
+          if (trf) trf.className = baseClass + 'type-active-trf';
+        }
       }
+
+      // category dropdown rules (Transfer => only Income/Bonus)
+      try { refreshCategoryDropdownByType(); } catch(e) {}
     }
 
     function resetUserSelection(){
@@ -2122,6 +2400,7 @@ function renderDonutChart(dataObj) {
         else if(c.includes('เงินออมแบบเงินตราต่างประเทศ USD')) catIcon = '<i class="fa-solid fa-dollar-sign"></i>';
         else if(c.includes('ประกันสะสมทรัพย์')) catIcon = '<i class="fa-solid fa-shield-halved"></i>';
         else if(c.includes('ออมทอง')) catIcon = '<i class="fa-solid fa-coins"></i>';
+        else if(c.includes('โอนไปยังบัญชีอื่น')) catIcon = '<i class="fa-solid fa-right-left"></i>';
         else if(c.includes('รายรับ')) catIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
 
         const rowNum = Number(item.row || 0);
@@ -2178,7 +2457,7 @@ function renderDonutChart(dataObj) {
       const btn = document.getElementById('saveBtn');
       const userVal = document.getElementById('userName').value;
       if (!userVal) return alert('กรุณาเลือก User ก่อนจ้า');
-      if (!currentType) return alert('กรุณาเลือกรายจ่ายหรือรายรับก่อนจ้า');
+      if (!currentType) return alert('กรุณาเลือกโหมดก่อนจ้า');
       const cateVal = document.getElementById('cate').value;
             const pmVal = (document.getElementById('payMethod') ? document.getElementById('payMethod').value : '');
       if (!pmVal) return alert('กรุณาเลือกการใช้จ่ายก่อนจ้า');
@@ -2186,16 +2465,39 @@ function renderDonutChart(dataObj) {
 
 const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
 
+      const descVal = (document.getElementById('desc').value || '').trim();
+      const amountVal = document.getElementById('amt').value;
+      if (!amountVal) return alert('กรอก “จำนวนเงิน” ก่อนจ้า');
+
+      // Transfer mode: create Expense for source + Income for destination
+      if (currentType === 'Transfer') {
+        // ensure allowed category only
+        if (document.getElementById('cate').value !== TRANSFER_CATEGORY_VAL) {
+          const bonus = CATEGORIES.find(c => c.val === TRANSFER_CATEGORY_VAL);
+          if (bonus) selectCustomOption(bonus.val, bonus.label, bonus.icon);
+        }
+
+        __pendingTransfer = {
+          date: dateVal,
+          sourceUser: userVal,
+          category: TRANSFER_CATEGORY_VAL,
+          desc: descVal,
+          amount: amountVal,
+          paymentMethod: pmVal
+        };
+        openTransferModal(userVal);
+        return;
+      }
+
       const payload = {
         entryDate: dateVal,
         userName: userVal,
         paymentMethod: pmVal,
         type: currentType === 'Expense' ? 'รายจ่าย' : 'รายรับ',
         category: cateVal,
-        description: (document.getElementById('desc').value || '').trim(),
-        amount: document.getElementById('amt').value
+        description: descVal,
+        amount: amountVal
       };
-      if (!payload.amount) return alert('กรอก “จำนวนเงิน” ก่อนจ้า');
 
       showLoading('Saving', 'Writing data...');
       btn.disabled = true;
