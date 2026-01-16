@@ -1646,14 +1646,28 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
         return g;
       };
 
+      // --- % Stacked Bar (barStack) ---
+      const _barNum = (v) => {
+        if (typeof v === 'string') v = v.replace(/,/g, '');
+        const n = Number(v);
+        return isFinite(n) ? n : 0;
+      };
+      const __barAbsIncome = (income || []).map(_barNum);
+      const __barAbsExpense = (expense || []).map(_barNum);
+      const __barAbsSavings = (savings || []).map(_barNum);
+      const __barTotals = labels.map((_, i) => (__barAbsIncome[i] || 0) + (__barAbsExpense[i] || 0) + (__barAbsSavings[i] || 0));
+      const incomePct = __barTotals.map((t, i) => (t > 0 ? ((__barAbsIncome[i] || 0) / t) * 100 : 0));
+      const expensePct = __barTotals.map((t, i) => (t > 0 ? ((__barAbsExpense[i] || 0) / t) * 100 : 0));
+      const savingsPct = __barTotals.map((t, i) => (t > 0 ? ((__barAbsSavings[i] || 0) / t) * 100 : 0));
+
       barChart = new Chart(document.getElementById('barStack'), {
         type: 'bar',
         data: {
           labels,
           datasets: [
-            { label: 'Income', data: income, backgroundColor: barIncomeBg, borderRadius: 6, borderWidth: 0 },
-            { label: 'Std. Expenses', data: expense, backgroundColor: barExpenseBg, borderRadius: 6, borderWidth: 0 },
-            { label: 'Saving Expenses', data: savings, backgroundColor: barSavingsBg, borderRadius: 6, borderWidth: 0 }
+            { label: 'Income', data: incomePct, backgroundColor: barIncomeBg, borderRadius: 6, borderWidth: 0 },
+            { label: 'Std. Expenses', data: expensePct, backgroundColor: barExpenseBg, borderRadius: 6, borderWidth: 0 },
+            { label: 'Saving Expenses', data: savingsPct, backgroundColor: barSavingsBg, borderRadius: 6, borderWidth: 0 }
           ]
         },
         options: {
@@ -1672,12 +1686,30 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
                 usePointStyle: true,
                 pointStyle: 'rectRounded'
               }
+            },
+            tooltip: {
+              ...commonOptions.plugins.tooltip,
+              filter: (ctx) => (ctx && ctx.dataset && ctx.dataset.label !== "Range"),
+              callbacks: {
+                label: function(ctx) {
+                  var v = Number((ctx.parsed && ctx.parsed.y) || 0);
+                  return (ctx.dataset.label + ': ' + v.toFixed(1) + '%');
+                }
+              }
             }
           },
           scales: {
             ...commonOptions.scales,
             x: { ...commonOptions.scales.x, stacked: true },
-            y: { ...commonOptions.scales.y, stacked: true }
+            y: {
+              ...commonOptions.scales.y,
+              stacked: true,
+              max: 100,
+              ticks: {
+                ...commonOptions.scales.y.ticks,
+                callback: (value) => value + '%'
+              }
+            }
           }
         }
       });
@@ -1746,6 +1778,14 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const rangeData = labels.map(() => rangeMax);
       const achieved = savingsRaw.map(v => (targetValue > 0) && (v >= targetValue));
 
+      // Achieved badge image (replace crown with pig icon)
+      // The image file should be available in the same folder as this HTML.
+      const achievedBadgeImg = new Image();
+      achievedBadgeImg.src = 'icon-192-maskable.png';
+      achievedBadgeImg.onload = () => {
+        try { if (lineChart) lineChart.update(); } catch (e) {}
+      };
+
       const _makeLinearGreen = (ctx, area, a1 = 0.95, a2 = 0.70) => {
         const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
         g.addColorStop(0, `rgba(34, 197, 94, ${a1})`);
@@ -1804,9 +1844,9 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
             ctx.stroke();
             ctx.restore();
 
-            // Achieved badge (crown)
+            // Achieved badge (pig icon)
             if (pluginOptions && pluginOptions.achieved && pluginOptions.achieved[i]) {
-              // Draw crown INSIDE the Actual bar (instead of above it)
+              // Draw badge INSIDE the Actual bar (instead of above it)
               // For positive bars: y is the top pixel, base is the bottom pixel
               const moreProps = bar.getProps(['x', 'y', 'width', 'base'], true);
               const yTop = Math.min(moreProps.y, moreProps.base);
@@ -1814,18 +1854,23 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
               const h = Math.max(0, yBottom - yTop);
 
               // Prefer near-top placement, but clamp so it always stays inside the bar
-              let crownY = yTop + 14;
-              if (h < 28) crownY = (yTop + yBottom) / 2;
-              crownY = Math.max(yTop + 8, Math.min(yBottom - 8, crownY));
+              let badgeY = yTop + 16;
+              if (h < 34) badgeY = (yTop + yBottom) / 2;
+              badgeY = Math.max(yTop + 10, Math.min(yBottom - 10, badgeY));
+
+              // Badge size adapts to bar height
+              const badgeSize = Math.max(10, Math.min(16, h - 12));
 
               ctx.save();
-              ctx.font = "700 14px 'Kanit', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+              ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+              ctx.shadowBlur = 10;
+              ctx.globalAlpha = 0.98;
+
+              // Gold trophy emoji badge
+              ctx.font = `700 ${Math.round(badgeSize)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Kanit",sans-serif`;
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              // Extra contrast on bright bars
-              ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-              ctx.shadowBlur = 8;
-              ctx.fillText('👑', x, crownY);
+              ctx.fillText('🏆', x, badgeY);
               ctx.restore();
             }
           }
@@ -1900,6 +1945,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
             },
             tooltip: {
               ...commonOptions.plugins.tooltip,
+              filter: (ctx) => (ctx && ctx.dataset && ctx.dataset.label !== "Range"),
               callbacks: {
                 label: function(context) {
                   const i = context.dataIndex;
