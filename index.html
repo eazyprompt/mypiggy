@@ -612,7 +612,7 @@
             <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs mb-2 border border-rose-200/60">
               <i class="fa-solid fa-arrow-trend-down"></i>
             </div>
-            <p class="text-[10px] text-slate-400 uppercase font-bold">Std. Expense</p>
+            <p class="text-[10px] text-slate-400 uppercase font-bold">Std. Expenses</p>
             <h3 id="kpiExpense" class="text-lg font-bold text-rose-600">฿ 0</h3>
           </div>
         </div>
@@ -1626,10 +1626,10 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const barExpenseBg = (context) => {
         const chart = context.chart;
         const { ctx, chartArea } = chart;
-        if (!chartArea) return 'rgba(14, 165, 233, 0.70)';
+        if (!chartArea) return 'rgba(244, 63, 94, 0.78)';
         const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-        g.addColorStop(0, 'rgba(14, 165, 233, 0.85)');
-        g.addColorStop(1, 'rgba(14, 165, 233, 0.25)');
+        g.addColorStop(0, 'rgba(244, 63, 94, 0.90)');
+        g.addColorStop(1, 'rgba(244, 63, 94, 0.22)');
         return g;
       };
 
@@ -1649,11 +1649,18 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
           labels,
           datasets: [
             { label: 'Income', data: income, backgroundColor: barIncomeBg, borderRadius: 6, borderWidth: 0 },
-            { label: 'Expense', data: expense, backgroundColor: barExpenseBg, borderRadius: 6, borderWidth: 0 },
-            { label: 'Saving', data: savings, backgroundColor: barSavingsBg, borderRadius: 6, borderWidth: 0 }
+            { label: 'Std. Expense', data: expense, backgroundColor: barExpenseBg, borderRadius: 6, borderWidth: 0 },
+            { label: 'Saving Expenses', data: savings, backgroundColor: barSavingsBg, borderRadius: 6, borderWidth: 0 }
           ]
         },
-        options: commonOptions
+        options: {
+          ...commonOptions,
+          scales: {
+            ...commonOptions.scales,
+            x: { ...commonOptions.scales.x, stacked: true },
+            y: { ...commonOptions.scales.y, stacked: true }
+          }
+        }
       });
 
       let targetValue = 0;
