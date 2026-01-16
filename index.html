@@ -1712,47 +1712,233 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
         return _makeLinearBlueSoft(ctx, chartArea, 0.25, 0.02);
       };
 
+
+      // --- Option 4: Bullet / Progress per month (Actual bar + Target marker + Achieved crown) for lineChart ---
+      const savingsRaw = (savings || []).map(v => {
+        if (typeof v === 'string') v = v.replace(/,/g, '');
+        const n = Number(v);
+        return isFinite(n) ? n : 0;
+      });
+
+      function _niceCeil(n) {
+        if (!isFinite(n) || n <= 0) return 0;
+        const pow = Math.pow(10, Math.floor(Math.log10(n)));
+        const m = n / pow;
+        let nice = 10;
+        if (m <= 1) nice = 1;
+        else if (m <= 2) nice = 2;
+        else if (m <= 5) nice = 5;
+        return nice * pow;
+      }
+
+      const maxSavings = savingsRaw.length ? Math.max(...savingsRaw) : 0;
+      const maxTarget = targetValue > 0 ? targetValue : 0;
+
+      // Scale rule: set Max = Target + Target (2x Target).
+      // If Actual exceeds Max, it will be clipped to Max and (if achieved) shown with a crown.
+      let rangeMax = 1;
+      if (maxTarget > 0) {
+        rangeMax = _niceCeil(maxTarget * 2) || (maxTarget * 2);
+      } else {
+        rangeMax = _niceCeil(Math.max(maxSavings, 1) * 1.08) || 1;
+      }
+      if (!isFinite(rangeMax) || rangeMax <= 0) rangeMax = 1;
+      const rangeData = labels.map(() => rangeMax);
+      const achieved = savingsRaw.map(v => (targetValue > 0) && (v >= targetValue));
+
+      const _makeLinearGreen = (ctx, area, a1 = 0.95, a2 = 0.70) => {
+        const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
+        g.addColorStop(0, `rgba(34, 197, 94, ${a1})`);
+        g.addColorStop(1, `rgba(16, 185, 129, ${a2})`);
+        return g;
+      };
+
+      const actualBulletBg = (context) => {
+        const chart = context.chart;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return achieved[context.dataIndex] ? 'rgba(34, 197, 94, 0.90)' : 'rgba(37, 99, 235, 0.95)';
+        return achieved[context.dataIndex]
+          ? _makeLinearGreen(ctx, chartArea, 0.95, 0.72)
+          : _makeLinearBlue(ctx, chartArea, 0.98, 0.72, 'v');
+      };
+
+      const actualBulletBorder = (context) => {
+        return achieved[context.dataIndex] ? 'rgba(16, 185, 129, 0.95)' : 'rgba(37, 99, 235, 0.0)';
+      };
+
+      const bulletMarkersPlugin = {
+        id: 'bulletMarkersPlugin',
+        afterDatasetsDraw(chart, args, pluginOptions) {
+          const tv = (pluginOptions && pluginOptions.targetValue) || 0;
+          if (!(tv > 0)) return;
+
+          const metaActual = chart.getDatasetMeta(1); // Actual dataset
+          if (!metaActual || !metaActual.data) return;
+
+          const yScale = chart.scales && chart.scales.y;
+          if (!yScale) return;
+
+          const ctx = chart.ctx;
+          ctx.save();
+
+          const yTarget = yScale.getPixelForValue(tv);
+
+          for (let i = 0; i < metaActual.data.length; i++) {
+            const bar = metaActual.data[i];
+            if (!bar) continue;
+
+            const props = bar.getProps(['x', 'y', 'width'], true);
+            const x = props.x;
+            const w = (props.width || 0) * 0.88;
+
+            // Target marker (short glowing line)
+            ctx.save();
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.28)';
+            ctx.shadowBlur = 10;
+            ctx.moveTo(x - w / 2, yTarget);
+            ctx.lineTo(x + w / 2, yTarget);
+            ctx.stroke();
+            ctx.restore();
+
+            // Achieved badge (crown)
+            if (pluginOptions && pluginOptions.achieved && pluginOptions.achieved[i]) {
+              // Draw crown INSIDE the Actual bar (instead of above it)
+              // For positive bars: y is the top pixel, base is the bottom pixel
+              const moreProps = bar.getProps(['x', 'y', 'width', 'base'], true);
+              const yTop = Math.min(moreProps.y, moreProps.base);
+              const yBottom = Math.max(moreProps.y, moreProps.base);
+              const h = Math.max(0, yBottom - yTop);
+
+              // Prefer near-top placement, but clamp so it always stays inside the bar
+              let crownY = yTop + 14;
+              if (h < 28) crownY = (yTop + yBottom) / 2;
+              crownY = Math.max(yTop + 8, Math.min(yBottom - 8, crownY));
+
+              ctx.save();
+              ctx.font = "700 14px 'Kanit', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              // Extra contrast on bright bars
+              ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+              ctx.shadowBlur = 8;
+              ctx.fillText('👑', x, crownY);
+              ctx.restore();
+            }
+          }
+
+          ctx.restore();
+        }
+      };
+
       lineChart = new Chart(document.getElementById('lineChart'), {
-        type: 'line',
+        type: 'bar',
         data: {
           labels,
           datasets: [
             {
-              label: 'Savings',
-              data: savings,
-              tension: 0.4,
-              borderColor: 'rgba(37, 99, 235, 0.95)',
-              borderWidth: 2,
-              backgroundColor: savingsFill,
-              pointBackgroundColor: '#ffffff',
-              pointBorderColor: 'rgba(37, 99, 235, 0.95)',
-              pointBorderWidth: 2,
-              pointRadius: 3,
-              fill: true
+              label: 'Range',
+              data: rangeData,
+              backgroundColor: 'rgba(148, 163, 184, 0.12)',
+              borderColor: 'rgba(148, 163, 184, 0.00)',
+              borderWidth: 0,
+              borderRadius: 14,
+              borderSkipped: false,
+              grouped: false,
+              order: 0
             },
             {
-              label: 'Min Goal',
-              data: targetData,
-              borderColor: 'rgba(34, 197, 94, 1)', // #22c55e
-              borderWidth: 2,
-              borderDash: [6, 6],
-              pointRadius: 0,
-              fill: false,
-              tension: 0
-            },
-            {
-              label: 'Trend',
-              data: trendData,
-              borderColor: 'rgba(14, 165, 233, 0.70)',
-              borderWidth: 2,
-              borderDash: [2, 4],
-              pointRadius: 0,
-              fill: false,
-              tension: 0
+              label: 'Actual',
+              data: savingsRaw.map(v => Math.min(v, rangeMax)),
+              backgroundColor: actualBulletBg,
+              borderColor: actualBulletBorder,
+              borderWidth: (ctx) => achieved[ctx.dataIndex] ? 1 : 0,
+              borderRadius: 14,
+              borderSkipped: false,
+              grouped: false,
+              order: 1
             }
           ]
         },
-        options: commonOptions
+        options: {
+          ...commonOptions,
+          plugins: {
+            ...commonOptions.plugins,
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                font: fontConfig,
+                color: '#cbd5e1',
+                boxWidth: 10,
+                boxHeight: 10,
+                padding: 12,
+                usePointStyle: true,
+                // Actual uses rounded-rect, Target uses a line sample
+                pointStyle: (ctx) => (ctx && ctx.text === 'Target' ? 'line' : 'rectRounded'),
+                generateLabels: (chart) => {
+                  const base = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                  const filtered = (base || []).filter(l => l.text !== 'Range');
+                  filtered.push({
+                    text: 'Target',
+                    fillStyle: 'rgba(255, 255, 255, 0)',
+                    strokeStyle: 'rgba(255, 255, 255, 0.95)',
+                    lineWidth: 3,
+                    hidden: false
+                  });
+                  return filtered;
+                }
+              },
+              onClick: function(e, legendItem, legend) {
+                if (legendItem && legendItem.text === 'Target') return;
+                const defaultClick = Chart.defaults.plugins.legend.onClick;
+                return defaultClick.call(this, e, legendItem, legend);
+              }
+            },
+            tooltip: {
+              ...commonOptions.plugins.tooltip,
+              callbacks: {
+                label: function(context) {
+                  const i = context.dataIndex;
+                  const rawVal = savingsRaw[i] ?? 0;
+                  const tv = targetValue || 0;
+                  const ok = (tv > 0) && (rawVal >= tv);
+                  const parts = [];
+                  parts.push(` Actual: ฿${Number(rawVal).toLocaleString()}`);
+                  if (tv > 0) parts.push(` Target: ฿${Number(tv).toLocaleString()}`);
+                  if (tv > 0) parts.push(ok ? ' Achieved: Yes' : ' Achieved: No');
+                  return parts.join('  •  ');
+                }
+              }
+            }
+          },
+          scales: {
+            ...commonOptions.scales,
+            y: {
+              ...commonOptions.scales.y,
+              max: rangeMax,
+              ticks: {
+                ...commonOptions.scales.y.ticks,
+                callback: (v) => Number(v).toLocaleString()
+              }
+            }
+          }
+        },
+        plugins: [
+          {
+            ...bulletMarkersPlugin,
+            // pass options to plugin
+            afterDatasetsDraw(chart, args, pluginOptions) {
+              return bulletMarkersPlugin.afterDatasetsDraw(chart, args, {
+                targetValue: targetValue,
+                achieved: achieved
+              });
+            }
+          }
+        ]
       });
     }
 
