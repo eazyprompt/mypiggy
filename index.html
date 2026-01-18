@@ -390,6 +390,99 @@
   inset: 0;
 }
 
+
+
+  /* =====================
+     Utility Status Matrix (compact, no scrollbar)
+     ===================== */
+  .util-matrix { width: 100%; }
+  .util-matrix-grid {
+    display: grid;
+    grid-template-columns: 78px repeat(12, 1fr);
+    gap: 6px;
+    align-items: center;
+  }
+  .util-matrix-head {
+    font-size: 10px;
+    font-weight: 800;
+    color: rgb(100 116 139); /* slate-500 */
+    text-align: center;
+    line-height: 1;
+  }
+  .util-matrix-rowlabel {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.94); /* white for readability on dark theme */
+    line-height: 1.1;
+    padding-right: 4px;
+    white-space: nowrap;
+  }
+  .util-matrix-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+  }
+
+  /* Make each pill tappable (link to Slip) without changing layout */
+  .util-pill-link {
+    width: 22px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .util-pill-link:hover {
+    background: rgba(239,246,255,.18);
+    border-color: rgba(191,219,254,.22);
+  }
+  .util-pill-link:active { transform: scale(0.98); }
+  .util-pill {
+    width: 10px;
+    height: 18px;
+    border-radius: 9999px;
+    box-shadow: 0 0 0 1px rgba(148,163,184,.35) inset;
+  }
+  .util-pill-paid { background: rgb(16 185 129); }
+  .util-pill-unpaid { background: rgb(244 63 94); }
+  .util-slip-btn {
+    width: 22px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.65);
+    border: 1px solid rgba(226,232,240,.85);
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .util-slip-btn:hover {
+    background: rgba(239,246,255,.9);
+    border-color: rgba(191,219,254,.95);
+    color: rgb(29 78 216);
+  }
+  .util-cell-stack {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  @media (max-width: 420px) {
+    .util-matrix-grid { grid-template-columns: 64px repeat(12, 1fr); gap: 4px; }
+    .util-matrix-head { font-size: 9px; }
+    .util-matrix-rowlabel { font-size: 9px; }
+    .util-matrix-cell { height: 18px; }
+    .util-pill { width: 9px; height: 16px; }
+    .util-slip-btn { width: 20px; height: 18px; border-radius: 9px; }
+  }
+
 </style>
 </head>
 
@@ -516,7 +609,8 @@
             <option value="🏠 ค่าบ้าน">ค่าบ้าน</option>
             <option value="🚰 ค่าน้ำ">ค่าน้ำ</option>
             <option value="💡 ค่าไฟ">ค่าไฟ</option>
-            <option value="📱 โทรศัพท์ / Internet">โทรศัพท์ / Internet</option>
+            <option value="📶 Internet มือถือ">Internet มือถือ</option>
+            <option value="📡 Internet บ้าน">Internet บ้าน</option>
             <option value="🛍️ ช้อปปิ้ง">ช้อปปิ้ง / บันเทิง</option>
 
             <!-- ✅ 4 หมวดเงินออม -->
@@ -675,6 +769,10 @@
         </div>
       </div>
 
+
+
+      
+
       <div class="glass rounded-[2.5rem] p-5 space-y-6">
         <div>
           <div class="flex items-center justify-between mb-3">
@@ -699,6 +797,30 @@
           </div>
           <div class="h-[180px] w-full">
             <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- ===================== UTILITY STATUS (Dashboard) ===================== -->
+        <div class="border-t border-slate-100/80 pt-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="min-w-0">
+              <h3 class="font-bold text-slate-800 text-sm">Utility Status</h3>
+              <p class="hidden sm:block text-[10px] text-slate-400 mt-0.5">สถานะการจ่าย: ค่าบ้าน / ค่าน้ำ / ค่าไฟ / Internet มือถือ / Internet บ้าน (รายเดือน)</p>
+              <p class="sm:hidden text-[10px] text-slate-400 mt-0.5">สถานะค่าสาธารณูปโภค (รายเดือน)</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-end gap-2 text-[9px] sm:text-[10px] font-bold">
+              <span class="inline-flex items-center gap-1.5 text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-lg">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> จ่ายแล้ว
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-rose-600 bg-rose-50 border border-rose-100 px-2 py-1 rounded-lg">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> ยังไม่จ่าย
+              </span>
+            </div>
+          </div>
+
+          <!-- Matrix view (No scrollbar, fits in one card) -->
+          <div class="w-full">
+            <div id="utilStatusMatrix" class="util-matrix"></div>
           </div>
         </div>
 
@@ -869,7 +991,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwlNDDifCqdHZC21H_OHluZJkoYlpCH3PIxurFp0HwCgKtlG-2hfA29yJtjZ9r1M6amyg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyeiUkdZ8au06ZWK4Yq336lzcrUM8iOEDzWllR51GQEXH54FhvIu9KwM8_Pz1dnZlH7rg/exec';
 
     // ✅ Savings categories (ใช้สำหรับกรอง donut)
     const SAVINGS_CATEGORIES = [
@@ -921,7 +1043,8 @@ function _savingsLightBlueToDeepStops() {
       { val: "🏠 ค่าบ้าน", label: "ค่าบ้าน", icon: "fa-house" },
       { val: "🚰 ค่าน้ำ",  label: "ค่าน้ำ",  icon: "fa-faucet-drip" },
       { val: "💡 ค่าไฟ",  label: "ค่าไฟ",  icon: "fa-bolt" },
-      { val: "📱 โทรศัพท์ / Internet", label: "โทรศัพท์ / Internet", icon: "fa-mobile-screen-button" },
+      { val: "📶 Internet มือถือ", label: "Internet มือถือ", icon: "fa-mobile-screen-button" },
+      { val: "📡 Internet บ้าน", label: "Internet บ้าน", icon: "fa-wifi" },
       { val: "🛍️ ช้อปปิ้ง", label: "ช้อปปิ้ง / บันเทิง", icon: "fa-bag-shopping" },
 
       { val: "💰 เงินออมแบบเงินตราไทย THB",           label: "เงินออมแบบเงินตราไทย THB",           icon: "fa-piggy-bank" },
@@ -1737,6 +1860,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       document.getElementById('rangeHint').innerText = `Year: ${res.filter.year}`;
       const yStr = String(res.filter.year);
       const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
+      try { renderUtilityStatusCard(yearFilteredHistory, res.filter.year); } catch(e) {}
 
       // ✅ Exclude Savings-category expenses from KPI + BarChart
       const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, res.filter.year);
@@ -1830,6 +1954,110 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       if (!isNaN(d.getTime())) return d.getMonth();
       return null;
     }
+
+    // ===========================================
+    // Utility Status (Dashboard)
+    // - Columns: ค่าบ้าน, ค่าน้ำ, ค่าไฟ, Internet มือถือ, Internet บ้าน
+    // - Rows: Jan-Dec
+    // - Paid: มีรายการ "รายจ่าย" ในเดือนนั้นๆ
+    // - Slip: เปิดลิงก์สลิป (ถ้ามี slipUrl)
+    // ===========================================
+    const __UTILITY_ROWS = [
+      { key: 'house', label: 'ค่าบ้าน', matcher: (c) => (c.includes('ค่าบ้าน')) },
+      { key: 'water', label: 'ค่าน้ำ', matcher: (c) => (c.includes('ค่าน้ำ')) },
+      { key: 'electric', label: 'ค่าไฟ', matcher: (c) => (c.includes('ค่าไฟ')) },
+      // Split from old category โทรศัพท์ / Internet
+      { key: 'inetMobile', label: 'Internet มือ', matcher: (c) => (c.includes('Internet มือถือ') || (c.includes('Internet') && c.includes('มือถือ')) || c.includes('โทรศัพท์ / Internet') || c.includes('โทรศัพท์') ) },
+      { key: 'inetHome',   label: 'Internet บ้าน',   matcher: (c) => (c.includes('Internet บ้าน')   || (c.includes('Internet') && c.includes('บ้าน'))   || c.includes('โทรศัพท์ / Internet') || c.includes('โทรศัพท์') ) },
+    ];
+
+    function __getSlipUrlFromItem(item){
+      if (!item) return '';
+      return String(item.slipUrl || item.slipURL || item.slip_url || '').trim();
+    }
+
+    function openSlip(url){
+      const u = String(url || '').trim();
+      if (!u) return;
+      try { window.open(u, '_blank', 'noopener'); } catch(e) { window.open(u, '_blank'); }
+    }
+
+    function renderUtilityStatusCard(historyItems, year){
+      const matrix = document.getElementById('utilStatusMatrix');
+      if (!matrix) return;
+
+      // Use only year + expense items
+      const yStr = String(year || '');
+      const list = (historyItems || []).filter(it => {
+        if (!it) return false;
+        if ((it.type || '').toString().trim() !== 'รายจ่าย') return false;
+        if (!it.date) return false;
+        if (yStr && !String(it.date).includes(yStr)) return false;
+        return true;
+      });
+
+      // list is typically newest-first; keep that to pick latest slip per month
+      function findPaidItem(rowDef, monthIdx){
+        for (const it of list){
+          const cat = (it.category || '').toString().trim();
+          if (!cat) continue;
+          if (!rowDef.matcher(cat)) continue;
+          const mi = __getMonthIndexFromAny(it.date);
+          if (mi === monthIdx) return it;
+        }
+        return null;
+      }
+
+      const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+      let html = '';
+      html += `<div class="util-matrix-grid">`;
+
+      // Header row
+      html += `<div></div>`;
+      for (let m=0; m<12; m++){
+        html += `<div class="util-matrix-head">${monthLabels[m]}</div>`;
+      }
+
+      // Category rows
+      for (const rowDef of __UTILITY_ROWS){
+        html += `<div class="util-matrix-rowlabel">${rowDef.label}</div>`;
+
+        for (let m=0; m<12; m++){
+          const it = findPaidItem(rowDef, m);
+          const paid = !!it;
+          const slipUrl = __getSlipUrlFromItem(it);
+
+          const pillCls = paid ? 'util-pill util-pill-paid' : 'util-pill util-pill-unpaid';
+
+          if (paid && slipUrl){
+            // Make the pill itself clickable (opens Slip)
+            html += `<div class="util-matrix-cell">`;
+            html += `<button type="button" class="utilPillLink util-pill-link" data-url="${String(slipUrl).replace(/"/g,'&quot;')}" aria-label="Open Slip">`;
+            html += `<span class="${pillCls}"></span>`;
+            html += `</button>`;
+            html += `</div>`;
+          } else {
+            html += `<div class="util-matrix-cell"><span class="${pillCls}"></span></div>`;
+          }
+        }
+      }
+
+      html += `</div>`;
+      matrix.innerHTML = html;
+
+      // bind pill links
+      try {
+        matrix.querySelectorAll('.utilPillLink').forEach(btn => {
+          btn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openSlip(btn.getAttribute('data-url'));
+          };
+        });
+      } catch(e) {}
+    }
+
 
     // ✅ Donut สำหรับ "รายจ่าย" ที่ไม่ใช่เงินออม
     function calculateExpenseDonutData(historyItems) {
@@ -2486,8 +2714,8 @@ function renderDonutChart(dataObj) {
       '🏠 ค่าบ้าน',
       '🚰 ค่าน้ำ',
       '💡 ค่าไฟ',
-      '📱 โทรศัพท์ / Internet'
-    ];
+      '📶 Internet มือถือ',
+      '📡 Internet บ้าน',];
 
     let __slipState = { name: '', mime: '', base64: '', size: 0 };
 
