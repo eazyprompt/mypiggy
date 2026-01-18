@@ -1009,7 +1009,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyeiUkdZ8au06ZWK4Yq336lzcrUM8iOEDzWllR51GQEXH54FhvIu9KwM8_Pz1dnZlH7rg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyvNBzo2qqRuVT0RYILsX-t6vSxYf6dkZ1TADpxEewidTQUsiBVV9kP4gph9Rbijhm6_Q/exec';
 
     // ✅ Savings categories (ใช้สำหรับกรอง donut)
     const SAVINGS_CATEGORIES = [
@@ -1878,7 +1878,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       document.getElementById('rangeHint').innerText = `Year: ${res.filter.year}`;
       const yStr = String(res.filter.year);
       const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
-      try { renderUtilityStatusCard(yearFilteredHistory, res.filter.year); } catch(e) {}
+      try { renderUtilityStatusCard(yearFilteredHistory, res.filter.year, (res.utilityAnyUser || [])); } catch(e) {}
 
       // ✅ Exclude Savings-category expenses from KPI + BarChart
       const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, res.filter.year);
@@ -1985,7 +1985,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       { key: 'water', label: 'ค่าน้ำ', matcher: (c) => (c.includes('ค่าน้ำ')) },
       { key: 'electric', label: 'ค่าไฟ', matcher: (c) => (c.includes('ค่าไฟ')) },
       // Split from old category โทรศัพท์ / Internet
-      { key: 'inetMobile', label: 'Internet มือ', matcher: (c) => (c.includes('Internet มือถือ') || (c.includes('Internet') && c.includes('มือถือ')) || c.includes('โทรศัพท์ / Internet') || c.includes('โทรศัพท์') ) },
+      { key: 'inetMobile', label: 'Internet มือถือ', matcher: (c) => (c.includes('Internet มือถือ') || (c.includes('Internet') && c.includes('มือถือ')) || c.includes('โทรศัพท์ / Internet') || c.includes('โทรศัพท์') ) },
       { key: 'inetHome',   label: 'Internet บ้าน',   matcher: (c) => (c.includes('Internet บ้าน')   || (c.includes('Internet') && c.includes('บ้าน'))   || c.includes('โทรศัพท์ / Internet') || c.includes('โทรศัพท์') ) },
     ];
 
@@ -2000,7 +2000,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       try { window.open(u, '_blank', 'noopener'); } catch(e) { window.open(u, '_blank'); }
     }
 
-    function renderUtilityStatusCard(historyItems, year){
+    function renderUtilityStatusCard(historyItems, year, utilityAnyUserItems){
       const matrix = document.getElementById('utilStatusMatrix');
       if (!matrix) return;
 
@@ -2014,9 +2014,21 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
         return true;
       });
 
+      // ✅ Any-user paid list (สำหรับ ค่าบ้าน/ค่าน้ำ/ค่าไฟ/Internet บ้าน)
+      const anyUserList = (utilityAnyUserItems || []).filter(it => {
+        if (!it) return false;
+        if ((it.type || '').toString().trim() !== 'รายจ่าย') return false;
+        if (!it.date) return false;
+        if (yStr && !String(it.date).includes(yStr)) return false;
+        return true;
+      });
+
+      const __UTILITY_ANY_USER_KEYS = new Set(['house','water','electric','inetHome']);
+
       // list is typically newest-first; keep that to pick latest slip per month
       function findPaidItem(rowDef, monthIdx){
-        for (const it of list){
+        const src = __UTILITY_ANY_USER_KEYS.has(rowDef.key) ? anyUserList : list;
+        for (const it of src){
           const cat = (it.category || '').toString().trim();
           if (!cat) continue;
           if (!rowDef.matcher(cat)) continue;
