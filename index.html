@@ -546,6 +546,23 @@
             <input type="text" id="desc" class="field w-full p-4 pl-12 rounded-2xl text-slate-700" placeholder="บันทึกช่วยจำ (ถ้ามี)">
             <i class="fa-regular fa-comment-dots absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
           </div>
+
+          <!-- Slip Upload (Required for: ค่าบ้าน/ค่าน้ำ/ค่าไฟ/โทรศัพท์) -->
+          <div id="slipWrap" class="hidden mt-3">
+            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Slip</label>
+            <input id="slipFile" type="file" accept="image/*,application/pdf" class="hidden" />
+
+            <div id="slipPicker" class="field w-full p-4 rounded-2xl text-slate-800 font-medium flex items-center justify-between cursor-pointer" onclick="document.getElementById('slipFile').click()">
+              <span class="flex items-center gap-3 min-w-0">
+                <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+                  <i class="fa-solid fa-receipt text-sm"></i>
+                </span>
+                <span id="slipText" class="text-slate-400 truncate">แนบสลิป (จำเป็น)</span>
+              </span>
+              <button type="button" id="slipClearBtn" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-full hover:bg-rose-100 transition-colors" onclick="event.stopPropagation(); clearSlip();">ลบไฟล์</button>
+            </div>
+            <p id="slipHint" class="text-[10px] text-slate-400 mt-2 ml-2">รองรับรูปภาพหรือ PDF (แนะนำไฟล์เล็ก ๆ)</p>
+          </div>
         </div>
 
         <button onclick="saveData()" id="saveBtn" class="btn btn-primary-grad w-full py-4 rounded-[1.5rem] font-bold text-lg flex items-center justify-center gap-2 mt-4">
@@ -852,7 +869,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxfQUt2rlig9GBJEVa2lDFjL0p9wyGe8jW6pYF5fIrxgpKCOliQDUWaJfZ2d8ce2PdhpQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwlNDDifCqdHZC21H_OHluZJkoYlpCH3PIxurFp0HwCgKtlG-2hfA29yJtjZ9r1M6amyg/exec';
 
     // ✅ Savings categories (ใช้สำหรับกรอง donut)
     const SAVINGS_CATEGORIES = [
@@ -1144,11 +1161,13 @@ function _savingsLightBlueToDeepStops() {
       bindHistoryControls();
       initCustomDropdown();
       initUserSelectDropdowns();
+      initSlipUploader();
       loadTargets();
 
       refreshDashboard();
       resetTypeSelection();
       resetUserSelection();
+      updateSlipRequirementUI();
       switchTab('dashboard');
     };
 
@@ -1249,6 +1268,9 @@ function _savingsLightBlueToDeepStops() {
       });
       document.getElementById('custom-cate-options').classList.remove('open');
       document.getElementById('trigger-arrow').style.transform = 'rotate(0deg)';
+
+      // slip requirement UI
+      try { updateSlipRequirementUI(); } catch(e) {}
     }
 
     function resetCustomDropdown() {
@@ -1257,6 +1279,8 @@ function _savingsLightBlueToDeepStops() {
       document.getElementById('trigger-icon').className = "w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white flex items-center justify-center shadow-sm";
       document.getElementById('trigger-text').innerText = "เลือกหมวดหมู่...";
       document.getElementById('trigger-text').className = "text-slate-400";
+
+      try { updateSlipRequirementUI(); } catch(e) {}
     }
 
     // ===========================================
@@ -1590,6 +1614,9 @@ function _savingsLightBlueToDeepStops() {
 
       // reset category list back to normal
       try { refreshCategoryDropdownByType(); } catch(e) {}
+
+      // slip requirement UI
+      try { updateSlipRequirementUI(); } catch(e) {}
     }
 
     function setType(type) {
@@ -1617,6 +1644,9 @@ function _savingsLightBlueToDeepStops() {
 
       // category dropdown rules (Transfer => only Income/Bonus)
       try { refreshCategoryDropdownByType(); } catch(e) {}
+
+      // slip requirement UI
+      try { updateSlipRequirementUI(); } catch(e) {}
     }
 
     function resetUserSelection(){
@@ -2449,11 +2479,108 @@ function renderDonutChart(dataObj) {
       return String(str).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
     }
 
+    // ===========================================
+    // Slip Attachment (Required Categories)
+    // ===========================================
+    const SLIP_REQUIRED_CATEGORIES = [
+      '🏠 ค่าบ้าน',
+      '🚰 ค่าน้ำ',
+      '💡 ค่าไฟ',
+      '📱 โทรศัพท์ / Internet'
+    ];
+
+    let __slipState = { name: '', mime: '', base64: '', size: 0 };
+
+    function isSlipRequiredCategory(val) {
+      return SLIP_REQUIRED_CATEGORIES.includes(String(val || '').trim());
+    }
+
+    function updateSlipRequirementUI() {
+      try {
+        const cateVal = (document.getElementById('cate') ? document.getElementById('cate').value : '');
+        const wrap = document.getElementById('slipWrap');
+        if (!wrap) return;
+
+        // Never require for Transfer
+        const require = (currentType !== 'Transfer') && isSlipRequiredCategory(cateVal);
+
+        if (!require) {
+          wrap.classList.add('hidden');
+          // clear slip if category no longer requires
+          if (__slipState && (__slipState.base64 || __slipState.name)) clearSlip(true);
+          return;
+        }
+
+        wrap.classList.remove('hidden');
+        // keep current selection UI
+      } catch (e) {}
+    }
+
+    function clearSlip(silent) {
+      try {
+        __slipState = { name: '', mime: '', base64: '', size: 0 };
+        const f = document.getElementById('slipFile');
+        if (f) f.value = '';
+        const t = document.getElementById('slipText');
+        if (t) { t.textContent = 'แนบสลิป (จำเป็น)'; t.className = 'text-slate-400 truncate'; }
+        const btn = document.getElementById('slipClearBtn');
+        if (btn) btn.classList.add('hidden');
+        if (!silent) {
+          // no alert by default (avoid noisy UX)
+        }
+      } catch (e) {}
+    }
+
+    function initSlipUploader() {
+      const inp = document.getElementById('slipFile');
+      if (!inp || inp.__bound) return;
+      inp.__bound = true;
+
+      inp.addEventListener('change', function(){
+        try {
+          const file = inp.files && inp.files[0];
+          if (!file) return;
+
+          // basic size guard (URLSearchParams payload can get large)
+          const maxBytes = 3 * 1024 * 1024; // 3MB
+          if (file.size > maxBytes) {
+            clearSlip(true);
+            return alert('ไฟล์สลิปใหญ่เกินไป (เกิน 3MB) กรุณาเลือกไฟล์ที่เล็กลง');
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(){
+            const dataUrl = String(reader.result || '');
+            const parts = dataUrl.split(',');
+            const b64 = parts.length > 1 ? parts[1] : '';
+
+            __slipState = {
+              name: file.name || 'slip',
+              mime: file.type || 'application/octet-stream',
+              base64: b64,
+              size: file.size || 0
+            };
+
+            const t = document.getElementById('slipText');
+            if (t) { t.textContent = 'แนบแล้ว: ' + __slipState.name; t.className = 'text-slate-900 font-bold truncate'; }
+            const btn = document.getElementById('slipClearBtn');
+            if (btn) btn.classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
+        } catch (e) {
+          clearSlip(true);
+          alert('อ่านไฟล์ไม่สำเร็จ');
+        }
+      });
+    }
+
     function resetInputs() {
       document.getElementById('desc').value = '';
       document.getElementById('amt').value = '';
       const pm = document.getElementById('payMethod'); if (pm) { pm.value = ''; try { syncCustomSelectUI('payMethod'); } catch(e) {} }
       resetCustomDropdown();
+      clearSlip(true);
+      updateSlipRequirementUI();
       resetTypeSelection();
       resetUserSelection();
       initDateDefaultToday();
@@ -2495,6 +2622,16 @@ const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
         return;
       }
 
+      // Slip required categories (server will re-check too)
+      const needSlip = isSlipRequiredCategory(cateVal);
+      if (needSlip) {
+        // ensure UI visible
+        try { updateSlipRequirementUI(); } catch(e) {}
+        if (!__slipState || !__slipState.base64 || !__slipState.mime) {
+          return alert('หมวดนี้ต้องแนบสลิปก่อนบันทึก');
+        }
+      }
+
       const payload = {
         entryDate: dateVal,
         userName: userVal,
@@ -2502,7 +2639,9 @@ const dateVal = document.getElementById('txDate').value || ymdLocal(new Date());
         type: currentType === 'Expense' ? 'รายจ่าย' : 'รายรับ',
         category: cateVal,
         description: descVal,
-        amount: amountVal
+        amount: amountVal,
+        // slip (only send when required to keep payload small)
+        ...(needSlip ? { slipName: __slipState.name, slipMime: __slipState.mime, slipBase64: __slipState.base64 } : {})
       };
 
       showLoading('Saving', 'Writing data...');
