@@ -399,29 +399,46 @@
   .util-matrix-grid {
     display: grid;
     grid-template-columns: 78px repeat(12, 1fr);
-    gap: 6px;
+    gap: 0;
     align-items: center;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255,255,255,.06);
   }
+  .util-matrix-grid > div{
+    border-right: 1px solid rgba(255,255,255,.28);
+    border-bottom: 1px solid rgba(255,255,255,.28);
+    min-height: 22px;
+  }
+  /* remove outer-right border for last column in each row (13 columns total) */
+  .util-matrix-grid > div:nth-child(13n){ border-right: none; }
+  /* remove bottom border for last row */
+  .util-matrix-grid > div:nth-last-child(-n+13){ border-bottom: none; }
   .util-matrix-head {
     font-size: 10px;
     font-weight: 800;
     color: rgb(100 116 139); /* slate-500 */
     text-align: center;
     line-height: 1;
+    background: rgba(255,255,255,.08);
+    padding: 4px 0;
   }
   .util-matrix-rowlabel {
     font-size: 10px;
     font-weight: 900;
     color: rgba(255,255,255,0.94); /* white for readability on dark theme */
     line-height: 1.1;
-    padding-right: 4px;
+    padding: 4px 6px;
+    background: rgba(255,255,255,.08);
     white-space: nowrap;
   }
   .util-matrix-cell {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 20px;
+    height: 22px;
+    padding: 0;
   }
 
   /* Make each pill tappable (link to Slip) without changing layout */
@@ -475,10 +492,11 @@
   }
 
   @media (max-width: 420px) {
-    .util-matrix-grid { grid-template-columns: 64px repeat(12, 1fr); gap: 4px; }
+    .util-matrix-grid { grid-template-columns: 64px repeat(12, 1fr); gap: 0; border-radius: 14px; }
+    .util-matrix-grid > div{ min-height: 20px; }
     .util-matrix-head { font-size: 9px; }
     .util-matrix-rowlabel { font-size: 9px; }
-    .util-matrix-cell { height: 18px; }
+    .util-matrix-cell { height: 20px; }
     .util-pill { width: 9px; height: 16px; }
     .util-slip-btn { width: 20px; height: 18px; border-radius: 9px; }
   }
