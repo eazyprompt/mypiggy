@@ -513,7 +513,10 @@
             <option value="" disabled selected>Select Category</option>
             <option value="🍱 อาหาร/เครื่องดื่ม">อาหาร / เครื่องดื่ม</option>
             <option value="🚗 การเดินทาง">การเดินทาง / ค่าน้ำมัน</option>
-            <option value="🏠 ที่พัก/ของใช้">ที่พัก / ของใช้ส่วนตัว</option>
+            <option value="🏠 ค่าบ้าน">ค่าบ้าน</option>
+            <option value="🚰 ค่าน้ำ">ค่าน้ำ</option>
+            <option value="💡 ค่าไฟ">ค่าไฟ</option>
+            <option value="📱 โทรศัพท์ / Internet">โทรศัพท์ / Internet</option>
             <option value="🛍️ ช้อปปิ้ง">ช้อปปิ้ง / บันเทิง</option>
 
             <!-- ✅ 4 หมวดเงินออม -->
@@ -849,7 +852,7 @@
     // ===========================================
     // CONFIG & UTILS
     // ===========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw93WqGQKvqsTY_0BEYrsYThJwtOMpwJ-jOl3Rpf8dGkWkf3YxzVlniBmuLRTylM_Ac0Q/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxfQUt2rlig9GBJEVa2lDFjL0p9wyGe8jW6pYF5fIrxgpKCOliQDUWaJfZ2d8ce2PdhpQ/exec';
 
     // ✅ Savings categories (ใช้สำหรับกรอง donut)
     const SAVINGS_CATEGORIES = [
@@ -898,7 +901,10 @@ function _savingsLightBlueToDeepStops() {
     const CATEGORIES = [
       { val: "🍱 อาหาร/เครื่องดื่ม", label: "อาหาร / เครื่องดื่ม", icon: "fa-utensils" },
       { val: "🚗 การเดินทาง", label: "การเดินทาง / น้ำมัน", icon: "fa-gas-pump" },
-      { val: "🏠 ที่พัก/ของใช้", label: "ที่พัก / ของใช้", icon: "fa-house-chimney" },
+      { val: "🏠 ค่าบ้าน", label: "ค่าบ้าน", icon: "fa-house" },
+      { val: "🚰 ค่าน้ำ",  label: "ค่าน้ำ",  icon: "fa-faucet-drip" },
+      { val: "💡 ค่าไฟ",  label: "ค่าไฟ",  icon: "fa-bolt" },
+      { val: "📱 โทรศัพท์ / Internet", label: "โทรศัพท์ / Internet", icon: "fa-mobile-screen-button" },
       { val: "🛍️ ช้อปปิ้ง", label: "ช้อปปิ้ง / บันเทิง", icon: "fa-bag-shopping" },
 
       { val: "💰 เงินออมแบบเงินตราไทย THB",           label: "เงินออมแบบเงินตราไทย THB",           icon: "fa-piggy-bank" },
