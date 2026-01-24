@@ -870,7 +870,7 @@
               <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wide"></p>
               <span class="text-[10px] text-slate-400"></span>
             </div>
-            <div class="h-[220px] w-full relative">
+            <div class="h-[200px] w-full relative">
               <canvas id="savingsTypeBarStack"></canvas>
             </div>
           </div>
@@ -2774,8 +2774,7 @@ function renderDonutChart(dataObj) {
         _raw: __raw,
         backgroundColor: (savingsTypeColorMap && savingsTypeColorMap[t]) ? savingsTypeColorMap[t] : colors[i % colors.length],
         borderWidth: 0,
-        borderRadius: 6,
-        borderSkipped: false
+        borderRadius: 6
       };
     });
 savingsTypeBarStackChart = new Chart(canvas, {
@@ -2814,12 +2813,21 @@ savingsTypeBarStackChart = new Chart(canvas, {
           }
         },
         scales: {
-          x: { stacked: true, ticks: { font: { family: "'Kanit', sans-serif", size: 10 }, color: '#94a3b8' }, grid: { display: false } },
+          x: {
+            stacked: true,
+            ticks: { font: { family: "'Kanit', sans-serif", size: 10 }, color: '#94a3b8' },
+            grid: { display: false }
+          },
           y: {
             beginAtZero: true,
             stacked: true,
             max: 100,
-            ticks: { font: { family: "'Kanit', sans-serif", size: 10 }, color: '#94a3b8', maxTicksLimit: 5, callback: (v) => `${v}%` },
+            ticks: {
+              font: { family: "'Kanit', sans-serif", size: 10 },
+              color: '#94a3b8',
+              maxTicksLimit: 5,
+              callback: (v) => `${v}%`
+            },
             grid: { color: 'rgba(148, 163, 184, 0.15)', drawBorder: false }
           }
         }
