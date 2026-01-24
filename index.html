@@ -865,6 +865,16 @@
           <div class="h-[220px] w-full relative">
             <canvas id="savingsDonutChart"></canvas>
           </div>
+          <div class="mt-4">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wide"></p>
+              <span class="text-[10px] text-slate-400"></span>
+            </div>
+            <div class="h-[220px] w-full relative">
+              <canvas id="savingsTypeBarStack"></canvas>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -1129,6 +1139,8 @@ function _savingsLightBlueToDeepStops() {
     let lineChart = null;
     let donutChart = null;
     let savingsDonutChart = null;
+    let savingsTypeBarStackChart = null;
+    let savingsTypeColorMap = {};
 
     const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let __loadingCount = 0;
@@ -1907,6 +1919,10 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const savingsDonutData = calculateSavingsDonutData(yearFilteredHistory);
       renderSavingsDonutChart(savingsDonutData);
 
+      // ✅ NEW: Monthly stacked bar for Savings By Type
+      const monthlySavingsByType = calculateMonthlySavingsByType(yearFilteredHistory);
+      renderSavingsTypeBarStack(monthlySavingsByType);
+
       if(res.history) {
         __historyCache = yearFilteredHistory;
         if (__activeTab === 'history') renderHistory(__historyCache);
@@ -2637,6 +2653,10 @@ function renderDonutChart(dataObj) {
     if (data.length === 0) return;
 
     const colors = _savingsLightBlueToDeepStops();
+    // Keep color mapping so other charts (e.g., Monthly 100% Stack) match the donut colors
+    savingsTypeColorMap = {};
+    labels.forEach((lab, i) => { savingsTypeColorMap[lab] = colors[i % colors.length]; });
+
 
     savingsDonutChart = new Chart(canvas, {
       type: 'doughnut',
@@ -2682,6 +2702,131 @@ function renderDonutChart(dataObj) {
       }
     });
   }
+        
+
+  // ✅ NEW: Monthly Stacked Bar ต่อท้าย Savings By Type Donut
+  function calculateMonthlySavingsByType(items) {
+    const labels = (typeof MONTH_LABELS !== 'undefined' && Array.isArray(MONTH_LABELS))
+      ? MONTH_LABELS
+      : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    const series = {};
+    (items || []).forEach((item) => {
+      const cat = (item && item.category != null) ? String(item.category).trim() : '';
+      if (!cat) return;
+      if (typeof isSavingsCategory === 'function' && !isSavingsCategory(cat)) return;
+
+      const mi = (typeof __getMonthIndexFromAny === 'function') ? __getMonthIndexFromAny(item.date) : -1;
+      if (mi == null || mi < 0 || mi > 11) return;
+
+      let rawAmt = item ? item.amt : 0;
+      if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
+      let amt = Number(rawAmt);
+      if (!isFinite(amt)) amt = 0;
+      amt = Math.abs(amt);
+
+      if (!series[cat]) series[cat] = Array(12).fill(0);
+      series[cat][mi] += amt;
+    });
+
+    const types = Object.keys(series).filter(k => (series[k] || []).some(v => v !== 0));
+    // sort by total desc (readable legend)
+    types.sort((a, b) => {
+      const ta = (series[a] || []).reduce((s, v) => s + (Number(v) || 0), 0);
+      const tb = (series[b] || []).reduce((s, v) => s + (Number(v) || 0), 0);
+      return tb - ta;
+    });
+
+    return { labels, series, types };
+  }
+
+  function renderSavingsTypeBarStack(monthlyObj) {
+    const canvas = document.getElementById('savingsTypeBarStack');
+    if (!canvas) return;
+
+    if (savingsTypeBarStackChart) savingsTypeBarStackChart.destroy();
+
+    const labels = (monthlyObj && monthlyObj.labels) ? monthlyObj.labels : [];
+    const types = (monthlyObj && monthlyObj.types) ? monthlyObj.types : [];
+    const series = (monthlyObj && monthlyObj.series) ? monthlyObj.series : {};
+
+    if (!labels.length || !types.length) return;
+
+    const colors = _savingsLightBlueToDeepStops();
+
+    
+    // 100% stacked: convert each month's amounts to percent of that month total
+    const __labelsLen = labels.length || 12;
+    const __totals = Array(__labelsLen).fill(0);
+
+    // totals per month
+    types.forEach((t) => {
+      const arr = (series[t] || Array(__labelsLen).fill(0)).map(v => Number(v) || 0);
+      for (let i = 0; i < __labelsLen; i++) __totals[i] += (arr[i] || 0);
+    });
+
+    const datasets = types.map((t, i) => {
+      const __raw = (series[t] || Array(__labelsLen).fill(0)).map(v => Number(v) || 0);
+      const __pct = __raw.map((v, idx) => (__totals[idx] ? (v / __totals[idx]) * 100 : 0));
+      return {
+        label: t,
+        data: __pct,
+        _raw: __raw,
+        backgroundColor: (savingsTypeColorMap && savingsTypeColorMap[t]) ? savingsTypeColorMap[t] : colors[i % colors.length],
+        borderWidth: 0,
+        borderRadius: 6,
+        borderSkipped: false
+      };
+    });
+savingsTypeBarStackChart = new Chart(canvas, {
+      type: 'bar',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+            position: 'bottom',
+            labels: {
+              font: { family: "'Kanit', sans-serif", size: 10 },
+              color: '#cbd5e1',
+              boxWidth: 10,
+              boxHeight: 10,
+              padding: 12,
+              usePointStyle: true,
+              pointStyle: 'rectRounded'
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            padding: 10,
+            titleFont: { family: "'Kanit', sans-serif" },
+            bodyFont: { family: "'Kanit', sans-serif" },
+            cornerRadius: 8,
+            callbacks: {
+              label: function(ctx) {
+                const v = Number((ctx.parsed && ctx.parsed.y) || 0);
+                const raw = (ctx.dataset && ctx.dataset._raw) ? Number(ctx.dataset._raw[ctx.dataIndex] || 0) : 0;
+                return ` ${ctx.dataset.label}: ${v.toFixed(1)}% (฿${raw.toLocaleString()})`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true, ticks: { font: { family: "'Kanit', sans-serif", size: 10 }, color: '#94a3b8' }, grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            stacked: true,
+            max: 100,
+            ticks: { font: { family: "'Kanit', sans-serif", size: 10 }, color: '#94a3b8', maxTicksLimit: 5, callback: (v) => `${v}%` },
+            grid: { color: 'rgba(148, 163, 184, 0.15)', drawBorder: false }
+          }
+        }
+      }
+    });
+  }
+
         function renderHistory(items) {
       const sortedItems = items.slice().sort((a, b) => Number(b.row) - Number(a.row));
 
