@@ -636,6 +636,7 @@
             <option value="💵 เงินออมแบบเงินตราต่างประเทศ USD">เงินออมแบบเงินตราต่างประเทศ USD</option>
             <option value="🛡️ เงินออมแบบประกันสะสมทรัพย์">เงินออมแบบประกันสะสมทรัพย์</option>
             <option value="🪙 เงินออมแบบออมทอง">เงินออมแบบออมทอง</option>
+            <option value="🎟️ เงินออมแบบสลากออมสิน">เงินออมแบบสลากออมสิน</option>
 	    <option value="₿ เงินออมแบบ Crypto Currency">เงินออมแบบ Crypto Currency</option>
             <option value="📈 เงินออมแบบกองทุน/หุ้น">เงินออมแบบกองทุน/หุ้น</option>
 
@@ -1030,6 +1031,7 @@
       "เงินออมแบบเงินตราต่างประเทศ USD",
       "เงินออมแบบประกันสะสมทรัพย์",
       "เงินออมแบบออมทอง",
+      "เงินออมแบบสลากออมสิน",
 "เงินออมแบบ Crypto Currency",
       "เงินออมแบบกองทุน/หุ้น"
     ];
@@ -1083,7 +1085,8 @@ function _savingsLightBlueToDeepStops() {
       { val: "💰 เงินออมแบบเงินตราไทย THB",           label: "เงินออมแบบเงินตราไทย THB",           icon: "fa-piggy-bank" },
       { val: "💵 เงินออมแบบเงินตราต่างประเทศ USD",   label: "เงินออมแบบเงินตราต่างประเทศ USD",   icon: "fa-dollar-sign" },
       { val: "🛡️ เงินออมแบบประกันสะสมทรัพย์",        label: "เงินออมแบบประกันสะสมทรัพย์",        icon: "fa-shield-halved" },
-      { val: "🪙 ออมทอง",                              label: "เงินออมแบบออมทอง",                              icon: "fa-coins" },
+      { val: "🪙 เงินออมแบบออมทอง",                  label: "เงินออมแบบออมทอง",                              icon: "fa-coins" },
+      { val: "🎟️ เงินออมแบบสลากออมสิน",                  label: "เงินออมแบบสลากออมสิน",                          icon: "fa-ticket" },
 { val: "₿ เงินออมแบบ Crypto Currency", label: "เงินออมแบบ Crypto Currency", icon: "fa-bitcoin-sign" },
 { val: "📈 เงินออมแบบกองทุน/หุ้น", label: "เงินออมแบบกองทุน/หุ้น", icon: "fa-chart-line" },
 
@@ -2855,6 +2858,7 @@ savingsTypeBarStackChart = new Chart(canvas, {
         else if(c.includes('เงินออมแบบเงินตราต่างประเทศ USD')) catIcon = '<i class="fa-solid fa-dollar-sign"></i>';
         else if(c.includes('ประกันสะสมทรัพย์')) catIcon = '<i class="fa-solid fa-shield-halved"></i>';
         else if(c.includes('เงินออมแบบออมทอง')) catIcon = '<i class="fa-solid fa-coins"></i>';
+        else if(c.includes('เงินออมแบบสลากออมสิน')) catIcon = '<i class="fa-solid fa-ticket"></i>';
         else if(c.includes('โอนไปยังบัญชีอื่น')) catIcon = '<i class="fa-solid fa-right-left"></i>';
         else if(c.includes('รายรับ')) catIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
 
