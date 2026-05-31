@@ -317,6 +317,399 @@
   color: rgba(226,232,240,0.98) !important;
 }
 
+
+
+/* ==================================================
+   One Page Dashboard (Landscape Summary View)
+   UI only — no changes to data/save logic
+   ================================================== */
+body.onepage-lock{
+  overflow: hidden !important;
+}
+
+#onePageDashOverlay{
+  position: fixed;
+  inset: 0;
+  z-index: 9900;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(59,130,246,0.26), transparent 38%),
+    radial-gradient(circle at 88% 82%, rgba(6,182,212,0.22), transparent 42%),
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    rgba(2, 6, 23, 0.98);
+  background-size: auto, auto, 24px 24px, 24px 24px, auto;
+  color: rgba(226,232,240,0.98);
+}
+
+.onepage-shell{
+  width: 100%;
+  height: 100%;
+  padding: max(0.45rem, env(safe-area-inset-top)) max(0.55rem, env(safe-area-inset-right)) max(0.45rem, env(safe-area-inset-bottom)) max(0.55rem, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.onepage-content{
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.onepage-topbar{
+  height: 2.7rem;
+  min-height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 1.25rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(148,163,184,0.16);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.onepage-title{
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.onepage-logo{
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(6,182,212,0.18);
+}
+
+.onepage-title-text{
+  min-width: 0;
+  line-height: 1.05;
+}
+
+.onepage-title-text h2{
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.onepage-title-text p{
+  margin-top: 0.1rem;
+  font-size: clamp(0.52rem, 0.9vw, 0.68rem);
+  color: rgba(148,163,184,0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onepage-actions{
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.onepage-action-btn{
+  height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: rgba(226,232,240,0.96);
+  border: 1px solid rgba(148,163,184,0.18);
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+}
+
+.onepage-action-btn:hover{
+  background: rgba(6,182,212,0.14);
+  border-color: rgba(6,182,212,0.30);
+}
+
+.onepage-action-btn:active{ transform: scale(0.98); }
+
+.onepage-grid{
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.02fr 1.22fr 1.02fr;
+  grid-template-rows: minmax(0, 0.88fr) minmax(0, 1.04fr);
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.onepage-card{
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.15rem;
+  padding: 0.6rem;
+  background: rgba(255,255,255,0.065);
+  border: 1px solid rgba(148,163,184,0.16);
+  box-shadow: 0 16px 38px rgba(0,0,0,0.32);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+}
+
+.onepage-card-title{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: clamp(0.62rem, 1vw, 0.78rem);
+  font-weight: 900;
+  color: rgba(226,232,240,0.96);
+  line-height: 1;
+  min-height: 0.9rem;
+}
+
+.onepage-card-sub{
+  font-size: clamp(0.48rem, 0.82vw, 0.62rem);
+  color: rgba(148,163,184,0.86);
+  font-weight: 700;
+}
+
+.onepage-chart-box{
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.onepage-chart-box canvas{
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.onepage-summary-card{
+  background:
+    radial-gradient(circle at 18% 20%, rgba(6,182,212,0.20), transparent 48%),
+    linear-gradient(135deg, rgba(37,99,235,0.22), rgba(6,182,212,0.12)),
+    rgba(255,255,255,0.07);
+}
+
+.onepage-net-label{
+  font-size: clamp(0.55rem, 0.9vw, 0.68rem);
+  color: rgba(191,219,254,0.90);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.onepage-net-value{
+  margin-top: 0.12rem;
+  font-size: clamp(1.2rem, 3.1vw, 2.35rem);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.onepage-mini-breakdown{
+  margin-top: 0.45rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.onepage-mini-box{
+  min-width: 0;
+  border-radius: 0.85rem;
+  padding: 0.38rem 0.45rem;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.onepage-mini-box span{
+  display: block;
+  font-size: clamp(0.46rem, 0.78vw, 0.56rem);
+  color: rgba(191,219,254,0.86);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.onepage-mini-box b{
+  display: block;
+  margin-top: 0.15rem;
+  font-size: clamp(0.62rem, 1vw, 0.78rem);
+  color: #fff;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onepage-kpi-grid{
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.onepage-kpi{
+  min-width: 0;
+  border-radius: 0.85rem;
+  padding: 0.38rem 0.45rem;
+  background: rgba(2,6,23,0.24);
+  border: 1px solid rgba(148,163,184,0.12);
+}
+
+.onepage-kpi span{
+  display: block;
+  font-size: clamp(0.43rem, 0.74vw, 0.54rem);
+  color: rgba(148,163,184,0.90);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.onepage-kpi b{
+  display: block;
+  margin-top: 0.17rem;
+  font-size: clamp(0.64rem, 1.06vw, 0.83rem);
+  color: rgba(226,232,240,0.98);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onepage-utility-compact{
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.onepage-utility-compact .util-matrix-grid{
+  height: 100%;
+  grid-template-columns: 64px repeat(12, 1fr);
+  border-radius: 0.75rem;
+}
+
+.onepage-utility-compact .util-matrix-grid > div{
+  min-height: 0;
+}
+
+.onepage-utility-compact .util-matrix-head{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.34rem, 0.62vw, 0.46rem);
+  padding: 0;
+}
+
+.onepage-utility-compact .util-matrix-rowlabel{
+  display: flex;
+  align-items: center;
+  font-size: clamp(0.36rem, 0.64vw, 0.48rem);
+  padding: 0 0.28rem;
+}
+
+.onepage-utility-compact .util-matrix-cell{
+  height: auto;
+  min-height: 0;
+}
+
+.onepage-utility-compact .util-pill-link{
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.onepage-utility-compact .util-pill{
+  width: clamp(0.32rem, 0.7vw, 0.45rem);
+  height: clamp(0.58rem, 1.15vw, 0.82rem);
+}
+
+.onepage-split-charts{
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 0.45rem;
+}
+
+.onepage-portrait-hint{
+  display: none;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.onepage-portrait-card{
+  width: min(88vw, 360px);
+  border-radius: 2rem;
+  padding: 1.4rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(148,163,184,0.16);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.45);
+}
+
+.onepage-portrait-card i{
+  font-size: 2rem;
+  color: rgba(125,211,252,0.95);
+}
+
+.onepage-portrait-card h3{
+  margin-top: 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: rgba(226,232,240,0.98);
+}
+
+.onepage-portrait-card p{
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: rgba(148,163,184,0.94);
+}
+
+@media (orientation: portrait){
+  #onePageDashOverlay .onepage-content{ display: none; }
+  #onePageDashOverlay .onepage-portrait-hint{ display: flex; }
+}
+
+@media (orientation: landscape) and (max-height: 500px){
+  .onepage-shell{ padding: 0.35rem 0.45rem; gap: 0.35rem; }
+  .onepage-content{ gap: 0.35rem; }
+  .onepage-topbar{ height: 2.25rem; min-height: 2.25rem; padding: 0.3rem 0.55rem; border-radius: 1rem; }
+  .onepage-logo{ width: 1.55rem; height: 1.55rem; border-radius: 0.6rem; }
+  .onepage-action-btn{ height: 1.72rem; padding: 0 0.55rem; font-size: 0.58rem; }
+  .onepage-grid{ gap: 0.35rem; }
+  .onepage-card{ padding: 0.42rem; border-radius: 0.9rem; }
+  .onepage-card-title{ margin-bottom: 0.22rem; }
+  .onepage-mini-breakdown,
+  .onepage-kpi-grid{ gap: 0.25rem; margin-top: 0.3rem; }
+  .onepage-mini-box,
+  .onepage-kpi{ border-radius: 0.65rem; padding: 0.28rem 0.34rem; }
+}
+
 @media (prefers-reduced-motion: reduce){
       * { transition: none !important; animation: none !important; }
     }
@@ -693,7 +1086,13 @@
       <div class="glass rounded-[2rem] p-5 relative z-[60] overflow-visible">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-bold text-slate-800">Overview</h2>
-          <button id="btnRefresh" class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">Refresh</button>
+          <div class="flex items-center gap-2">
+            <button id="btnOnePageDashboard" class="text-xs font-bold text-cyan-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors inline-flex items-center gap-1.5">
+              <i class="fa-solid fa-display text-[10px]"></i>
+              One Page
+            </button>
+            <button id="btnRefresh" class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">Refresh</button>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -920,6 +1319,103 @@
 
   </div>
 
+
+  <!-- ===================== ONE PAGE DASHBOARD OVERLAY ===================== -->
+  <div id="onePageDashOverlay" class="hidden" aria-hidden="true">
+    <div class="onepage-shell">
+      <div class="onepage-portrait-hint">
+        <div class="onepage-portrait-card">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+          <h3>หมุนหน้าจอเป็นแนวนอน</h3>
+          <p>One Page Dashboard ถูกออกแบบให้สรุปทุกอย่างในจอเดียวโดยไม่ต้องเลื่อนหน้า</p>
+          <button type="button" onclick="closeOnePageDashboard()" class="onepage-action-btn mt-4 mx-auto">
+            <i class="fa-solid fa-xmark"></i> ปิด
+          </button>
+        </div>
+      </div>
+
+      <div class="onepage-content">
+        <div class="onepage-topbar">
+          <div class="onepage-title">
+            <span class="onepage-logo"><i class="fa-solid fa-piggy-bank"></i></span>
+            <div class="onepage-title-text">
+              <h2>My Piggy — One Page Dashboard</h2>
+              <p id="onePageFilterText">User: - • Year: -</p>
+            </div>
+          </div>
+          <div class="onepage-actions">
+            <button type="button" id="btnOnePageRefresh" class="onepage-action-btn">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+            <button type="button" onclick="closeOnePageDashboard()" class="onepage-action-btn">
+              <i class="fa-solid fa-xmark"></i> Close
+            </button>
+          </div>
+        </div>
+
+        <div class="onepage-grid">
+          <section class="onepage-card onepage-summary-card">
+            <div class="onepage-net-label">Net Balance (Year)</div>
+            <div id="onePageKpiNet" class="onepage-net-value">฿ 0</div>
+            <div class="onepage-mini-breakdown">
+              <div class="onepage-mini-box"><span>เงินสด</span><b id="onePageKpiCash">฿ 0</b></div>
+              <div class="onepage-mini-box"><span>เงิน Digital</span><b id="onePageKpiDigital">฿ 0</b></div>
+            </div>
+            <div class="onepage-kpi-grid">
+              <div class="onepage-kpi"><span>Income</span><b id="onePageKpiIncome">฿ 0</b></div>
+              <div class="onepage-kpi"><span>Std. Expense</span><b id="onePageKpiExpense">฿ 0</b></div>
+              <div class="onepage-kpi"><span>Saving Expense</span><b id="onePageKpiSavings">฿ 0</b></div>
+              <div class="onepage-kpi"><span>Total Balance</span><b id="onePageKpiOverall">฿ 0</b></div>
+            </div>
+          </section>
+
+          <section class="onepage-card">
+            <div class="onepage-card-title">
+              <span>Monthly Breakdown</span>
+              <span class="onepage-card-sub">% Income / Expense / Saving</span>
+            </div>
+            <div class="onepage-chart-box"><canvas id="onePageMonthlyChart"></canvas></div>
+          </section>
+
+          <section class="onepage-card">
+            <div class="onepage-card-title">
+              <span>Savings Trend</span>
+              <span id="onePageTargetText" class="onepage-card-sub">Target: -</span>
+            </div>
+            <div class="onepage-chart-box"><canvas id="onePageSavingsChart"></canvas></div>
+          </section>
+
+          <section class="onepage-card">
+            <div class="onepage-card-title">
+              <span>Utility Status</span>
+              <span class="onepage-card-sub">Paid / Unpaid</span>
+            </div>
+            <div id="onePageUtilityMatrix" class="util-matrix onepage-utility-compact"></div>
+          </section>
+
+          <section class="onepage-card">
+            <div class="onepage-card-title">
+              <span>Expense By Category</span>
+              <span class="onepage-card-sub">Exclude savings</span>
+            </div>
+            <div class="onepage-chart-box"><canvas id="onePageExpenseDonut"></canvas></div>
+          </section>
+
+          <section class="onepage-card">
+            <div class="onepage-card-title">
+              <span>Savings By Type</span>
+              <span class="onepage-card-sub">Share + Monthly %</span>
+            </div>
+            <div class="onepage-split-charts">
+              <div class="onepage-chart-box"><canvas id="onePageSavingsDonut"></canvas></div>
+              <div class="onepage-chart-box"><canvas id="onePageSavingsTypeStack"></canvas></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="loadingOverlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center">
     <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"></div>
     <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] shadow-2xl flex flex-col items-center relative z-10 animate-float border border-white/60">
@@ -1144,6 +1640,14 @@ function _savingsLightBlueToDeepStops() {
     let savingsDonutChart = null;
     let savingsTypeBarStackChart = null;
     let savingsTypeColorMap = {};
+
+    // One Page Dashboard state (separate from the existing dashboard charts)
+    let __latestDashboardRes = null;
+    let onePageMonthlyChart = null;
+    let onePageSavingsChart = null;
+    let onePageExpenseDonutChart = null;
+    let onePageSavingsDonutChart = null;
+    let onePageSavingsTypeStackChart = null;
 
     const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     let __loadingCount = 0;
@@ -1755,6 +2259,19 @@ function _savingsLightBlueToDeepStops() {
       document.getElementById('dashUser').addEventListener('change', refreshDashboard);
       document.getElementById('dashYear').addEventListener('change', refreshDashboard);
       document.getElementById('btnRefresh').addEventListener('click', refreshDashboard);
+      const onePageBtn = document.getElementById('btnOnePageDashboard');
+      if (onePageBtn) onePageBtn.addEventListener('click', openOnePageDashboard);
+      const onePageRefreshBtn = document.getElementById('btnOnePageRefresh');
+      if (onePageRefreshBtn) onePageRefreshBtn.addEventListener('click', refreshDashboard);
+      window.addEventListener('resize', () => {
+        if (isOnePageDashboardOpen()) {
+          window.clearTimeout(window.__onePageResizeTimer);
+          window.__onePageResizeTimer = window.setTimeout(renderOnePageDashboard, 120);
+        }
+      });
+      window.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && isOnePageDashboardOpen()) closeOnePageDashboard();
+      });
     }
 
     function bindHistoryControls(){
@@ -1887,6 +2404,7 @@ function _savingsLightBlueToDeepStops() {
         alert((res && res.error) ? res.error : 'โหลดข้อมูลไม่สำเร็จ');
         return;
       }
+      __latestDashboardRes = res;
       document.getElementById('kpiNet').innerText = money(res.period.net);
       // Payment Method breakdown (Cash/Digital)
       const cashNet = (res && res.periodMethods && res.periodMethods.cash) ? Number(res.periodMethods.cash.net || 0) : 0;
@@ -1929,6 +2447,10 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       if(res.history) {
         __historyCache = yearFilteredHistory;
         if (__activeTab === 'history') renderHistory(__historyCache);
+      }
+
+      if (isOnePageDashboardOpen()) {
+        renderOnePageDashboard();
       }
     }
 
@@ -2835,6 +3357,382 @@ savingsTypeBarStackChart = new Chart(canvas, {
           }
         }
       }
+    });
+  }
+
+
+  // ===========================================
+  // ONE PAGE DASHBOARD (Landscape Summary View)
+  // - Uses existing dashboard response/cache
+  // - Does not change save/API logic
+  // ===========================================
+  function isOnePageDashboardOpen(){
+    const overlay = document.getElementById('onePageDashOverlay');
+    return !!(overlay && !overlay.classList.contains('hidden'));
+  }
+
+  function openOnePageDashboard(){
+    const overlay = document.getElementById('onePageDashOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('onepage-lock');
+
+    window.setTimeout(() => {
+      if (__latestDashboardRes) renderOnePageDashboard();
+      else refreshDashboard();
+    }, 50);
+  }
+
+  function closeOnePageDashboard(){
+    const overlay = document.getElementById('onePageDashOverlay');
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('onepage-lock');
+    destroyOnePageCharts();
+  }
+
+  function destroyOnePageCharts(){
+    [onePageMonthlyChart, onePageSavingsChart, onePageExpenseDonutChart, onePageSavingsDonutChart, onePageSavingsTypeStackChart].forEach(ch => {
+      try { if (ch) ch.destroy(); } catch(e) {}
+    });
+    onePageMonthlyChart = null;
+    onePageSavingsChart = null;
+    onePageExpenseDonutChart = null;
+    onePageSavingsDonutChart = null;
+    onePageSavingsTypeStackChart = null;
+  }
+
+  function __setOnePageText(id, value){
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+  }
+
+  function __num(v){
+    if (typeof v === 'string') v = v.replace(/,/g, '');
+    const n = Number(v);
+    return isFinite(n) ? n : 0;
+  }
+
+  function __getOnePageTargetValue(currentUser){
+    if (currentUser === 'Nine') return targetNine || 0;
+    if (currentUser === 'Bow') return targetBow || 0;
+    return (targetNine || 0) + (targetBow || 0);
+  }
+
+  function renderOnePageDashboard(){
+    if (!isOnePageDashboardOpen()) return;
+    const res = __latestDashboardRes;
+    if (!res || !res.period) return;
+
+    const year = res.filter && res.filter.year ? res.filter.year : (document.getElementById('dashYear') ? document.getElementById('dashYear').value : new Date().getFullYear());
+    const currentUser = (document.getElementById('dashUser') && document.getElementById('dashUser').value) ? document.getElementById('dashUser').value : ((res.filter && res.filter.user) ? res.filter.user : 'All');
+    const yStr = String(year || '');
+    const yearFilteredHistory = (res.history || []).filter(x => x.date && (!yStr || String(x.date).includes(yStr)));
+
+    const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, year);
+    const expenseNoSavingsTotal = expenseNoSavingsSeries.reduce((a, b) => a + b, 0);
+
+    const cashNet = (res && res.periodMethods && res.periodMethods.cash) ? Number(res.periodMethods.cash.net || 0) : 0;
+    const digitalNet = (res && res.periodMethods && res.periodMethods.digital) ? Number(res.periodMethods.digital.net || 0) : 0;
+
+    __setOnePageText('onePageFilterText', `User: ${currentUser} • Year: ${year}`);
+    __setOnePageText('onePageKpiNet', money(res.period.net));
+    __setOnePageText('onePageKpiCash', money(cashNet));
+    __setOnePageText('onePageKpiDigital', money(digitalNet));
+    __setOnePageText('onePageKpiIncome', money(res.period.income));
+    __setOnePageText('onePageKpiExpense', money(expenseNoSavingsTotal));
+    __setOnePageText('onePageKpiSavings', money(res.period.savings));
+    __setOnePageText('onePageKpiOverall', money(res.overall && res.overall.balance));
+
+    const targetValue = __getOnePageTargetValue(currentUser);
+    __setOnePageText('onePageTargetText', targetValue > 0 ? `Target: ${money(targetValue)}` : 'Target: -');
+
+    const seriesFixed = Object.assign({}, (res.series || {}));
+    seriesFixed.expense = expenseNoSavingsSeries;
+
+    renderOnePageUtilityStatusCard(yearFilteredHistory, year, (res.utilityAnyUser || []));
+    renderOnePageMonthlyChart(seriesFixed);
+    renderOnePageSavingsChart(seriesFixed, currentUser);
+    renderOnePageDonutChart('onePageExpenseDonut', calculateExpenseDonutData(yearFilteredHistory), _expensePinkToRedStops(), 'expense');
+    renderOnePageDonutChart('onePageSavingsDonut', calculateSavingsDonutData(yearFilteredHistory), _savingsLightBlueToDeepStops(), 'savings');
+    renderOnePageSavingsTypeStack(calculateMonthlySavingsByType(yearFilteredHistory));
+  }
+
+  function renderOnePageUtilityStatusCard(historyItems, year, utilityAnyUserItems){
+    const matrix = document.getElementById('onePageUtilityMatrix');
+    if (!matrix) return;
+
+    const yStr = String(year || '');
+    const list = (historyItems || []).filter(it => {
+      if (!it) return false;
+      if ((it.type || '').toString().trim() !== 'รายจ่าย') return false;
+      if (!it.date) return false;
+      if (yStr && !String(it.date).includes(yStr)) return false;
+      return true;
+    });
+
+    const anyUserList = (utilityAnyUserItems || []).filter(it => {
+      if (!it) return false;
+      if ((it.type || '').toString().trim() !== 'รายจ่าย') return false;
+      if (!it.date) return false;
+      if (yStr && !String(it.date).includes(yStr)) return false;
+      return true;
+    });
+
+    const anyUserKeys = new Set(['house','water','electric','inetHome']);
+    const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function findPaidItem(rowDef, monthIdx){
+      const src = anyUserKeys.has(rowDef.key) ? anyUserList : list;
+      for (const it of src){
+        const cat = (it.category || '').toString().trim();
+        if (!cat) continue;
+        if (!rowDef.matcher(cat)) continue;
+        const mi = __getMonthIndexFromAny(it.date);
+        if (mi === monthIdx) return it;
+      }
+      return null;
+    }
+
+    let html = '';
+    html += `<div class="util-matrix-grid">`;
+    html += `<div></div>`;
+    for (let m=0; m<12; m++) html += `<div class="util-matrix-head">${monthLabels[m]}</div>`;
+
+    for (const rowDef of __UTILITY_ROWS){
+      html += `<div class="util-matrix-rowlabel">${rowDef.label}</div>`;
+      for (let m=0; m<12; m++){
+        const it = findPaidItem(rowDef, m);
+        const paid = !!it;
+        const slipUrl = __getSlipUrlFromItem(it);
+        const pillCls = paid ? 'util-pill util-pill-paid' : 'util-pill util-pill-unpaid';
+
+        if (paid && slipUrl){
+          html += `<div class="util-matrix-cell">`;
+          html += `<button type="button" class="onePageUtilPillLink util-pill-link" data-url="${String(slipUrl).replace(/"/g,'&quot;')}" aria-label="Open Slip">`;
+          html += `<span class="${pillCls}"></span>`;
+          html += `</button>`;
+          html += `</div>`;
+        } else {
+          html += `<div class="util-matrix-cell"><span class="${pillCls}"></span></div>`;
+        }
+      }
+    }
+    html += `</div>`;
+    matrix.innerHTML = html;
+
+    try {
+      matrix.querySelectorAll('.onePageUtilPillLink').forEach(btn => {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openSlip(btn.getAttribute('data-url'));
+        };
+      });
+    } catch(e) {}
+  }
+
+  function __onePageBaseChartOptions(extra){
+    const opts = extra || {};
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 180 },
+      plugins: {
+        legend: opts.legend || { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.94)',
+          padding: 8,
+          titleFont: { family: "'Kanit', sans-serif", size: 10 },
+          bodyFont: { family: "'Kanit', sans-serif", size: 10 },
+          cornerRadius: 8
+        }
+      },
+      scales: opts.scales || undefined
+    };
+  }
+
+  function renderOnePageMonthlyChart(series){
+    const canvas = document.getElementById('onePageMonthlyChart');
+    if (!canvas) return;
+    if (onePageMonthlyChart) onePageMonthlyChart.destroy();
+
+    const labels = MONTH_LABELS.slice();
+    const income = (series.income || []).map(__num);
+    const expense = (series.expense || []).map(__num);
+    const savings = (series.savings || []).map(__num);
+    const totals = labels.map((_, i) => (income[i] || 0) + (expense[i] || 0) + (savings[i] || 0));
+    const incomePct = totals.map((t, i) => t > 0 ? ((income[i] || 0) / t) * 100 : 0);
+    const expensePct = totals.map((t, i) => t > 0 ? ((expense[i] || 0) / t) * 100 : 0);
+    const savingsPct = totals.map((t, i) => t > 0 ? ((savings[i] || 0) / t) * 100 : 0);
+
+    onePageMonthlyChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Income', data: incomePct, backgroundColor: 'rgba(37,99,235,0.95)', borderWidth: 0, borderRadius: 4 },
+          { label: 'Std. Expense', data: expensePct, backgroundColor: 'rgba(244,63,94,0.90)', borderWidth: 0, borderRadius: 4 },
+          { label: 'Saving', data: savingsPct, backgroundColor: 'rgba(16,185,129,0.90)', borderWidth: 0, borderRadius: 4 }
+        ]
+      },
+      options: __onePageBaseChartOptions({
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: { color: '#cbd5e1', boxWidth: 8, boxHeight: 8, padding: 8, font: { family: "'Kanit', sans-serif", size: 8 } }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color: '#94a3b8', font: { family: "'Kanit', sans-serif", size: 8 }, maxRotation: 0 }, grid: { display: false } },
+          y: { stacked: true, beginAtZero: true, max: 100, ticks: { display: false }, grid: { color: 'rgba(148,163,184,0.12)' } }
+        }
+      })
+    });
+  }
+
+  function renderOnePageSavingsChart(series, currentUser){
+    const canvas = document.getElementById('onePageSavingsChart');
+    if (!canvas) return;
+    if (onePageSavingsChart) onePageSavingsChart.destroy();
+
+    const labels = MONTH_LABELS.slice();
+    const savings = (series.savings || []).map(__num);
+    const targetValue = __getOnePageTargetValue(currentUser);
+    const datasets = [
+      { type: 'bar', label: 'Actual', data: savings, backgroundColor: 'rgba(37,99,235,0.92)', borderWidth: 0, borderRadius: 5 }
+    ];
+    if (targetValue > 0) {
+      datasets.push({ type: 'line', label: 'Target', data: labels.map(() => targetValue), borderColor: 'rgba(255,255,255,0.92)', borderWidth: 2, pointRadius: 0, tension: 0, fill: false });
+    }
+
+    onePageSavingsChart = new Chart(canvas, {
+      data: { labels, datasets },
+      options: __onePageBaseChartOptions({
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: { color: '#cbd5e1', boxWidth: 8, boxHeight: 8, padding: 8, font: { family: "'Kanit', sans-serif", size: 8 } }
+        },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { family: "'Kanit', sans-serif", size: 8 }, maxRotation: 0 }, grid: { display: false } },
+          y: { beginAtZero: true, ticks: { color: '#94a3b8', font: { family: "'Kanit', sans-serif", size: 8 }, maxTicksLimit: 3, callback: (v) => Number(v).toLocaleString() }, grid: { color: 'rgba(148,163,184,0.12)' } }
+        }
+      })
+    });
+  }
+
+  function renderOnePageDonutChart(canvasId, dataObj, colors, chartType){
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    if (chartType === 'expense' && onePageExpenseDonutChart) onePageExpenseDonutChart.destroy();
+    if (chartType === 'savings' && onePageSavingsDonutChart) onePageSavingsDonutChart.destroy();
+
+    const labels = Object.keys(dataObj || {});
+    const data = Object.values(dataObj || {}).map(__num);
+    const total = data.reduce((a, b) => a + b, 0);
+
+    if (!labels.length || total <= 0) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (chartType === 'expense') onePageExpenseDonutChart = null;
+      if (chartType === 'savings') onePageSavingsDonutChart = null;
+      return;
+    }
+
+    const chart = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+          borderWidth: 0,
+          hoverOffset: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '58%',
+        animation: { duration: 180 },
+        layout: { padding: 2 },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'right',
+            labels: {
+              color: '#cbd5e1',
+              boxWidth: 7,
+              boxHeight: 7,
+              padding: 6,
+              font: { family: "'Kanit', sans-serif", size: 7 }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.94)',
+            padding: 8,
+            titleFont: { family: "'Kanit', sans-serif", size: 10 },
+            bodyFont: { family: "'Kanit', sans-serif", size: 10 },
+            cornerRadius: 8,
+            callbacks: {
+              label: function(context){
+                const value = context.raw || 0;
+                const pct = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                return ` ${context.label}: ฿${Number(value).toLocaleString()} (${pct})`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (chartType === 'expense') onePageExpenseDonutChart = chart;
+    if (chartType === 'savings') onePageSavingsDonutChart = chart;
+  }
+
+  function renderOnePageSavingsTypeStack(monthlyObj){
+    const canvas = document.getElementById('onePageSavingsTypeStack');
+    if (!canvas) return;
+    if (onePageSavingsTypeStackChart) onePageSavingsTypeStackChart.destroy();
+
+    const labels = (monthlyObj && monthlyObj.labels) ? monthlyObj.labels : [];
+    const types = (monthlyObj && monthlyObj.types) ? monthlyObj.types : [];
+    const series = (monthlyObj && monthlyObj.series) ? monthlyObj.series : {};
+    if (!labels.length || !types.length) return;
+
+    const colors = _savingsLightBlueToDeepStops();
+    const totals = Array(labels.length).fill(0);
+    types.forEach(t => {
+      const arr = (series[t] || Array(labels.length).fill(0)).map(__num);
+      for (let i = 0; i < labels.length; i++) totals[i] += arr[i] || 0;
+    });
+
+    const datasets = types.map((t, i) => {
+      const raw = (series[t] || Array(labels.length).fill(0)).map(__num);
+      const pct = raw.map((v, idx) => totals[idx] ? (v / totals[idx]) * 100 : 0);
+      return {
+        label: t,
+        data: pct,
+        _raw: raw,
+        backgroundColor: (savingsTypeColorMap && savingsTypeColorMap[t]) ? savingsTypeColorMap[t] : colors[i % colors.length],
+        borderWidth: 0,
+        borderRadius: 4
+      };
+    });
+
+    onePageSavingsTypeStackChart = new Chart(canvas, {
+      type: 'bar',
+      data: { labels, datasets },
+      options: __onePageBaseChartOptions({
+        legend: { display: false },
+        scales: {
+          x: { stacked: true, ticks: { color: '#94a3b8', font: { family: "'Kanit', sans-serif", size: 7 }, maxRotation: 0 }, grid: { display: false } },
+          y: { stacked: true, beginAtZero: true, max: 100, ticks: { display: false }, grid: { color: 'rgba(148,163,184,0.12)' } }
+        }
+      })
     });
   }
 
