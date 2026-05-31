@@ -2410,13 +2410,18 @@ function _savingsLightBlueToDeepStops() {
       const elDigital = document.getElementById('kpiNetDigital');
       if (elCash) elCash.innerText = money(cashNet);
       if (elDigital) elDigital.innerText = money(digitalNet);
-      document.getElementById('kpiSavings').innerText = money(res.period.savings);
       document.getElementById('kpiIncome').innerText = money(res.period.income);
 document.getElementById('kpiOverallBalance').innerText = money(res.overall.balance);
       document.getElementById('rangeHint').innerText = `Year: ${res.filter.year}`;
       const yStr = String(res.filter.year);
       const yearFilteredHistory = (res.history || []).filter(x => x.date && String(x.date).includes(yStr));
       try { renderUtilityStatusCard(yearFilteredHistory, res.filter.year, (res.utilityAnyUser || [])); } catch(e) {}
+
+      // ✅ Recalculate all savings categories from history for Savings Trend/KPI
+      // This keeps newly added savings types (e.g. สลากออมสิน, Crypto, กองทุน/หุ้น) included.
+      const savingsAllCategorySeries = calculateMonthlySavingsAllCategories(yearFilteredHistory, res.filter.year);
+      const savingsAllCategoryTotal = savingsAllCategorySeries.reduce((a, b) => a + b, 0);
+      document.getElementById('kpiSavings').innerText = money(savingsAllCategoryTotal);
 
       // ✅ Exclude Savings-category expenses from KPI + BarChart
       const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, res.filter.year);
@@ -2426,6 +2431,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const currentUser = document.getElementById('dashUser').value;
       const seriesFixed = Object.assign({}, (res.series || {}));
       seriesFixed.expense = expenseNoSavingsSeries;
+      seriesFixed.savings = savingsAllCategorySeries;
       renderCharts(seriesFixed, currentUser);
 
 
@@ -2488,6 +2494,25 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
         let rawAmt = item.amt;
         if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
         const amt = parseFloat(rawAmt) || 0;
+        out[mi] += amt;
+      });
+      return out;
+    }
+
+    // ✅ Monthly savings series including every category listed in SAVINGS_CATEGORIES
+    // Used by Savings Trend so all saving types are included consistently.
+    function calculateMonthlySavingsAllCategories(historyItems, year) {
+      const out = Array(12).fill(0);
+      (historyItems || []).forEach(item => {
+        const cat = (item.category || '').toString().trim();
+        if (!isSavingsCategory(cat)) return;
+
+        const mi = __getMonthIndexFromAny(item.date);
+        if (mi == null || mi < 0 || mi > 11) return;
+
+        let rawAmt = item.amt;
+        if (typeof rawAmt === 'string') rawAmt = rawAmt.replace(/,/g, '');
+        const amt = Math.abs(parseFloat(rawAmt) || 0);
         out[mi] += amt;
       });
       return out;
@@ -3433,6 +3458,8 @@ savingsTypeBarStackChart = new Chart(canvas, {
 
     const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, year);
     const expenseNoSavingsTotal = expenseNoSavingsSeries.reduce((a, b) => a + b, 0);
+    const savingsAllCategorySeries = calculateMonthlySavingsAllCategories(yearFilteredHistory, year);
+    const savingsAllCategoryTotal = savingsAllCategorySeries.reduce((a, b) => a + b, 0);
 
     const cashNet = (res && res.periodMethods && res.periodMethods.cash) ? Number(res.periodMethods.cash.net || 0) : 0;
     const digitalNet = (res && res.periodMethods && res.periodMethods.digital) ? Number(res.periodMethods.digital.net || 0) : 0;
@@ -3443,7 +3470,7 @@ savingsTypeBarStackChart = new Chart(canvas, {
     __setOnePageText('onePageKpiDigital', money(digitalNet));
     __setOnePageText('onePageKpiIncome', money(res.period.income));
     __setOnePageText('onePageKpiExpense', money(expenseNoSavingsTotal));
-    __setOnePageText('onePageKpiSavings', money(res.period.savings));
+    __setOnePageText('onePageKpiSavings', money(savingsAllCategoryTotal));
     __setOnePageText('onePageKpiOverall', money(res.overall && res.overall.balance));
 
     const targetValue = __getOnePageTargetValue(currentUser);
@@ -3451,6 +3478,7 @@ savingsTypeBarStackChart = new Chart(canvas, {
 
     const seriesFixed = Object.assign({}, (res.series || {}));
     seriesFixed.expense = expenseNoSavingsSeries;
+    seriesFixed.savings = savingsAllCategorySeries;
 
     renderOnePageMonthlyChart(seriesFixed);
     renderOnePageSavingsChart(seriesFixed, currentUser);
