@@ -1540,7 +1540,7 @@ body.theme-fintech{
               <span id="trendEmoji" class="text-base"></span>
             </div>
 
-            <button onclick="openTargetModal()" class="flex items-center gap-1.5 bg-orange-50 text-orange-600 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-100 hover:bg-orange-100 transition-colors">
+            <button id="btnSetGoal" type="button" onclick="event.preventDefault(); event.stopPropagation(); openTargetModal();" class="relative z-[80] pointer-events-auto flex items-center gap-1.5 bg-orange-50 text-orange-600 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-100 hover:bg-orange-100 transition-colors">
               <i class="fa-solid fa-crosshairs"></i> Set Goal
             </button>
           </div>
@@ -1893,7 +1893,18 @@ function _savingsLightBlueToDeepStops() {
       targetBow  = parseFloat(localStorage.getItem('myPiggy_targetBow'))  || 0;
     }
 
+    // Keep popup layers outside the phone shell so global farm-shell CSS cannot override fixed overlay behavior.
+    function ensureModalPortal() {
+      ['loadingOverlay', 'targetModal', 'transferModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement !== document.body) {
+          document.body.appendChild(el);
+        }
+      });
+    }
+
     function openTargetModal() {
+      ensureModalPortal();
       loadTargets();
       document.getElementById('targetNineInput').value = targetNine || '';
       document.getElementById('targetBowInput').value  = targetBow  || '';
@@ -1914,12 +1925,25 @@ function _savingsLightBlueToDeepStops() {
       setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
+    function bindTargetModalControls() {
+      const btn = document.getElementById('btnSetGoal');
+      if (!btn || btn.__targetBound) return;
+      btn.__targetBound = true;
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        const modal = document.getElementById('targetModal');
+        if (!modal || modal.classList.contains('hidden')) openTargetModal();
+      });
+    }
+
     // --- TRANSFER MODAL LOGIC ---
     let __pendingTransfer = null;
     // Guard against double-submit / duplicate transfer writes
     let __transferInFlight = false;
 
     function openTransferModal(sourceUser){
+      ensureModalPortal();
       // prepare target list (exclude source)
       try {
         const cfg = __customSelectRegistry && __customSelectRegistry.transferTo;
@@ -2047,6 +2071,7 @@ function _savingsLightBlueToDeepStops() {
     // MAIN FLOW
     // ===========================================
     window.onload = () => {
+      ensureModalPortal();
       const __runner = document.getElementById('inputRunner');
       if (__runner){
         __runner.addEventListener('animationend', () => { __runner.classList.remove('is-running'); });
@@ -2063,6 +2088,7 @@ function _savingsLightBlueToDeepStops() {
       initUserSelectDropdowns();
       initSlipUploader();
       loadTargets();
+      bindTargetModalControls();
 
       refreshDashboard();
       resetTypeSelection();
@@ -2383,6 +2409,7 @@ function _savingsLightBlueToDeepStops() {
     // Loading & Utils
     // ===========================================
     function showLoading(title, sub) {
+      ensureModalPortal();
       __loadingCount++;
       const o = document.getElementById('loadingOverlay');
       const t = document.getElementById('loadingTitle');
@@ -5405,6 +5432,83 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
   .menu-tree .canopy-3{ left:8px; bottom:20px; width:16px; height:16px; }
 }
 
+
+/* =========================================================
+   Set Goal Button Tap Safety
+   UI/event only — keeps Saving Trend chart logic unchanged
+   ========================================================= */
+#btnSetGoal{
+  position: relative !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
+#targetModal{
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+}
+#targetModal.hidden{
+  pointer-events: none !important;
+}
+
+
+
+/* =========================================================
+   Modal Overlay Portal Fix
+   UI/layer only — keeps all saving, transfer, and chart logic unchanged
+   ========================================================= */
+#loadingOverlay,
+#targetModal,
+#transferModal{
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+}
+
+#targetModal,
+#transferModal{
+  z-index: 100001 !important;
+}
+
+#loadingOverlay.hidden,
+#targetModal.hidden,
+#transferModal.hidden{
+  display: none !important;
+  pointer-events: none !important;
+}
+
+#loadingOverlay:not(.hidden),
+#targetModal:not(.hidden),
+#transferModal:not(.hidden){
+  display: flex !important;
+}
+
+#targetModalContent,
+#transferModalContent{
+  position: relative !important;
+  z-index: 100002 !important;
+}
+
+#targetModal > .absolute.inset-0,
+#transferModal > .absolute.inset-0,
+#loadingOverlay > .absolute.inset-0{
+  position: absolute !important;
+  inset: 0 !important;
+}
 </style>
 
   <div id="inputRunner" aria-hidden="true">
