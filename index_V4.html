@@ -1645,63 +1645,11 @@ body.theme-fintech{
       <div id="history-list" class="space-y-3 pb-10 px-1"></div>
     </div>
 
-
-    <!-- ===================== SHEEP COUNT TAB ===================== -->
-    <div id="tab-sheep" class="hidden space-y-5">
-      <div class="glass sheep-count-card rounded-[2.5rem] p-5 space-y-5 overflow-visible">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Saving Sheep Jar</p>
-            <h2 class="text-xl font-bold text-slate-800 mt-1">นับแกะในโหล</h2>
-          </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <button id="btnOpenSheepTarget" type="button" class="sheep-mini-btn sheep-target-header-btn" onclick="openSheepTargetModal()" aria-expanded="false" aria-controls="sheepTargetModal">
-              <i class="fa-solid fa-bullseye"></i>
-              Set Target
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2">
-          <div class="sheep-stat-card">
-            <p>Saving Expense</p>
-            <h3 id="sheepSavingValue">฿ 0</h3>
-          </div>
-          <div class="sheep-stat-card">
-            <p>Sheep</p>
-            <h3 id="sheepCountValue">0 ตัว</h3>
-          </div>
-          <div class="sheep-stat-card">
-            <p>Target</p>
-            <h3 id="sheepTargetValue">฿ 100,000</h3>
-          </div>
-        </div>
-
-        <div class="sheep-jar-stage" aria-label="Sheep saving jar">
-          <div class="sheep-jar-lid"></div>
-          <div class="sheep-jar">
-            <div id="sheepJarFill" class="sheep-jar-fill"></div>
-            <div id="sheepJarTargetLine" class="sheep-jar-target-line">
-              <span id="sheepJarTargetText">Target</span>
-            </div>
-            <div id="sheepJarSheepLayer" class="sheep-jar-sheep-layer"></div>
-            <div id="sheepEmptyHint" class="sheep-jar-empty-hint">ยังไม่มีแกะในโหล</div>
-            <div class="sheep-jar-shine"></div>
-          </div>
-          <div id="sheepProgressText" class="sheep-progress-text sheep-progress-card">
-            <span class="sheep-progress-pill sheep-progress-rate"><i class="fa-solid fa-sheep"></i> แกะ 1 ตัว = ฿ 10,000</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
     <!-- ===================== BOTTOM TAB MENU ===================== -->
-      <div class="top-tab-nav bottom-tab-nav bg-white/60 border border-slate-200/60 p-1.5 rounded-2xl grid grid-cols-4 gap-1 relative">
+      <div class="top-tab-nav bottom-tab-nav bg-white/60 border border-slate-200/60 p-1.5 rounded-2xl grid grid-cols-3 gap-1 relative">
         <span class="menu-running-sheep" aria-hidden="true"><img src="icon-192.png" alt=""></span>
         <button id="tabBtnDash" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-pie mr-1.5"></i>Dashboard</button>
         <button id="tabBtnInput" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('input')"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Input</button>
-        <button id="tabBtnSheep" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('sheep')"><i class="fa-solid fa-jar mr-1.5"></i>Sheepy</button>
         <button id="tabBtnHistory" class="py-2.5 rounded-xl text-xs font-bold transition-all duration-200 tab-inactive" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left mr-1.5"></i>History</button>
 
 
@@ -1758,47 +1706,6 @@ body.theme-fintech{
       <button onclick="saveTargets()" class="btn btn-primary-grad w-full py-3 rounded-xl font-bold text-sm mt-6 shadow-lg shadow-blue-500/30">
         Save Goals
       </button>
-    </div>
-  </div>
-
-  <!-- ===================== SHEEPY TARGET MODAL ===================== -->
-  <div id="sheepTargetModal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center">
-    <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="closeSheepTargetModal()"></div>
-    <div class="sheep-target-modal-content bg-white w-[88%] max-w-sm p-6 rounded-[2rem] shadow-2xl relative z-10 transform transition-all duration-300 scale-95 opacity-0 border border-white/70" id="sheepTargetModalContent">
-      <div class="flex justify-between items-center mb-5">
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="sheep-target-modal-icon w-9 h-9 rounded-full flex items-center justify-center border shrink-0">
-            <i class="fa-solid fa-jar text-sm"></i>
-          </div>
-          <div class="min-w-0">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide leading-none">Jar Target</p>
-            <h3 class="font-bold text-slate-900 text-lg leading-tight mt-1">Set Sheepy Target</h3>
-          </div>
-        </div>
-        <button type="button" onclick="closeSheepTargetModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border border-slate-200 shrink-0">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-500 mb-4">ตั้งเป้าหมายเงินในโหล เพื่อให้ระบบคำนวณจำนวนแกะและเปอร์เซ็นต์ความสำเร็จ</p>
-
-      <div>
-        <label class="block text-xs font-bold text-slate-600 mb-1 ml-2">Target Amount</label>
-        <div class="relative">
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs">฿</span>
-          <input id="sheepJarTargetInput" type="number" inputmode="decimal" class="field w-full rounded-2xl pl-8 pr-4 py-3 text-sm font-bold text-slate-800" placeholder="100000" onkeydown="handleSheepTargetKey(event)">
-        </div>
-      </div>
-
-      <div class="sheep-target-modal-hint mt-3">
-        <i class="fa-solid fa-sheep"></i>
-        <span>ใช้ Saving Expense ÷ 10,000 เพื่อแปลงเป็นจำนวนแกะในโหล</span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 mt-5">
-        <button type="button" onclick="closeSheepTargetModal()" class="btn w-full py-3 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200">Cancel</button>
-        <button id="btnSaveSheepJarTarget" type="button" onclick="saveSheepJarTarget()" class="btn btn-primary-grad w-full py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20">Save</button>
-      </div>
     </div>
   </div>
 
@@ -1988,7 +1895,7 @@ function _savingsLightBlueToDeepStops() {
 
     // Keep popup layers outside the phone shell so global farm-shell CSS cannot override fixed overlay behavior.
     function ensureModalPortal() {
-      ['loadingOverlay', 'targetModal', 'transferModal', 'sheepTargetModal'].forEach(id => {
+      ['loadingOverlay', 'targetModal', 'transferModal'].forEach(id => {
         const el = document.getElementById(id);
         if (el && el.parentElement !== document.body) {
           document.body.appendChild(el);
@@ -2182,7 +2089,6 @@ function _savingsLightBlueToDeepStops() {
       initSlipUploader();
       loadTargets();
       bindTargetModalControls();
-      bindSheepWaterInteraction();
 
       refreshDashboard();
       resetTypeSelection();
@@ -2580,201 +2486,6 @@ function _savingsLightBlueToDeepStops() {
     let __activeTab = 'input';
     let __historyCache = [];
 
-    const SHEEP_JAR_VALUE = 10000;
-    const SHEEP_JAR_DEFAULT_TARGET = 100000;
-    let __lastSheepSavingExpense = 0;
-
-    function getSheepJarTarget(){
-      const raw = localStorage.getItem('mySheepy_sheepJarTarget');
-      const val = parseFloat(String(raw || '').replace(/,/g, ''));
-      return (Number.isFinite(val) && val > 0) ? val : SHEEP_JAR_DEFAULT_TARGET;
-    }
-
-    function saveSheepJarTarget(){
-      const input = document.getElementById('sheepJarTargetInput');
-      const raw = input ? input.value : '';
-      const val = parseFloat(String(raw || '').replace(/,/g, ''));
-      if (!Number.isFinite(val) || val <= 0) {
-        alert('กรุณาระบุ Target ของโหลมากกว่า 0');
-        return;
-      }
-      localStorage.setItem('mySheepy_sheepJarTarget', String(val));
-      updateSheepJarFromSavings(__lastSheepSavingExpense);
-      closeSheepTargetModal();
-    }
-
-    function openSheepTargetModal(){
-      ensureModalPortal();
-      const modal = document.getElementById('sheepTargetModal');
-      const content = document.getElementById('sheepTargetModalContent');
-      const input = document.getElementById('sheepJarTargetInput');
-      const btn = document.getElementById('btnOpenSheepTarget');
-      if (!modal || !content) return;
-
-      if (input) input.value = getSheepJarTarget() || '';
-      if (btn) {
-        btn.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-
-      modal.classList.remove('hidden');
-      setTimeout(() => {
-        content.classList.remove('scale-95', 'opacity-0');
-        content.classList.add('scale-100', 'opacity-100');
-        if (input) {
-          input.focus();
-          input.select();
-        }
-      }, 10);
-    }
-
-    function closeSheepTargetModal(){
-      const modal = document.getElementById('sheepTargetModal');
-      const content = document.getElementById('sheepTargetModalContent');
-      const btn = document.getElementById('btnOpenSheepTarget');
-      if (!modal || !content) return;
-
-      content.classList.remove('scale-100', 'opacity-100');
-      content.classList.add('scale-95', 'opacity-0');
-      if (btn) {
-        btn.classList.remove('is-open');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-      setTimeout(() => { modal.classList.add('hidden'); }, 200);
-    }
-
-    function toggleSheepTargetPanel(forceOpen){
-      const modal = document.getElementById('sheepTargetModal');
-      const isHidden = !modal || modal.classList.contains('hidden');
-      const willOpen = (typeof forceOpen === 'boolean') ? forceOpen : isHidden;
-      if (willOpen) openSheepTargetModal();
-      else closeSheepTargetModal();
-    }
-
-    function handleSheepTargetKey(event){
-      if (event && event.key === 'Enter') {
-        event.preventDefault();
-        saveSheepJarTarget();
-      }
-    }
-
-    function renderSheepJarSheep(count){
-      const layer = document.getElementById('sheepJarSheepLayer');
-      if (!layer) return { waterPct: 0, rows: 0, cols: 0 };
-      const total = Math.max(0, Math.floor(Number(count || 0)));
-      layer.innerHTML = '';
-      layer.style.gridTemplateColumns = '';
-      layer.style.setProperty('--sheep-size', '30px');
-      layer.style.setProperty('--sheep-gap', '3px');
-      if (total <= 0) return { waterPct: 0, rows: 0, cols: 0 };
-
-      const w = layer.clientWidth || 270;
-      const h = layer.clientHeight || 250;
-      const gap = 3;
-      const cols = Math.max(1, Math.ceil(Math.sqrt(total * (w / Math.max(h, 1)))));
-      const rows = Math.max(1, Math.ceil(total / cols));
-      const size = Math.max(8, Math.min(34, Math.floor(Math.min(
-        (w - (cols - 1) * gap) / cols,
-        (h - (rows - 1) * gap) / rows
-      ))));
-
-      layer.style.setProperty('--sheep-size', size + 'px');
-      layer.style.setProperty('--sheep-gap', gap + 'px');
-      layer.style.gridTemplateColumns = `repeat(${cols}, var(--sheep-size))`;
-
-      const frag = document.createDocumentFragment();
-      for (let i = 0; i < total; i++) {
-        const sheep = document.createElement('span');
-        sheep.className = 'jar-sheep';
-        sheep.style.setProperty('--delay', ((i % 8) * 0.08) + 's');
-        const img = document.createElement('img');
-        img.src = 'icon-192.png';
-        img.alt = '';
-        img.draggable = false;
-        sheep.appendChild(img);
-        frag.appendChild(sheep);
-      }
-      layer.appendChild(frag);
-
-      const jar = layer.closest('.sheep-jar');
-      const jarH = jar ? (jar.clientHeight || 340) : 340;
-      const layerBottom = jar ? Math.max(0, jarH - (layer.offsetTop + (layer.clientHeight || h))) : 28;
-      const stackHeight = (rows * size) + ((rows - 1) * gap);
-      const waterPct = Math.min(92, Math.max(0, ((layerBottom + stackHeight) / Math.max(jarH, 1)) * 100));
-      return { waterPct, rows, cols, size, gap };
-    }
-
-    function bindSheepWaterInteraction(){
-      const jar = document.querySelector('#tab-sheep .sheep-jar');
-      if (!jar || jar.__sheepWaterBound) return;
-      jar.__sheepWaterBound = true;
-
-      let timer = null;
-      const activateWater = () => {
-        jar.classList.add('is-water-active');
-        window.clearTimeout(timer);
-        timer = window.setTimeout(() => jar.classList.remove('is-water-active'), 900);
-      };
-      jar.addEventListener('pointerdown', activateWater);
-      jar.addEventListener('pointermove', activateWater);
-      jar.addEventListener('pointerleave', () => jar.classList.remove('is-water-active'));
-      jar.addEventListener('touchstart', activateWater, { passive: true });
-    }
-
-    function updateSheepJarFromSavings(savingExpense){
-      const amount = Math.max(0, Number(savingExpense || 0));
-      __lastSheepSavingExpense = amount;
-
-      const target = getSheepJarTarget();
-      const fullSheep = Math.floor(amount / SHEEP_JAR_VALUE);
-      const sheepDecimal = amount / SHEEP_JAR_VALUE;
-      const targetSheep = target / SHEEP_JAR_VALUE;
-      const scaleMax = Math.max(target, amount, SHEEP_JAR_VALUE);
-      const targetPct = Math.min(88, Math.max(10, (target / scaleMax) * 82));
-      const sheepLayout = renderSheepJarSheep(fullSheep);
-      const fillPct = amount > 0 ? (sheepLayout && Number.isFinite(sheepLayout.waterPct) ? sheepLayout.waterPct : Math.min(88, Math.max(6, (amount / scaleMax) * 82))) : 0;
-      const progressPct = target > 0 ? Math.min(999, (amount / target) * 100) : 0;
-
-      const savingEl = document.getElementById('sheepSavingValue');
-      const countEl = document.getElementById('sheepCountValue');
-      const targetEl = document.getElementById('sheepTargetValue');
-      const progressEl = document.getElementById('sheepProgressText');
-      const targetInput = document.getElementById('sheepJarTargetInput');
-      const fillEl = document.getElementById('sheepJarFill');
-      const lineEl = document.getElementById('sheepJarTargetLine');
-      const targetTextEl = document.getElementById('sheepJarTargetText');
-      const emptyHint = document.getElementById('sheepEmptyHint');
-
-      if (savingEl) savingEl.textContent = money(amount);
-      if (countEl) countEl.textContent = fullSheep.toLocaleString() + ' ตัว';
-      if (targetEl) targetEl.textContent = money(target);
-      if (targetInput && document.activeElement !== targetInput) targetInput.value = String(Math.round(target));
-      if (fillEl) fillEl.style.height = fillPct + '%';
-      if (lineEl) lineEl.style.bottom = targetPct + '%';
-      if (targetTextEl) targetTextEl.textContent = 'Target ' + money(target) + ' • ' + targetSheep.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' ตัว';
-      if (emptyHint) emptyHint.classList.toggle('hidden', fullSheep > 0);
-      if (progressEl) {
-        const remaining = Math.max(0, target - amount);
-        const sheepEquivalentText = sheepDecimal.toLocaleString(undefined, { maximumFractionDigits: 2 });
-        const statusCard = remaining > 0
-          ? `<span class="sheep-progress-pill is-remaining"><i class="fa-solid fa-flag-checkered"></i> เหลือ ${money(remaining)}</span>`
-          : `<span class="sheep-progress-pill is-complete"><i class="fa-solid fa-circle-check"></i> ถึง Target แล้ว</span>`;
-        progressEl.innerHTML = `
-          <span class="sheep-progress-pill sheep-progress-rate"><i class="fa-solid fa-jar"></i> แกะ 1 ตัว = ฿ 10,000</span>
-          <span class="sheep-progress-pill is-success">
-            <i class="fa-solid fa-chart-simple"></i>
-            <span class="sheep-success-copy">
-              <span class="sheep-success-label">สำเร็จแล้ว</span>
-              <span class="sheep-success-value">${progressPct.toFixed(1)}%</span>
-              <span class="sheep-success-note">อีกนิดเดียว ใกล้ถึงเป้าหมายแล้ว</span>
-            </span>
-          </span>
-          <span class="sheep-progress-pill"><i class="fa-solid fa-sheep"></i> ตอนนี้เทียบเท่า ${sheepEquivalentText} ตัว</span>
-          ${statusCard}
-        `;
-      }
-    }
-
     function setTabBtnState(btn, isActive){
       if (!btn) return;
       btn.classList.toggle('tab-active', isActive);
@@ -2786,25 +2497,20 @@ function _savingsLightBlueToDeepStops() {
       const input = document.getElementById('tab-input');
       const dash = document.getElementById('tab-dashboard');
       const hist = document.getElementById('tab-history');
-      const sheep = document.getElementById('tab-sheep');
       const bInput = document.getElementById('tabBtnInput');
       const bDash = document.getElementById('tabBtnDash');
-      const bSheep = document.getElementById('tabBtnSheep');
       const bHist = document.getElementById('tabBtnHistory');
 
       if (input) input.classList.toggle('hidden', tab !== 'input');
       if (dash)  dash.classList.toggle('hidden', tab !== 'dashboard');
       if (hist)  hist.classList.toggle('hidden', tab !== 'history');
-      if (sheep) sheep.classList.toggle('hidden', tab !== 'sheep');
 
       setTabBtnState(bInput, tab === 'input');
       setTabBtnState(bDash, tab === 'dashboard');
-      setTabBtnState(bSheep, tab === 'sheep');
       setTabBtnState(bHist, tab === 'history');
 
       if (tab === 'dashboard') refreshDashboard();
       if (tab === 'history') refreshHistory();
-      if (tab === 'sheep') { updateSheepJarFromSavings(__lastSheepSavingExpense); refreshDashboard(); }
       if (tab === 'input') playInputRunner();
     }
 
@@ -2964,7 +2670,6 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const savingsAllCategorySeries = calculateMonthlySavingsAllCategories(yearFilteredHistory, res.filter.year);
       const savingsAllCategoryTotal = savingsAllCategorySeries.reduce((a, b) => a + b, 0);
       document.getElementById('kpiSavings').innerText = money(savingsAllCategoryTotal);
-      updateSheepJarFromSavings(savingsAllCategoryTotal);
 
       // ✅ Exclude Savings-category expenses from KPI + BarChart
       const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, res.filter.year);
@@ -5738,13 +5443,11 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
   pointer-events: auto !important;
   touch-action: manipulation;
 }
-#targetModal,
-#sheepTargetModal{
+#targetModal{
   z-index: 100000 !important;
   pointer-events: auto !important;
 }
-#targetModal.hidden,
-#sheepTargetModal.hidden{
+#targetModal.hidden{
   pointer-events: none !important;
 }
 
@@ -5756,8 +5459,7 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
    ========================================================= */
 #loadingOverlay,
 #targetModal,
-#transferModal,
-#sheepTargetModal{
+#transferModal{
   position: fixed !important;
   inset: 0 !important;
   top: 0 !important;
@@ -5778,540 +5480,35 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
 }
 
 #targetModal,
-#transferModal,
-#sheepTargetModal{
+#transferModal{
   z-index: 100001 !important;
 }
 
 #loadingOverlay.hidden,
 #targetModal.hidden,
-#transferModal.hidden,
-#sheepTargetModal.hidden{
+#transferModal.hidden{
   display: none !important;
   pointer-events: none !important;
 }
 
 #loadingOverlay:not(.hidden),
 #targetModal:not(.hidden),
-#transferModal:not(.hidden),
-#sheepTargetModal:not(.hidden){
+#transferModal:not(.hidden){
   display: flex !important;
 }
 
 #targetModalContent,
-#transferModalContent,
-#sheepTargetModalContent{
+#transferModalContent{
   position: relative !important;
   z-index: 100002 !important;
 }
 
 #targetModal > .absolute.inset-0,
 #transferModal > .absolute.inset-0,
-#sheepTargetModal > .absolute.inset-0,
 #loadingOverlay > .absolute.inset-0{
   position: absolute !important;
   inset: 0 !important;
 }
-
-/* =========================================================
-   Sheep Count Tab — Jar Target + Sheep Conversion
-   UI only — uses existing Saving Expense calculation
-   ========================================================= */
-#tab-sheep{
-  margin-top: 0.45rem !important;
-}
-.sheep-count-card{
-  background:
-    radial-gradient(circle at 22% 9%, rgba(255,247,210,0.76), transparent 30%),
-    linear-gradient(180deg, rgba(253,248,229,0.94), rgba(236,241,212,0.91)) !important;
-  border-color: rgba(222, 208, 168, 0.90) !important;
-}
-.sheep-mini-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:0.35rem;
-  min-height:2.2rem;
-  padding:0 0.75rem;
-  border-radius:999px;
-  background: rgba(255,250,238,0.95);
-  border:1px solid rgba(220,208,176,0.92);
-  color:#789348;
-  font-size:0.68rem;
-  font-weight:800;
-  box-shadow:0 8px 18px rgba(91,74,35,0.06);
-}
-.sheep-target-header-btn{
-  background:linear-gradient(135deg, #8bae5a 0%, #12b886 100%) !important;
-  border-color:rgba(255,255,255,0.48) !important;
-  color:#fffdf8 !important;
-  box-shadow:0 10px 22px rgba(101,143,63,0.18) !important;
-}
-.sheep-target-header-btn:hover,
-.sheep-target-header-btn.is-open{
-  transform:translateY(-1px);
-  box-shadow:0 14px 28px rgba(101,143,63,0.24) !important;
-}
-@media (max-width:380px){
-  .sheep-target-header-btn{ padding:0 0.62rem; }
-}
-.sheep-stat-card{
-  border-radius:1.25rem;
-  background: rgba(255,253,246,0.84);
-  border:1px solid rgba(224,214,186,0.88);
-  padding:0.75rem 0.65rem;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 10px 20px rgba(91,74,35,0.04);
-  min-width:0;
-}
-.sheep-stat-card p{
-  font-size:0.56rem;
-  line-height:1;
-  color:#9a836e;
-  text-transform:uppercase;
-  font-weight:900;
-  letter-spacing:0.03em;
-  margin-bottom:0.35rem;
-  white-space:nowrap;
-}
-.sheep-stat-card h3{
-  color:#5b3b22;
-  font-size:clamp(0.76rem, 3.15vw, 0.98rem);
-  line-height:1.15;
-  font-weight:900;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.sheep-jar-stage{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:0.35rem 0 0;
-}
-.sheep-jar-lid{
-  width:min(62%, 220px);
-  height:24px;
-  border-radius:999px 999px 14px 14px;
-  background:linear-gradient(180deg, #f4c96b 0%, #c98a3f 100%);
-  border:1px solid rgba(124,88,44,0.26);
-  box-shadow:0 10px 18px rgba(91,74,35,0.13), inset 0 1px 0 rgba(255,255,255,0.36);
-  margin-bottom:-5px;
-  z-index:3;
-}
-.sheep-jar{
-  --target-level: 82%;
-  position:relative;
-  width:min(86%, 312px);
-  height:340px;
-  border-radius:44px 44px 58px 58px / 52px 52px 64px 64px;
-  overflow:hidden;
-  background:
-    linear-gradient(100deg, rgba(255,255,255,0.38), rgba(255,255,255,0.08) 28%, rgba(255,255,255,0.28) 68%, rgba(255,255,255,0.08)),
-    rgba(236, 251, 255, 0.34);
-  border:3px solid rgba(255,255,255,0.78);
-  box-shadow:
-    inset 0 0 0 1px rgba(114, 92, 55, 0.10),
-    inset 0 -18px 38px rgba(111, 143, 66, 0.14),
-    0 22px 46px rgba(91,74,35,0.13);
-}
-.sheep-jar::before{
-  content:"";
-  position:absolute;
-  left:15%;
-  right:15%;
-  top:0.65rem;
-  height:16px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.48);
-  border:1px solid rgba(255,255,255,0.62);
-  z-index:9;
-}
-.sheep-jar-fill{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:0%;
-  overflow:hidden;
-  background:
-    linear-gradient(180deg, rgba(170, 216, 142, 0.30), rgba(112, 166, 118, 0.38)),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0 14px, transparent 14px 28px);
-  border-top:1px solid rgba(132,164,78,0.38);
-  transition:height 0.38s cubic-bezier(0.22, 1, 0.36, 1), filter 0.22s ease;
-  z-index:1;
-}
-.sheep-jar-fill::before{
-  content:"";
-  position:absolute;
-  left:-18%;
-  right:-18%;
-  top:-13px;
-  height:28px;
-  background:
-    radial-gradient(18px 12px at 18px 14px, rgba(255,255,255,0.46) 0 46%, transparent 48%) 0 0 / 36px 24px repeat-x,
-    linear-gradient(180deg, rgba(236,255,245,0.56), rgba(148,196,128,0.12));
-  opacity:0.92;
-  animation:sheepWaterWave 3.2s linear infinite;
-}
-.sheep-jar-fill::after{
-  content:"";
-  position:absolute;
-  inset:10px 14px 12px;
-  background:
-    radial-gradient(circle at 18% 35%, rgba(255,255,255,0.22) 0 2px, transparent 3px),
-    radial-gradient(circle at 62% 58%, rgba(255,255,255,0.18) 0 2px, transparent 3px),
-    radial-gradient(circle at 82% 28%, rgba(255,255,255,0.18) 0 1.8px, transparent 3px);
-  opacity:0.65;
-  animation:sheepWaterBubbles 4.4s ease-in-out infinite;
-  pointer-events:none;
-}
-.sheep-jar:hover .sheep-jar-fill,
-.sheep-jar.is-water-active .sheep-jar-fill{
-  filter:saturate(1.12) brightness(1.04);
-}
-.sheep-jar:hover .sheep-jar-fill::before,
-.sheep-jar.is-water-active .sheep-jar-fill::before{
-  animation-duration:1.05s;
-}
-.sheep-jar.is-water-active .sheep-jar-fill::after{
-  animation-duration:1.25s;
-  opacity:0.9;
-}
-.sheep-jar-target-line{
-  position:absolute;
-  left:7%;
-  right:7%;
-  bottom:82%;
-  z-index:12;
-  border-top:2px dashed rgba(207, 84, 56, 0.82);
-  filter:drop-shadow(0 1px 0 rgba(255,255,255,0.72));
-  transition:bottom 0.35s ease;
-}
-.sheep-jar-target-line span{
-  position:absolute;
-  right:0;
-  top:-1.55rem;
-  padding:0.22rem 0.55rem;
-  border-radius:999px;
-  background:rgba(255, 246, 225, 0.92);
-  border:1px solid rgba(207, 84, 56, 0.26);
-  color:#b24e33;
-  font-size:0.58rem;
-  line-height:1;
-  font-weight:900;
-  white-space:nowrap;
-  box-shadow:0 8px 16px rgba(91,74,35,0.08);
-}
-.sheep-jar-sheep-layer{
-  position:absolute;
-  left:1.45rem;
-  right:1.45rem;
-  top:3.3rem;
-  bottom:1.75rem;
-  display:grid;
-  align-content:end;
-  justify-content:center;
-  gap:var(--sheep-gap, 3px);
-  z-index:7;
-  overflow:hidden;
-}
-.jar-sheep{
-  width:var(--sheep-size, 30px);
-  height:var(--sheep-size, 30px);
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  animation: jarSheepBob 1.65s ease-in-out infinite;
-  animation-delay:var(--delay, 0s);
-  filter:drop-shadow(0 4px 5px rgba(91,74,35,0.13));
-}
-.jar-sheep img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  user-select:none;
-  -webkit-user-drag:none;
-}
-.sheep-jar-empty-hint{
-  position:absolute;
-  left:50%;
-  top:52%;
-  transform:translate(-50%, -50%);
-  z-index:8;
-  padding:0.55rem 0.75rem;
-  border-radius:999px;
-  background:rgba(255,253,246,0.74);
-  border:1px solid rgba(224,214,186,0.72);
-  color:#9a836e;
-  font-size:0.72rem;
-  font-weight:800;
-  white-space:nowrap;
-}
-.sheep-jar-shine{
-  position:absolute;
-  left:12%;
-  top:12%;
-  width:18%;
-  height:70%;
-  border-radius:999px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.54), rgba(255,255,255,0.05));
-  transform:rotate(8deg);
-  z-index:11;
-  pointer-events:none;
-}
-.sheep-progress-text{
-  margin-top:0.75rem;
-  color:#7a5a37;
-  font-size:0.68rem;
-  line-height:1.35;
-  font-weight:800;
-  text-align:center;
-}
-.sheep-progress-card{
-  width:100%;
-  margin-top:0.85rem;
-  padding:0.75rem;
-  border-radius:1.45rem;
-  background:linear-gradient(135deg, rgba(255,253,246,0.92), rgba(238,244,216,0.88));
-  border:1px solid rgba(224,214,186,0.92);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.88), 0 12px 24px rgba(91,74,35,0.07);
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
-  gap:0.45rem;
-  text-align:left;
-}
-.sheep-progress-pill{
-  min-height:2.25rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:0.35rem;
-  padding:0.48rem 0.55rem;
-  border-radius:1rem;
-  background:rgba(255,250,238,0.78);
-  border:1px solid rgba(224,214,186,0.70);
-  color:#745237;
-  font-size:0.63rem;
-  line-height:1.2;
-  font-weight:900;
-  text-align:center;
-  box-shadow:0 6px 14px rgba(91,74,35,0.04);
-}
-.sheep-progress-pill i{
-  color:#d1903f;
-  font-size:0.68rem;
-}
-.sheep-progress-rate{
-  grid-column:1 / -1;
-  background:linear-gradient(135deg, rgba(255,239,211,0.96), rgba(224,237,192,0.92));
-  color:#5b3b22;
-}
-.sheep-progress-pill.is-success{
-  grid-column:1 / -1;
-  min-height:4.6rem;
-  justify-content:center;
-  gap:0.65rem;
-  padding:0.75rem 0.9rem;
-  color:#4f7f2d;
-  background:linear-gradient(135deg, rgba(236,241,212,0.98), rgba(207,229,151,0.88));
-  border-color:rgba(142, 174, 90, 0.45);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.88), 0 12px 24px rgba(101,143,63,0.12);
-}
-.sheep-progress-pill.is-success i{
-  width:2rem;
-  height:2rem;
-  border-radius:999px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(255,255,255,0.55);
-  color:#d1903f;
-  font-size:1rem;
-  box-shadow:0 8px 16px rgba(101,143,63,0.12);
-}
-.sheep-success-copy{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  justify-content:center;
-  line-height:1.05;
-}
-.sheep-success-label{
-  font-size:0.68rem;
-  color:#6f9343;
-  font-weight:900;
-}
-.sheep-success-value{
-  margin-top:0.1rem;
-  font-size:1.72rem;
-  font-weight:1000;
-  letter-spacing:-0.04em;
-  color:#4f7f2d;
-  text-shadow:0 2px 0 rgba(255,255,255,0.54);
-}
-.sheep-success-note{
-  margin-top:0.2rem;
-  font-size:0.58rem;
-  color:#7a9b4e;
-  font-weight:900;
-}
-.sheep-progress-pill.is-remaining{
-  color:#b24e33;
-  background:rgba(255,239,211,0.86);
-}
-.sheep-progress-pill.is-complete{
-  grid-column:1 / -1;
-  color:#658f3f;
-  background:rgba(236,241,212,0.92);
-}
-@media (max-width:380px){
-  .sheep-progress-card{ grid-template-columns:1fr; }
-  .sheep-progress-rate,
-  .sheep-progress-pill.is-complete{ grid-column:auto; }
-}
-.sheep-target-open-btn{
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:0.75rem;
-  border-radius:1.55rem;
-  padding:0.9rem 1rem;
-  background:linear-gradient(135deg, rgba(255,239,211,0.96), rgba(224,237,192,0.92));
-  border:1px solid rgba(184, 205, 125, 0.64);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.86), 0 12px 24px rgba(91,74,35,0.07);
-  transition:transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-  text-align:left;
-}
-.sheep-target-open-btn:hover,
-.sheep-target-open-btn.is-open{
-  transform:translateY(-1px);
-  border-color:rgba(142, 174, 90, 0.72);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.90), 0 16px 30px rgba(101,143,63,0.13);
-}
-.sheep-target-open-copy{
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-}
-.sheep-target-open-label{
-  color:#789348;
-  font-size:0.63rem;
-  line-height:1;
-  font-weight:1000;
-  text-transform:uppercase;
-  letter-spacing:0.04em;
-}
-.sheep-target-open-title{
-  margin-top:0.25rem;
-  color:#5b3b22;
-  font-size:0.88rem;
-  line-height:1.15;
-  font-weight:1000;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.sheep-target-open-action{
-  flex:0 0 auto;
-  min-height:2.35rem;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:0.45rem;
-  border-radius:1.1rem;
-  padding:0 0.85rem;
-  background:linear-gradient(135deg, #8bae5a 0%, #12b886 100%);
-  color:#fffdf8;
-  font-size:0.72rem;
-  font-weight:1000;
-  box-shadow:0 10px 22px rgba(101,143,63,0.20);
-}
-.sheep-target-toggle-icon{
-  font-size:0.62rem;
-  transition:transform 0.16s ease;
-}
-.sheep-target-open-btn.is-open .sheep-target-toggle-icon{
-  transform:rotate(180deg);
-}
-.sheep-target-panel{
-  border-radius:1.5rem;
-  background:rgba(255,253,246,0.72);
-  border:1px solid rgba(224,214,186,0.82);
-  padding:0.85rem;
-  overflow:hidden;
-  transition:max-height 0.22s ease, opacity 0.18s ease, transform 0.20s ease, margin-top 0.20s ease, padding-top 0.20s ease, padding-bottom 0.20s ease, border-width 0.20s ease;
-}
-.sheep-target-panel.is-collapsed{
-  max-height:0;
-  opacity:0;
-  transform:translateY(-0.35rem);
-  margin-top:-0.35rem;
-  padding-top:0;
-  padding-bottom:0;
-  border-width:0;
-  pointer-events:none;
-}
-.sheep-target-panel.is-open{
-  max-height:12rem;
-  opacity:1;
-  transform:translateY(0);
-}
-.sheep-target-modal-content{
-  background:linear-gradient(180deg, rgba(255,253,246,0.98), rgba(236,241,212,0.96)) !important;
-  border:1px solid rgba(222, 208, 168, 0.92) !important;
-  box-shadow:0 28px 80px rgba(91,74,35,0.18), inset 0 1px 0 rgba(255,255,255,0.88) !important;
-}
-.sheep-target-modal-icon{
-  background:linear-gradient(135deg, rgba(255,239,211,0.96), rgba(224,237,192,0.92));
-  border-color:rgba(184, 205, 125, 0.64);
-  color:#789348;
-  box-shadow:0 10px 22px rgba(101,143,63,0.12);
-}
-.sheep-target-modal-hint{
-  display:flex;
-  align-items:center;
-  gap:0.45rem;
-  padding:0.65rem 0.75rem;
-  border-radius:1rem;
-  background:rgba(255,239,211,0.64);
-  border:1px solid rgba(224,214,186,0.72);
-  color:#8a6b48;
-  font-size:0.66rem;
-  line-height:1.25;
-  font-weight:800;
-}
-.sheep-target-modal-hint i{
-  color:#d1903f;
-}
-.bottom-tab-nav{
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-}
-.bottom-tab-nav button{
-  font-size:0.66rem !important;
-  gap:0.22rem !important;
-}
-@keyframes sheepWaterWave{
-  0% { transform:translateX(0) translateY(0); }
-  50% { transform:translateX(18px) translateY(2px); }
-  100% { transform:translateX(36px) translateY(0); }
-}
-@keyframes sheepWaterBubbles{
-  0%, 100% { transform:translateY(7px); opacity:0.50; }
-  50% { transform:translateY(-5px); opacity:0.86; }
-}
-@keyframes jarSheepBob{
-  0%, 100% { transform:translateY(0) rotate(-1deg); }
-  50% { transform:translateY(-2px) rotate(1deg); }
-}
-@media (max-width:430px){
-  .sheep-jar{ height:318px; width:90%; }
-  .sheep-jar-sheep-layer{ left:1.25rem; right:1.25rem; top:3rem; bottom:1.55rem; }
-  .sheep-jar-target-line span{ font-size:0.54rem; }
-  .bottom-tab-nav button{ font-size:0.60rem !important; padding-left:0.18rem !important; padding-right:0.18rem !important; }
-}
-
 </style>
 
   <div id="inputRunner" aria-hidden="true">
