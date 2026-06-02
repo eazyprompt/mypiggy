@@ -2582,9 +2582,23 @@ function _savingsLightBlueToDeepStops() {
 
     const SHEEP_JAR_VALUE = 10000;
     const SHEEP_JAR_DEFAULT_TARGET = 100000;
-    const SHEEP_JAR_MAX_RENDER = 120; // Performance: cap visible sheep DOM nodes; totals still use the real amount
+    const SHEEP_JAR_MAX_RENDER = 90; // Desktop cap: totals still use the real amount
+    const SHEEP_JAR_MAX_RENDER_MOBILE = 28; // Mobile Lite: fewer PNG nodes for smoother tab switching
     let __lastSheepSavingExpense = 0;
     let __sheepJarRaf = null;
+    let __sheepJarIdleTimer = null;
+
+    function isMobileLiteMode(){
+      try {
+        return window.matchMedia && window.matchMedia('(max-width: 640px), (pointer: coarse)').matches;
+      } catch(e) {
+        return window.innerWidth <= 640;
+      }
+    }
+
+    function getSheepRenderCap(){
+      return isMobileLiteMode() ? SHEEP_JAR_MAX_RENDER_MOBILE : SHEEP_JAR_MAX_RENDER;
+    }
 
     function isSheepTabActive(){
       const sheepTab = document.getElementById('tab-sheep');
@@ -2593,7 +2607,13 @@ function _savingsLightBlueToDeepStops() {
 
     function setSheepTabPerformanceState(isActive){
       document.body.classList.toggle('sheep-tab-active', !!isActive);
+      document.body.classList.toggle('sheep-mobile-lite', isMobileLiteMode());
     }
+
+    try {
+      window.addEventListener('resize', () => setSheepTabPerformanceState(isSheepTabActive()), { passive: true });
+      setSheepTabPerformanceState(false);
+    } catch(e) {}
 
     function syncSheepJarFromSavings(savingExpense, forceRender){
       const amount = Math.max(0, Number(savingExpense || 0));
@@ -2603,10 +2623,17 @@ function _savingsLightBlueToDeepStops() {
       if (!forceRender && !isSheepTabActive()) return;
 
       if (__sheepJarRaf) window.cancelAnimationFrame(__sheepJarRaf);
-      __sheepJarRaf = window.requestAnimationFrame(() => {
-        __sheepJarRaf = null;
-        updateSheepJarFromSavings(amount);
-      });
+      if (__sheepJarIdleTimer) window.clearTimeout(__sheepJarIdleTimer);
+
+      const run = () => {
+        __sheepJarRaf = window.requestAnimationFrame(() => {
+          __sheepJarRaf = null;
+          updateSheepJarFromSavings(amount);
+        });
+      };
+
+      // On mobile, let the tab transition finish first before building the Sheepy DOM.
+      __sheepJarIdleTimer = window.setTimeout(run, isMobileLiteMode() ? 120 : 0);
     }
 
     function getSheepJarTarget(){
@@ -2688,10 +2715,12 @@ function _savingsLightBlueToDeepStops() {
       if (!layer) return { waterPct: 0, rows: 0, cols: 0 };
 
       const total = Math.max(0, Math.floor(Number(count || 0)));
-      const renderTotal = Math.min(total, SHEEP_JAR_MAX_RENDER);
+      const renderCap = getSheepRenderCap();
+      const renderTotal = Math.min(total, renderCap);
+      const mobileLite = isMobileLiteMode();
       const w = layer.clientWidth || 270;
       const h = layer.clientHeight || 250;
-      const cacheKey = `${renderTotal}|${w}|${h}`;
+      const cacheKey = `${renderTotal}|${renderCap}|${mobileLite ? 'm' : 'd'}|${w}|${h}`;
 
       if (total <= 0) {
         layer.innerHTML = '';
@@ -2712,10 +2741,10 @@ function _savingsLightBlueToDeepStops() {
       layer.style.setProperty('--sheep-size', '30px');
       layer.style.setProperty('--sheep-gap', '3px');
 
-      const gap = 3;
+      const gap = mobileLite ? 5 : 3;
       const cols = Math.max(1, Math.ceil(Math.sqrt(renderTotal * (w / Math.max(h, 1)))));
       const rows = Math.max(1, Math.ceil(renderTotal / cols));
-      const size = Math.max(8, Math.min(34, Math.floor(Math.min(
+      const size = Math.max(mobileLite ? 22 : 8, Math.min(mobileLite ? 38 : 34, Math.floor(Math.min(
         (w - (cols - 1) * gap) / cols,
         (h - (rows - 1) * gap) / rows
       ))));
@@ -2727,8 +2756,8 @@ function _savingsLightBlueToDeepStops() {
       const frag = document.createDocumentFragment();
       for (let i = 0; i < renderTotal; i++) {
         const sheep = document.createElement('span');
-        sheep.className = 'jar-sheep';
-        sheep.style.setProperty('--delay', ((i % 6) * 0.09) + 's');
+        sheep.className = mobileLite ? 'jar-sheep jar-sheep-lite' : 'jar-sheep';
+        if (!mobileLite) sheep.style.setProperty('--delay', ((i % 6) * 0.09) + 's');
         const img = document.createElement('img');
         img.src = 'icon-192.png';
         img.alt = '';
@@ -2760,8 +2789,8 @@ function _savingsLightBlueToDeepStops() {
         window.clearTimeout(timer);
         timer = window.setTimeout(() => jar.classList.remove('is-water-active'), 900);
       };
-      jar.addEventListener('pointerdown', activateWater);
-      jar.addEventListener('pointermove', activateWater);
+      jar.addEventListener('pointerdown', activateWater, { passive: true });
+      if (!isMobileLiteMode()) jar.addEventListener('pointermove', activateWater, { passive: true });
       jar.addEventListener('pointerleave', () => jar.classList.remove('is-water-active'));
       jar.addEventListener('touchstart', activateWater, { passive: true });
     }
@@ -2848,6 +2877,10 @@ function _savingsLightBlueToDeepStops() {
       setTabBtnState(bHist, tab === 'history');
 
       setSheepTabPerformanceState(tab === 'sheep');
+      if (tab !== 'sheep') {
+        if (__sheepJarRaf) window.cancelAnimationFrame(__sheepJarRaf);
+        if (__sheepJarIdleTimer) window.clearTimeout(__sheepJarIdleTimer);
+      }
 
       if (tab === 'dashboard') refreshDashboard();
       if (tab === 'history') refreshHistory();
@@ -6365,22 +6398,69 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
    - Pause Sheepy/menu sheep motion outside Sheepy tab
    - Reduce costly visual filters while moving between app functions
    ========================================================= */
-body:not(.sheep-tab-active) .menu-running-sheep,
-body:not(.sheep-tab-active) .menu-running-sheep img,
-body:not(.sheep-tab-active) .menu-running-sheep::after,
 body:not(.sheep-tab-active) #tab-sheep .jar-sheep,
 body:not(.sheep-tab-active) #tab-sheep .sheep-jar-fill::before,
 body:not(.sheep-tab-active) #tab-sheep .sheep-jar-fill::after{
   animation-play-state: paused !important;
 }
 
-body:not(.sheep-tab-active) .menu-running-sheep{
+.sheep-tab-active .jar-sheep img{
+  will-change: transform;
+}
+
+.menu-running-sheep img{
+  will-change: transform;
+}
+
+
+/* =========================================================
+   Sheepy Mobile Lite Guard
+   - Mobile Safari/Chrome struggles with many PNG nodes, blur, drop-shadow and continuous pseudo-element animations.
+   - Keep totals accurate, but render fewer visual sheep and stop continuous motion on mobile.
+   ========================================================= */
+.sheep-mobile-lite #tab-sheep .sheep-count-card{
+  box-shadow: 0 10px 22px rgba(91,74,35,0.08) !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-jar{
+  height: 286px !important;
+  width: 88% !important;
+  border-width: 2px !important;
+  box-shadow: inset 0 -10px 18px rgba(111,143,66,0.10), 0 12px 24px rgba(91,74,35,0.10) !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-jar-fill{
+  transition: height 0.18s ease !important;
+  background: linear-gradient(180deg, rgba(170,216,142,0.28), rgba(112,166,118,0.34)) !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-jar-fill::before,
+.sheep-mobile-lite #tab-sheep .sheep-jar-fill::after,
+.sheep-mobile-lite #tab-sheep .jar-sheep{
+  animation: none !important;
+}
+
+/* Keep the bottom-menu sheep running on every tab, including Mobile Lite.
+   Only reduce its shadow cost on mobile; do not pause the mascot animation. */
+.sheep-mobile-lite .menu-running-sheep{
   filter: none !important;
 }
 
-.sheep-tab-active .jar-sheep img,
-.sheep-tab-active .menu-running-sheep img{
-  will-change: transform;
+.sheep-mobile-lite #tab-sheep .jar-sheep{
+  filter: none !important;
+}
+.sheep-mobile-lite #tab-sheep .jar-sheep img{
+  transform: translateZ(0);
+  will-change: auto !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-jar-shine{
+  display: none !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-jar-target-line,
+.sheep-mobile-lite #tab-sheep .sheep-jar-target-line span{
+  transition: none !important;
+}
+@media (max-width:430px){
+  .sheep-mobile-lite #tab-sheep .sheep-stat-card{ padding:0.72rem !important; }
+  .sheep-mobile-lite #tab-sheep .sheep-stat-card h3{ font-size:0.95rem !important; }
+  .sheep-mobile-lite #tab-sheep .sheep-success-value{ font-size:1.45rem !important; }
 }
 
 </style>
