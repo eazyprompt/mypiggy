@@ -2582,7 +2582,32 @@ function _savingsLightBlueToDeepStops() {
 
     const SHEEP_JAR_VALUE = 10000;
     const SHEEP_JAR_DEFAULT_TARGET = 100000;
+    const SHEEP_JAR_MAX_RENDER = 120; // Performance: cap visible sheep DOM nodes; totals still use the real amount
     let __lastSheepSavingExpense = 0;
+    let __sheepJarRaf = null;
+
+    function isSheepTabActive(){
+      const sheepTab = document.getElementById('tab-sheep');
+      return __activeTab === 'sheep' && sheepTab && !sheepTab.classList.contains('hidden');
+    }
+
+    function setSheepTabPerformanceState(isActive){
+      document.body.classList.toggle('sheep-tab-active', !!isActive);
+    }
+
+    function syncSheepJarFromSavings(savingExpense, forceRender){
+      const amount = Math.max(0, Number(savingExpense || 0));
+      __lastSheepSavingExpense = amount;
+
+      // Avoid expensive Sheepy DOM work while other tabs are active.
+      if (!forceRender && !isSheepTabActive()) return;
+
+      if (__sheepJarRaf) window.cancelAnimationFrame(__sheepJarRaf);
+      __sheepJarRaf = window.requestAnimationFrame(() => {
+        __sheepJarRaf = null;
+        updateSheepJarFromSavings(amount);
+      });
+    }
 
     function getSheepJarTarget(){
       const raw = localStorage.getItem('mySheepy_sheepJarTarget');
@@ -2599,7 +2624,7 @@ function _savingsLightBlueToDeepStops() {
         return;
       }
       localStorage.setItem('mySheepy_sheepJarTarget', String(val));
-      updateSheepJarFromSavings(__lastSheepSavingExpense);
+      syncSheepJarFromSavings(__lastSheepSavingExpense, true);
       closeSheepTargetModal();
     }
 
@@ -2661,18 +2686,35 @@ function _savingsLightBlueToDeepStops() {
     function renderSheepJarSheep(count){
       const layer = document.getElementById('sheepJarSheepLayer');
       if (!layer) return { waterPct: 0, rows: 0, cols: 0 };
+
       const total = Math.max(0, Math.floor(Number(count || 0)));
+      const renderTotal = Math.min(total, SHEEP_JAR_MAX_RENDER);
+      const w = layer.clientWidth || 270;
+      const h = layer.clientHeight || 250;
+      const cacheKey = `${renderTotal}|${w}|${h}`;
+
+      if (total <= 0) {
+        layer.innerHTML = '';
+        layer.style.gridTemplateColumns = '';
+        layer.style.setProperty('--sheep-size', '30px');
+        layer.style.setProperty('--sheep-gap', '3px');
+        layer.__sheepCacheKey = '';
+        layer.__sheepLayoutCache = null;
+        return { waterPct: 0, rows: 0, cols: 0 };
+      }
+
+      if (layer.__sheepCacheKey === cacheKey && layer.__sheepLayoutCache) {
+        return layer.__sheepLayoutCache;
+      }
+
       layer.innerHTML = '';
       layer.style.gridTemplateColumns = '';
       layer.style.setProperty('--sheep-size', '30px');
       layer.style.setProperty('--sheep-gap', '3px');
-      if (total <= 0) return { waterPct: 0, rows: 0, cols: 0 };
 
-      const w = layer.clientWidth || 270;
-      const h = layer.clientHeight || 250;
       const gap = 3;
-      const cols = Math.max(1, Math.ceil(Math.sqrt(total * (w / Math.max(h, 1)))));
-      const rows = Math.max(1, Math.ceil(total / cols));
+      const cols = Math.max(1, Math.ceil(Math.sqrt(renderTotal * (w / Math.max(h, 1)))));
+      const rows = Math.max(1, Math.ceil(renderTotal / cols));
       const size = Math.max(8, Math.min(34, Math.floor(Math.min(
         (w - (cols - 1) * gap) / cols,
         (h - (rows - 1) * gap) / rows
@@ -2683,10 +2725,10 @@ function _savingsLightBlueToDeepStops() {
       layer.style.gridTemplateColumns = `repeat(${cols}, var(--sheep-size))`;
 
       const frag = document.createDocumentFragment();
-      for (let i = 0; i < total; i++) {
+      for (let i = 0; i < renderTotal; i++) {
         const sheep = document.createElement('span');
         sheep.className = 'jar-sheep';
-        sheep.style.setProperty('--delay', ((i % 8) * 0.08) + 's');
+        sheep.style.setProperty('--delay', ((i % 6) * 0.09) + 's');
         const img = document.createElement('img');
         img.src = 'icon-192.png';
         img.alt = '';
@@ -2701,7 +2743,10 @@ function _savingsLightBlueToDeepStops() {
       const layerBottom = jar ? Math.max(0, jarH - (layer.offsetTop + (layer.clientHeight || h))) : 28;
       const stackHeight = (rows * size) + ((rows - 1) * gap);
       const waterPct = Math.min(92, Math.max(0, ((layerBottom + stackHeight) / Math.max(jarH, 1)) * 100));
-      return { waterPct, rows, cols, size, gap };
+      const layout = { waterPct, rows, cols, size, gap, rendered: renderTotal, total };
+      layer.__sheepCacheKey = cacheKey;
+      layer.__sheepLayoutCache = layout;
+      return layout;
     }
 
     function bindSheepWaterInteraction(){
@@ -2802,9 +2847,11 @@ function _savingsLightBlueToDeepStops() {
       setTabBtnState(bSheep, tab === 'sheep');
       setTabBtnState(bHist, tab === 'history');
 
+      setSheepTabPerformanceState(tab === 'sheep');
+
       if (tab === 'dashboard') refreshDashboard();
       if (tab === 'history') refreshHistory();
-      if (tab === 'sheep') { updateSheepJarFromSavings(__lastSheepSavingExpense); refreshDashboard(); }
+      if (tab === 'sheep') syncSheepJarFromSavings(__lastSheepSavingExpense, true);
       if (tab === 'input') playInputRunner();
     }
 
@@ -2964,7 +3011,7 @@ document.getElementById('kpiOverallBalance').innerText = money(res.overall.balan
       const savingsAllCategorySeries = calculateMonthlySavingsAllCategories(yearFilteredHistory, res.filter.year);
       const savingsAllCategoryTotal = savingsAllCategorySeries.reduce((a, b) => a + b, 0);
       document.getElementById('kpiSavings').innerText = money(savingsAllCategoryTotal);
-      updateSheepJarFromSavings(savingsAllCategoryTotal);
+      syncSheepJarFromSavings(savingsAllCategoryTotal, false);
 
       // ✅ Exclude Savings-category expenses from KPI + BarChart
       const expenseNoSavingsSeries = calculateMonthlyExpenseNoSavings(yearFilteredHistory, res.filter.year);
@@ -6310,6 +6357,30 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
   .sheep-jar-sheep-layer{ left:1.25rem; right:1.25rem; top:3rem; bottom:1.55rem; }
   .sheep-jar-target-line span{ font-size:0.54rem; }
   .bottom-tab-nav button{ font-size:0.60rem !important; padding-left:0.18rem !important; padding-right:0.18rem !important; }
+}
+
+
+/* =========================================================
+   Sheepy Performance Guard
+   - Pause Sheepy/menu sheep motion outside Sheepy tab
+   - Reduce costly visual filters while moving between app functions
+   ========================================================= */
+body:not(.sheep-tab-active) .menu-running-sheep,
+body:not(.sheep-tab-active) .menu-running-sheep img,
+body:not(.sheep-tab-active) .menu-running-sheep::after,
+body:not(.sheep-tab-active) #tab-sheep .jar-sheep,
+body:not(.sheep-tab-active) #tab-sheep .sheep-jar-fill::before,
+body:not(.sheep-tab-active) #tab-sheep .sheep-jar-fill::after{
+  animation-play-state: paused !important;
+}
+
+body:not(.sheep-tab-active) .menu-running-sheep{
+  filter: none !important;
+}
+
+.sheep-tab-active .jar-sheep img,
+.sheep-tab-active .menu-running-sheep img{
+  will-change: transform;
 }
 
 </style>
