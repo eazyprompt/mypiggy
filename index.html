@@ -2935,7 +2935,7 @@ function _savingsLightBlueToDeepStops() {
     const SHEEP_JAR_VALUE = 10000;
     const SHEEP_JAR_DEFAULT_TARGET = 100000;
     const SHEEP_JAR_MAX_RENDER = 42; // Keep the pen clearer; stats still show the real sheep count
-    const SHEEP_JAR_MAX_RENDER_MOBILE = 32; // Lower visual density on mobile for readability and motion
+    const SHEEP_JAR_MAX_RENDER_MOBILE = 22; // iPhone/mobile: keep visual count lighter; stats still show the real sheep count
     const SHEEP_JAR_TARGET_VISUAL_OVERFLOW = 1.12; // Allow a little visual overflow only after passing target
     let __lastSheepSavingExpense = 0;
     let __sheepJarRaf = null;
@@ -3113,8 +3113,10 @@ function _savingsLightBlueToDeepStops() {
       const cellH = currentHeight / rows;
       const minDx = Math.max(4.3, Math.min(9.4, (size / Math.max(w, 1)) * 96));
       const minDy = Math.max(4.0, Math.min(8.8, (size / Math.max(h, 1)) * 96));
-      const animatedTotal = Math.min(renderTotal, Math.max(1, Math.round(renderTotal * 0.30)));
-      const animateEvery = Math.max(1, Math.floor(renderTotal / animatedTotal));
+      const animatedTotal = mobileLite
+        ? Math.min(renderTotal, 5)
+        : Math.min(renderTotal, Math.max(1, Math.round(renderTotal * 0.30)));
+      const animateEvery = Math.max(1, Math.floor(renderTotal / Math.max(1, animatedTotal)));
       const frag = document.createDocumentFragment();
       const placed = [];
 
@@ -7696,6 +7698,67 @@ body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.
 #tab-sheep .sheep-farm-progress-divider{
   display:none !important;
 }
+
+
+/* =========================================================
+   Sheepy iPhone Smooth Performance Override
+   - Keep Sheepy calculations untouched
+   - Reduce expensive mobile Safari painting: fewer visual nodes, no moving drop-shadows, no nested image animation
+   ========================================================= */
+.sheep-mobile-lite #tab-sheep .sheep-farm-field.sheep-jar{
+  box-shadow:-9px 9px 0 #7cb342, 0 12px 22px rgba(91,74,35,0.12) !important;
+  background-size:64px 64px, 64px 64px, auto, auto !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-farm-target-area,
+.sheep-mobile-lite #tab-sheep .sheep-farm-target-area::after,
+.sheep-mobile-lite #tab-sheep .sheep-farm-progress-fill,
+.sheep-mobile-lite #tab-sheep .sheep-goal-clarity-fill,
+.sheep-mobile-lite #tab-sheep .sheep-goal-clarity-pin{
+  transition:none !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-farm-decor-barn,
+.sheep-mobile-lite #tab-sheep .sheep-farm-decor-tree,
+.sheep-mobile-lite #tab-sheep .sheep-farm-progress-divider{
+  filter:none !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep,
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep,
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-animated{
+  filter:none !important;
+  backface-visibility:hidden !important;
+  -webkit-backface-visibility:hidden !important;
+  transform-style:flat !important;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-animated{
+  will-change:transform !important;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-animated::after{
+  display:none !important;
+  content:none !important;
+  animation:none !important;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-wiggle{
+  animation:sheepFarmSheepWiggleLite 2.4s ease-in-out infinite !important;
+  animation-delay:var(--delay, 0s) !important;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-wander{
+  animation:sheepFarmSheepWanderLite 4.6s ease-in-out infinite !important;
+  animation-delay:var(--delay, 0s) !important;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-animated img{
+  animation:none !important;
+  will-change:auto !important;
+  transform:none !important;
+}
+@keyframes sheepFarmSheepWiggleLite{
+  0%, 100%{ transform:translate(-50%, -50%) translateZ(var(--z-lift, 18px)) rotateZ(45deg) rotateX(-60deg); }
+  50%{ transform:translate(calc(-50% + 3px), calc(-50% - 3px)) translateZ(var(--z-lift, 18px)) rotateZ(43deg) rotateX(-60deg); }
+}
+@keyframes sheepFarmSheepWanderLite{
+  0%, 100%{ transform:translate(-50%, -50%) translateZ(var(--z-lift, 18px)) rotateZ(45deg) rotateX(-60deg); }
+  50%{ transform:translate(calc(-50% + var(--move-x, 8px)), calc(-50% + var(--move-y, -5px))) translateZ(var(--z-lift, 18px)) rotateZ(47deg) rotateX(-60deg); }
+}
+
 </style>
 
   <div id="inputRunner" aria-hidden="true">
