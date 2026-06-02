@@ -1299,6 +1299,217 @@ body.theme-fintech{
   65%{ transform: scale(0.99) rotate(2deg); }
 }
 
+
+
+/* =========================================================
+   Sheepy Front Pen Decorations — Barn + Trees
+   UI only — decorative layer around Sheepy pen, no calculation logic changed
+   ========================================================= */
+#tab-sheep .sheep-farm-iso-wrap{
+  position:relative !important;
+}
+#tab-sheep .sheep-farm-front-decor{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  overflow:visible;
+}
+#tab-sheep .sheep-farm-iso-scene{
+  z-index:3;
+}
+#tab-sheep .sheep-farm-decor-barn,
+#tab-sheep .sheep-farm-decor-tree{
+  position:absolute;
+  pointer-events:none;
+  transform-origin:center bottom;
+  filter:drop-shadow(0 10px 10px rgba(91,74,35,0.18));
+}
+#tab-sheep .sheep-farm-barn-front{
+  left:8px;
+  bottom:50px;
+  width:74px;
+  height:66px;
+  transform:rotate(-4deg) scale(0.94);
+  z-index:5;
+}
+#tab-sheep .sheep-farm-barn-front .barn-roof{
+  position:absolute;
+  left:-6px;
+  top:0;
+  width:0;
+  height:0;
+  border-left:43px solid transparent;
+  border-right:43px solid transparent;
+  border-bottom:29px solid #e9ad50;
+  filter:drop-shadow(0 3px 0 rgba(111,74,35,0.12));
+}
+#tab-sheep .sheep-farm-barn-front .barn-body{
+  position:absolute;
+  left:5px;
+  right:5px;
+  bottom:0;
+  height:43px;
+  border-radius:7px 7px 10px 10px;
+  background:linear-gradient(135deg, #d65a3e 0%, #be462f 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,0.14), inset 0 -10px 0 rgba(93,50,32,0.10);
+}
+#tab-sheep .sheep-farm-barn-front .barn-body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0 2px, transparent 2px 9px);
+  opacity:0.55;
+}
+#tab-sheep .sheep-farm-barn-front .barn-loft{
+  position:absolute;
+  left:26px;
+  top:27px;
+  width:20px;
+  height:14px;
+  border-radius:4px;
+  background:#743326;
+  border:2px solid rgba(255,255,255,0.86);
+  z-index:2;
+}
+#tab-sheep .sheep-farm-barn-front .barn-door{
+  position:absolute;
+  left:23px;
+  bottom:0;
+  width:28px;
+  height:25px;
+  border-radius:5px 5px 0 0;
+  background:#743326;
+  border:2px solid rgba(255,255,255,0.88);
+  border-bottom:none;
+  z-index:2;
+}
+#tab-sheep .sheep-farm-barn-front .barn-door::before,
+#tab-sheep .sheep-farm-barn-front .barn-door::after{
+  content:"";
+  position:absolute;
+  background:rgba(255,255,255,0.88);
+}
+#tab-sheep .sheep-farm-barn-front .barn-door::before{
+  left:50%;
+  top:0;
+  width:2px;
+  height:100%;
+  transform:translateX(-50%);
+}
+#tab-sheep .sheep-farm-barn-front .barn-door::after{
+  left:50%;
+  top:-5px;
+  width:2px;
+  height:135%;
+  transform:translateX(-50%) rotate(50deg);
+}
+#tab-sheep .sheep-farm-decor-tree{
+  width:62px;
+  height:78px;
+  z-index:6;
+}
+#tab-sheep .sheep-farm-decor-tree .tree-trunk{
+  position:absolute;
+  left:27px;
+  bottom:0;
+  width:10px;
+  height:28px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #9a6a41 0%, #765033 100%);
+  box-shadow:inset -2px 0 0 rgba(75,47,28,0.10);
+}
+#tab-sheep .sheep-farm-decor-tree .tree-canopy{
+  position:absolute;
+  border-radius:999px;
+  background:#7fa84f;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,0.18);
+}
+#tab-sheep .sheep-farm-decor-tree .canopy-a{
+  left:4px;
+  bottom:24px;
+  width:34px;
+  height:34px;
+  background:#82ad55;
+}
+#tab-sheep .sheep-farm-decor-tree .canopy-b{
+  right:3px;
+  bottom:24px;
+  width:33px;
+  height:33px;
+  background:#95bd61;
+}
+#tab-sheep .sheep-farm-decor-tree .canopy-c{
+  left:16px;
+  bottom:42px;
+  width:36px;
+  height:36px;
+  background:#8db95d;
+}
+#tab-sheep .sheep-tree-front-left{
+  left:74px;
+  bottom:38px;
+  transform:rotate(5deg) scale(0.72);
+  opacity:0.96;
+}
+#tab-sheep .sheep-tree-front-right{
+  right:12px;
+  bottom:46px;
+  transform:rotate(4deg) scale(0.86);
+}
+#tab-sheep .sheep-tree-back-right{
+  right:42px;
+  top:26px;
+  transform:rotate(-5deg) scale(0.66);
+  opacity:0.86;
+  z-index:2;
+  filter:drop-shadow(0 8px 8px rgba(91,74,35,0.12));
+}
+#tab-sheep .sheep-progress-card{
+  position:relative;
+  z-index:7;
+}
+@media (max-width:430px){
+  #tab-sheep .sheep-farm-barn-front{
+    left:0px;
+    bottom:46px;
+    transform:rotate(-4deg) scale(0.78);
+  }
+  #tab-sheep .sheep-tree-front-left{
+    left:58px;
+    bottom:34px;
+    transform:rotate(5deg) scale(0.60);
+  }
+  #tab-sheep .sheep-tree-front-right{
+    right:-4px;
+    bottom:40px;
+    transform:rotate(4deg) scale(0.70);
+  }
+  #tab-sheep .sheep-tree-back-right{
+    right:34px;
+    top:30px;
+    transform:rotate(-5deg) scale(0.54);
+  }
+}
+@media (max-width:380px){
+  #tab-sheep .sheep-farm-barn-front{
+    left:-4px;
+    bottom:42px;
+    transform:rotate(-4deg) scale(0.70);
+  }
+  #tab-sheep .sheep-tree-front-left{
+    left:48px;
+    bottom:30px;
+    transform:rotate(5deg) scale(0.54);
+  }
+  #tab-sheep .sheep-tree-front-right{
+    right:-10px;
+    bottom:36px;
+    transform:rotate(4deg) scale(0.62);
+  }
+}
+
 </style>
 </head>
 
@@ -1742,14 +1953,10 @@ body.theme-fintech{
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 gap-3">
           <div class="sheep-stat-card">
             <p>Saving Expense</p>
             <h3 id="sheepSavingValue">฿ 0</h3>
-          </div>
-          <div class="sheep-stat-card">
-            <p>Sheep</p>
-            <h3 id="sheepCountValue">0 ตัว</h3>
           </div>
           <div class="sheep-stat-card">
             <p>Target</p>
@@ -1759,8 +1966,50 @@ body.theme-fintech{
 
         <div class="sheep-jar-stage" aria-label="Sheep farm pen">
           <div class="sheep-farm-iso-wrap">
+            <div class="sheep-farm-front-decor" aria-hidden="true">
+              <div class="sheep-farm-decor-barn sheep-farm-barn-front">
+                <span class="barn-roof"></span>
+                <span class="barn-body"></span>
+                <span class="barn-loft"></span>
+                <span class="barn-door"></span>
+              </div>
+              <div class="sheep-farm-decor-tree sheep-tree-front-left">
+                <span class="tree-trunk"></span>
+                <span class="tree-canopy canopy-a"></span>
+                <span class="tree-canopy canopy-b"></span>
+                <span class="tree-canopy canopy-c"></span>
+              </div>
+              <div class="sheep-farm-decor-tree sheep-tree-front-right">
+                <span class="tree-trunk"></span>
+                <span class="tree-canopy canopy-a"></span>
+                <span class="tree-canopy canopy-b"></span>
+                <span class="tree-canopy canopy-c"></span>
+              </div>
+              <div class="sheep-farm-decor-tree sheep-tree-back-right">
+                <span class="tree-trunk"></span>
+                <span class="tree-canopy canopy-a"></span>
+                <span class="tree-canopy canopy-b"></span>
+                <span class="tree-canopy canopy-c"></span>
+              </div>
+            </div>
             <div class="sheep-farm-iso-scene">
               <div class="sheep-farm-field sheep-jar">
+                <div class="sheep-farm-target-area" aria-hidden="true">
+                  <div id="sheepFarmProgressFill" class="sheep-farm-progress-fill"></div>
+                  <span class="sheep-farm-percent-marker" style="--marker-left:25%" data-label="25%"></span>
+                  <span class="sheep-farm-percent-marker" style="--marker-left:50%" data-label="50%"></span>
+                  <span class="sheep-farm-percent-marker" style="--marker-left:75%" data-label="75%"></span>
+                  <span class="sheep-farm-percent-marker is-target" style="--marker-left:100%" data-label="Target"></span>
+                </div>
+                <div id="sheepFarmProgressDivider" class="sheep-farm-progress-divider" aria-hidden="true"></div>
+                <div id="sheepFarmProgressBadge" class="sheep-farm-progress-badge is-current" aria-hidden="true">
+                  <span id="sheepFarmProgressBadgeValue">0%</span>
+                  <small>filled</small>
+                </div>
+                <div id="sheepFarmRemainingBadge" class="sheep-farm-progress-badge is-remaining" aria-hidden="true">
+                  <span id="sheepFarmRemainingBadgeValue">เติมอีก 100%</span>
+                  <small>to Target</small>
+                </div>
                 <div class="sheep-farm-fence-wall sheep-farm-fence-horiz sheep-farm-fence-top"></div>
                 <div class="sheep-farm-fence-wall sheep-farm-fence-horiz sheep-farm-fence-bottom"></div>
                 <div class="sheep-farm-fence-wall sheep-farm-fence-left"></div>
@@ -1768,6 +2017,27 @@ body.theme-fintech{
                 <div id="sheepJarSheepLayer" class="sheep-jar-sheep-layer"></div>
                 <div id="sheepEmptyHint" class="sheep-jar-empty-hint">ยังไม่มีแกะในคอก</div>
               </div>
+            </div>
+          </div>
+          <div class="sheep-goal-clarity-card" aria-live="polite">
+            <div class="sheep-goal-clarity-head">
+              <div class="sheep-goal-clarity-metric is-current">
+                <span>มีเเกะอยู่ในคอก</span>
+                <strong id="sheepGoalNowPct">0%</strong>
+              </div>
+              <div class="sheep-goal-clarity-metric is-missing">
+                <span>ต้องเติมเเกะอีก</span>
+                <strong id="sheepGoalMissingPct">100%</strong>
+              </div>
+            </div>
+            <div id="sheepGoalClarityBar" class="sheep-goal-clarity-bar" data-current="0%" aria-hidden="true">
+              <span id="sheepGoalClarityFill" class="sheep-goal-clarity-fill"></span>
+              <span id="sheepGoalClarityPin" class="sheep-goal-clarity-pin"></span>
+            </div>
+            <div class="sheep-goal-clarity-foot">
+              <span><i class="fa-solid fa-check"></i> มีแล้ว <b id="sheepGoalNowSheep">0 ตัว</b></span>
+              <span><i class="fa-solid fa-plus"></i> เหลือ <b id="sheepGoalMissingSheep">0 ตัว</b></span>
+              <span><i class="fa-solid fa-bullseye"></i> Target <b id="sheepGoalTargetSheep">0 ตัว</b></span>
             </div>
           </div>
           <div id="sheepProgressText" class="sheep-progress-text sheep-progress-card">
@@ -2664,8 +2934,8 @@ function _savingsLightBlueToDeepStops() {
 
     const SHEEP_JAR_VALUE = 10000;
     const SHEEP_JAR_DEFAULT_TARGET = 100000;
-    const SHEEP_JAR_MAX_RENDER = 54; // Keep the pen readable; stats still show the real sheep count
-    const SHEEP_JAR_MAX_RENDER_MOBILE = 42; // Lower visual density on mobile for readability and motion
+    const SHEEP_JAR_MAX_RENDER = 42; // Keep the pen clearer; stats still show the real sheep count
+    const SHEEP_JAR_MAX_RENDER_MOBILE = 32; // Lower visual density on mobile for readability and motion
     const SHEEP_JAR_TARGET_VISUAL_OVERFLOW = 1.12; // Allow a little visual overflow only after passing target
     let __lastSheepSavingExpense = 0;
     let __sheepJarRaf = null;
@@ -2793,7 +3063,7 @@ function _savingsLightBlueToDeepStops() {
       }
     }
 
-    function renderSheepJarSheep(count, targetSheep, targetPct){
+    function renderSheepJarSheep(count, targetSheep, targetPct, sheepEquivalent){
       const layer = document.getElementById('sheepJarSheepLayer');
       if (!layer) return { waterPct: 0, rows: 0, cols: 0 };
 
@@ -2804,7 +3074,11 @@ function _savingsLightBlueToDeepStops() {
       const w = layer.clientWidth || 300;
       const h = layer.clientHeight || 230;
       const targetTotal = Math.max(1, Number(targetSheep || 0));
-      const cacheKey = `${renderTotal}|${renderCap}|${mobileLite ? 'm' : 'd'}|${Math.round(w)}|${Math.round(h)}|${targetTotal.toFixed(2)}`;
+      const progressSource = Math.max(0, Number.isFinite(Number(sheepEquivalent)) ? Number(sheepEquivalent) : total);
+      const progressRaw = targetTotal > 0 ? (progressSource / targetTotal) : 0;
+      const visualRatio = Math.min(1, Math.max(0, progressRaw));
+      const activeDepthRatio = Math.max(0.22, visualRatio || 0.22);
+      const cacheKey = `${renderTotal}|${renderCap}|${mobileLite ? 'm' : 'd'}|${Math.round(w)}|${Math.round(h)}|${targetTotal.toFixed(2)}|${progressSource.toFixed(2)}`;
 
       if (total <= 0) {
         layer.innerHTML = '';
@@ -2823,23 +3097,73 @@ function _savingsLightBlueToDeepStops() {
       const densityBase = Math.max(renderTotal, Math.ceil(Math.min(targetTotal, renderCap)));
       const size = Math.max(
         mobileLite ? 16 : 18,
-        Math.min(mobileLite ? 32 : 34, Math.floor(48 - Math.sqrt(densityBase) * 1.7))
+        Math.min(mobileLite ? 31 : 34, Math.floor(49 - Math.sqrt(densityBase) * 1.55))
       );
       layer.style.setProperty('--sheep-size', size + 'px');
 
-      const cols = Math.max(3, Math.ceil(Math.sqrt(renderTotal * (w / Math.max(h, 1))) * 1.12));
-      const rows = Math.max(1, Math.ceil(renderTotal / cols));
+      const xMin = 13;
+      const xMax = 87;
+      const yMin = 13;
+      const yMax = 84;
+      const currentYMax = yMin + (yMax - yMin) * activeDepthRatio;
+      const currentHeight = Math.max(10, currentYMax - yMin);
+      const rows = Math.max(3, Math.ceil(Math.sqrt(renderTotal) * (mobileLite ? 1.05 : 1.12)));
+      const cols = Math.max(4, Math.ceil(renderTotal / rows));
+      const cellW = (xMax - xMin) / cols;
+      const cellH = currentHeight / rows;
+      const minDx = Math.max(4.3, Math.min(9.4, (size / Math.max(w, 1)) * 96));
+      const minDy = Math.max(4.0, Math.min(8.8, (size / Math.max(h, 1)) * 96));
       const animatedTotal = Math.min(renderTotal, Math.max(1, Math.round(renderTotal * 0.30)));
       const animateEvery = Math.max(1, Math.floor(renderTotal / animatedTotal));
       const frag = document.createDocumentFragment();
+      const placed = [];
+
+      function seeded(seed){
+        const x = Math.sin(seed * 12.9898 + renderTotal * 78.233 + targetTotal * 0.137) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      function fallbackPos(index){
+        const row = index % rows;
+        const col = Math.floor(index / rows) % cols;
+        const rx = seeded(index * 5 + 1);
+        const ry = seeded(index * 7 + 3);
+        const x = xMin + (col + 0.18 + rx * 0.64) * cellW;
+        const yUnit = (row + 0.18 + ry * 0.72) / rows;
+        const y = yMin + Math.pow(yUnit, 0.82) * currentHeight;
+        return { x, y, row };
+      }
 
       for (let i = 0; i < renderTotal; i++) {
-        const row = Math.floor(i / cols);
-        const col = i % cols;
-        const xJitter = (((i * 37) % 21) - 10) / 100;
-        const yJitter = (((i * 53) % 19) - 9) / 100;
-        const x = Math.min(88, Math.max(12, ((col + 0.5) / cols) * 100 + xJitter * (80 / Math.max(cols, 1))));
-        const y = Math.min(84, Math.max(14, ((row + 0.5) / rows) * 100 + yJitter * (70 / Math.max(rows, 1))));
+        let pos = null;
+
+        for (let attempt = 0; attempt < 24; attempt++) {
+          const orderSeed = seeded(i * 31 + attempt * 17 + 5);
+          const cellCol = Math.min(cols - 1, Math.floor(orderSeed * cols));
+          const cellRowSeed = seeded(i * 37 + attempt * 19 + 9);
+          const cellRow = Math.min(rows - 1, Math.floor(cellRowSeed * rows));
+          const rx = seeded(i * 17 + attempt * 13 + 1);
+          const ry = seeded(i * 19 + attempt * 11 + 7);
+          const x = xMin + (cellCol + 0.14 + rx * 0.72) * cellW;
+          const yUnit = (cellRow + 0.12 + ry * 0.82) / rows;
+          const y = yMin + Math.pow(yUnit, 0.80) * currentHeight;
+
+          let overlaps = false;
+          for (let p = 0; p < placed.length; p++) {
+            const prev = placed[p];
+            if (Math.abs(prev.x - x) < minDx && Math.abs(prev.y - y) < minDy) {
+              overlaps = true;
+              break;
+            }
+          }
+          if (!overlaps) {
+            pos = { x, y, row: cellRow };
+            break;
+          }
+        }
+
+        if (!pos) pos = fallbackPos(i);
+        placed.push(pos);
 
         const sheep = document.createElement('span');
         sheep.className = mobileLite ? 'jar-sheep jar-sheep-lite' : 'jar-sheep';
@@ -2850,11 +3174,11 @@ function _savingsLightBlueToDeepStops() {
           sheep.style.setProperty('--turn-a', (41 + (i % 3)) + 'deg');
           sheep.style.setProperty('--turn-b', (48 - (i % 3)) + 'deg');
         }
-        sheep.style.left = x.toFixed(2) + '%';
-        sheep.style.top = y.toFixed(2) + '%';
-        sheep.style.zIndex = String(20 + row + (sheep.classList.contains('is-animated') ? 30 : 0));
+        sheep.style.left = pos.x.toFixed(2) + '%';
+        sheep.style.top = pos.y.toFixed(2) + '%';
+        sheep.style.zIndex = String(20 + pos.row + (sheep.classList.contains('is-animated') ? 30 : 0));
         sheep.style.setProperty('--delay', ((i % 7) * 0.13) + 's');
-        sheep.style.setProperty('--z-lift', (16 + (row % 3) * 2) + 'px');
+        sheep.style.setProperty('--z-lift', (16 + (pos.row % 3) * 2) + 'px');
         sheep.style.setProperty('--wiggle-scale', (1.02 + ((i % 3) * 0.015)).toFixed(3));
 
         const img = document.createElement('img');
@@ -2866,7 +3190,7 @@ function _savingsLightBlueToDeepStops() {
       }
       layer.appendChild(frag);
 
-      const progressRatio = Math.min(SHEEP_JAR_TARGET_VISUAL_OVERFLOW, total / targetTotal);
+      const progressRatio = Math.min(SHEEP_JAR_TARGET_VISUAL_OVERFLOW, progressSource / targetTotal);
       const waterPct = Math.min(92, Math.max(8, progressRatio * 82));
       const layout = { waterPct, rows, cols, size, gap: 0, rendered: renderTotal, total };
       layer.__sheepCacheKey = cacheKey;
@@ -2891,6 +3215,71 @@ function _savingsLightBlueToDeepStops() {
       jar.addEventListener('touchstart', activateWater, { passive: true });
     }
 
+    function updateSheepFarmTargetArea(progressPct, remaining, target, sheepEquivalent, targetSheep){
+      const field = document.querySelector('#tab-sheep .sheep-farm-field');
+      if (!field) return;
+
+      const pct = Math.min(100, Math.max(0, Number(progressPct || 0)));
+      const missingPct = Math.max(0, 100 - pct);
+      const remainingSheep = Math.max(0, Number(targetSheep || 0) - Number(sheepEquivalent || 0));
+
+      field.style.setProperty('--sheep-progress-width', pct.toFixed(2) + '%');
+      field.style.setProperty('--sheep-progress-depth', pct.toFixed(2) + '%');
+      field.classList.toggle('is-target-complete', pct >= 100);
+      field.classList.toggle('is-target-empty', pct <= 0.01);
+
+      const fill = document.getElementById('sheepFarmProgressFill');
+      const divider = document.getElementById('sheepFarmProgressDivider');
+      const currentBadge = document.getElementById('sheepFarmProgressBadge');
+      const remainingBadge = document.getElementById('sheepFarmRemainingBadge');
+      const currentValue = document.getElementById('sheepFarmProgressBadgeValue');
+      const remainingValue = document.getElementById('sheepFarmRemainingBadgeValue');
+      const goalNowPct = document.getElementById('sheepGoalNowPct');
+      const goalMissingPct = document.getElementById('sheepGoalMissingPct');
+      const goalNowSheep = document.getElementById('sheepGoalNowSheep');
+      const goalMissingSheep = document.getElementById('sheepGoalMissingSheep');
+      const goalTargetSheep = document.getElementById('sheepGoalTargetSheep');
+      const goalFill = document.getElementById('sheepGoalClarityFill');
+      const goalPin = document.getElementById('sheepGoalClarityPin');
+      const goalBar = document.getElementById('sheepGoalClarityBar');
+      const nowPctInt = Math.round(pct);
+      const missingPctInt = Math.max(0, 100 - nowPctInt);
+      const nowSheepInt = Math.round(Number(sheepEquivalent || 0));
+      const remainingSheepInt = Math.round(remainingSheep);
+      const targetSheepInt = Math.round(Number(targetSheep || 0));
+
+      if (goalNowPct) goalNowPct.textContent = nowPctInt + '%';
+      if (goalMissingPct) goalMissingPct.textContent = missingPctInt + '%';
+      if (goalNowSheep) goalNowSheep.textContent = nowSheepInt.toLocaleString() + ' ตัว';
+      if (goalMissingSheep) goalMissingSheep.textContent = remainingSheepInt.toLocaleString() + ' ตัว';
+      if (goalTargetSheep) goalTargetSheep.textContent = targetSheepInt.toLocaleString() + ' ตัว';
+      if (goalBar) goalBar.setAttribute('data-current', nowPctInt + '%');
+      if (goalFill) goalFill.style.width = pct.toFixed(2) + '%';
+      if (goalPin) goalPin.style.left = Math.min(100, Math.max(0, pct)).toFixed(2) + '%';
+
+      if (fill) {
+        fill.style.width = '100%';
+        fill.style.height = pct.toFixed(2) + '%';
+      }
+      if (divider) {
+        divider.style.left = pct.toFixed(2) + '%';
+        divider.classList.toggle('hidden', pct <= 0.01 || pct >= 99.99);
+      }
+      if (currentBadge) {
+        currentBadge.style.left = Math.min(86, Math.max(15, pct)).toFixed(2) + '%';
+        currentBadge.classList.toggle('is-complete', pct >= 100);
+      }
+      if (remainingBadge) {
+        remainingBadge.classList.toggle('hidden', pct >= 99.99);
+      }
+      if (currentValue) currentValue.textContent = nowPctInt + '%';
+      if (remainingValue) {
+        remainingValue.textContent = pct >= 99.99
+          ? 'ครบ Target แล้ว'
+          : `เติมอีก ${missingPctInt}% • ${remainingSheepInt.toLocaleString()} ตัว`;
+      }
+    }
+
     function updateSheepJarFromSavings(savingExpense){
       const amount = Math.max(0, Number(savingExpense || 0));
       __lastSheepSavingExpense = amount;
@@ -2901,9 +3290,10 @@ function _savingsLightBlueToDeepStops() {
       const targetSheep = target / SHEEP_JAR_VALUE;
       const scaleMax = Math.max(target, amount, SHEEP_JAR_VALUE);
       const targetPct = Math.min(88, Math.max(10, (target / scaleMax) * 82));
-      const sheepLayout = renderSheepJarSheep(fullSheep, targetSheep, targetPct);
+      const sheepLayout = renderSheepJarSheep(fullSheep, targetSheep, targetPct, sheepDecimal);
       const fillPct = amount > 0 ? (sheepLayout && Number.isFinite(sheepLayout.waterPct) ? sheepLayout.waterPct : Math.min(88, Math.max(6, (amount / scaleMax) * 82))) : 0;
       const progressPct = target > 0 ? Math.min(999, (amount / target) * 100) : 0;
+      updateSheepFarmTargetArea(progressPct, Math.max(0, target - amount), target, sheepDecimal, targetSheep);
 
       const savingEl = document.getElementById('sheepSavingValue');
       const countEl = document.getElementById('sheepCountValue');
@@ -2921,26 +3311,11 @@ function _savingsLightBlueToDeepStops() {
       if (targetInput && document.activeElement !== targetInput) targetInput.value = String(Math.round(target));
       if (fillEl) fillEl.style.height = fillPct + '%';
       if (lineEl) lineEl.style.bottom = targetPct + '%';
-      if (targetTextEl) targetTextEl.textContent = '🏁 Target ' + money(target) + ' • ' + targetSheep.toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' ตัว';
+      if (targetTextEl) targetTextEl.textContent = '🏁 Target ' + money(target) + ' • ' + Math.round(targetSheep).toLocaleString() + ' ตัว';
       if (emptyHint) emptyHint.classList.toggle('hidden', fullSheep > 0);
       if (progressEl) {
-        const remaining = Math.max(0, target - amount);
-        const sheepEquivalentText = sheepDecimal.toLocaleString(undefined, { maximumFractionDigits: 2 });
-        const statusCard = remaining > 0
-          ? `<span class="sheep-progress-pill is-remaining"><i class="fa-solid fa-flag-checkered"></i> เหลือ ${money(remaining)}</span>`
-          : `<span class="sheep-progress-pill is-complete"><i class="fa-solid fa-circle-check"></i> ถึง Target แล้ว</span>`;
         progressEl.innerHTML = `
           <span class="sheep-progress-pill sheep-progress-rate"><i class="fa-solid fa-fence"></i> แกะ 1 ตัว = ฿ 10,000</span>
-          <span class="sheep-progress-pill is-success">
-            <i class="fa-solid fa-chart-simple"></i>
-            <span class="sheep-success-copy">
-              <span class="sheep-success-label">สำเร็จแล้ว</span>
-              <span class="sheep-success-value">${progressPct.toFixed(1)}%</span>
-              <span class="sheep-success-note">อีกนิดเดียว ใกล้ถึงเป้าหมายแล้ว</span>
-            </span>
-          </span>
-          <span class="sheep-progress-pill"><i class="fa-solid fa-sheep"></i> ตอนนี้เทียบเท่า ${sheepEquivalentText} ตัว</span>
-          ${statusCard}
         `;
       }
     }
@@ -6031,31 +6406,42 @@ body.theme-fintech .kpi-net-hero #kpiNetDigital{
   .sheep-target-header-btn{ padding:0 0.62rem; }
 }
 .sheep-stat-card{
-  border-radius:1.25rem;
+  border-radius:1.45rem;
   background: rgba(255,253,246,0.84);
   border:1px solid rgba(224,214,186,0.88);
-  padding:0.75rem 0.65rem;
+  padding:0.9rem 0.85rem;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 10px 20px rgba(91,74,35,0.04);
   min-width:0;
 }
 .sheep-stat-card p{
-  font-size:0.56rem;
+  font-size:0.58rem;
   line-height:1;
   color:#9a836e;
   text-transform:uppercase;
   font-weight:900;
   letter-spacing:0.03em;
-  margin-bottom:0.35rem;
+  margin-bottom:0.42rem;
   white-space:nowrap;
 }
 .sheep-stat-card h3{
   color:#5b3b22;
-  font-size:clamp(0.76rem, 3.15vw, 0.98rem);
-  line-height:1.15;
-  font-weight:900;
+  font-size:clamp(0.88rem, 3.7vw, 1.08rem);
+  line-height:1.12;
+  font-weight:1000;
+  letter-spacing:-0.035em;
   white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  overflow:visible;
+  text-overflow:clip;
+}
+@media (max-width:380px){
+  .sheep-stat-card{
+    padding:0.82rem 0.62rem;
+    border-radius:1.3rem;
+  }
+  .sheep-stat-card h3{
+    font-size:clamp(0.78rem, 4.2vw, 0.94rem);
+    letter-spacing:-0.045em;
+  }
 }
 .sheep-jar-stage{
   position:relative;
@@ -6909,6 +7295,406 @@ body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.
 body.sheep-tab-active #tab-sheep .sheep-farm-field .jar-sheep.is-animated::after,
 body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-animated::after{
   animation-play-state: running !important;
+}
+
+
+/* =========================================================
+   Sheepy Target Area Split
+   - Shows completed vs remaining pen area against Sheepy Target
+   - Visual-only guide; saving/target calculations stay unchanged
+   ========================================================= */
+#tab-sheep .sheep-farm-field{
+  --sheep-progress-width:0%;
+}
+#tab-sheep .sheep-farm-target-area{
+  position:absolute;
+  left:26px;
+  right:26px;
+  top:24px;
+  bottom:26px;
+  border-radius:14px;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:6;
+  transform:translateZ(3px);
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.10) 0 10px, rgba(255,250,238,0.06) 10px 20px),
+    linear-gradient(90deg, rgba(255,248,223,0.26), rgba(255,248,223,0.18));
+  border:1px dashed rgba(107,74,44,0.20);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+#tab-sheep .sheep-farm-progress-fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:var(--sheep-progress-width);
+  border-radius:14px 0 0 14px;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255,255,255,0.20), transparent 36%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0 12px, rgba(255,255,255,0.04) 12px 24px),
+    linear-gradient(135deg, rgba(116,167,72,0.76), rgba(72,135,55,0.74));
+  box-shadow:inset -10px 0 18px rgba(47,100,39,0.14);
+  transition:width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#tab-sheep .sheep-farm-field.is-target-complete .sheep-farm-progress-fill{
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,247,210,0.22), transparent 42%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0 12px, rgba(255,255,255,0.04) 12px 24px),
+    linear-gradient(135deg, rgba(116,167,72,0.82), rgba(69,139,61,0.78));
+}
+#tab-sheep .sheep-farm-percent-marker{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:var(--marker-left);
+  width:0;
+  border-left:1px dashed rgba(91,74,35,0.28);
+  z-index:4;
+}
+#tab-sheep .sheep-farm-percent-marker::after{
+  content:attr(data-label);
+  position:absolute;
+  top:8px;
+  left:6px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(255,253,246,0.72);
+  border:1px solid rgba(224,214,186,0.50);
+  color:rgba(91,59,34,0.74);
+  font-size:10px;
+  line-height:1;
+  font-weight:1000;
+  white-space:nowrap;
+}
+#tab-sheep .sheep-farm-progress-divider{
+  position:absolute;
+  top:24px;
+  bottom:26px;
+  left:var(--sheep-progress-width);
+  width:0;
+  z-index:25;
+  transform:translateZ(24px);
+  border-left:4px dashed rgba(207,84,56,0.88);
+  filter:drop-shadow(0 3px 3px rgba(91,74,35,0.20));
+  pointer-events:none;
+  transition:left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#tab-sheep .sheep-farm-progress-divider::before{
+  content:"";
+  position:absolute;
+  top:-14px;
+  left:-9px;
+  width:18px;
+  height:13px;
+  border-radius:3px 6px 6px 3px;
+  background:conic-gradient(#3f2415 0 25%, #fffdf8 0 50%, #3f2415 0 75%, #fffdf8 0) 0 0 / 7px 7px;
+  border:1px solid rgba(63,36,21,0.38);
+  box-shadow:0 7px 12px rgba(91,74,35,0.16);
+}
+#tab-sheep .sheep-farm-progress-badge{
+  position:absolute;
+  z-index:58;
+  min-width:96px;
+  padding:8px 10px;
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  pointer-events:none;
+  transform:translate(-50%, -50%) translateZ(52px) rotateZ(45deg) rotateX(-60deg);
+  box-shadow:0 12px 22px rgba(91,74,35,0.16), inset 0 1px 0 rgba(255,255,255,0.70);
+  text-align:center;
+  white-space:nowrap;
+}
+#tab-sheep .sheep-farm-progress-badge span{
+  font-size:14px;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:-0.02em;
+}
+#tab-sheep .sheep-farm-progress-badge small{
+  font-size:9px;
+  line-height:1;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  opacity:0.76;
+}
+#tab-sheep .sheep-farm-progress-badge.is-current{
+  left:var(--sheep-progress-width);
+  top:46px;
+  color:#3f6f2c;
+  background:rgba(238,244,216,0.94);
+  border:1px solid rgba(142,174,90,0.54);
+}
+#tab-sheep .sheep-farm-progress-badge.is-current.is-complete{
+  color:#3f6f2c;
+  background:linear-gradient(135deg, rgba(236,241,212,0.96), rgba(255,239,211,0.92));
+}
+#tab-sheep .sheep-farm-progress-badge.is-remaining{
+  right:22px;
+  bottom:22px;
+  min-width:142px;
+  color:#a44d34;
+  background:rgba(255,239,211,0.94);
+  border:1px solid rgba(207,84,56,0.28);
+  transform:translate(0, 0) translateZ(52px) rotateZ(45deg) rotateX(-60deg);
+}
+#tab-sheep .sheep-farm-field.is-target-empty .sheep-farm-progress-badge.is-current{
+  opacity:0.88;
+}
+@media (max-width:430px){
+  #tab-sheep .sheep-farm-target-area{ left:30px; right:30px; top:30px; bottom:34px; }
+  #tab-sheep .sheep-farm-progress-divider{ top:30px; bottom:34px; }
+  #tab-sheep .sheep-farm-progress-badge{ min-width:86px; padding:7px 8px; border-radius:14px; }
+  #tab-sheep .sheep-farm-progress-badge span{ font-size:12px; }
+  #tab-sheep .sheep-farm-progress-badge small{ font-size:8px; }
+  #tab-sheep .sheep-farm-progress-badge.is-current{ top:54px; }
+  #tab-sheep .sheep-farm-progress-badge.is-remaining{ min-width:124px; right:28px; bottom:30px; }
+  #tab-sheep .sheep-farm-percent-marker::after{ display:none; }
+}
+
+
+/* =========================================================
+   Sheepy Target Clarity v2
+   - Keep the pen cute, but move the main explanation into a flat progress card
+   - Make filled vs remaining zones visually obvious
+   ========================================================= */
+#tab-sheep .sheep-farm-target-area{
+  z-index:5 !important;
+  border:2px solid rgba(91,74,35,0.16) !important;
+  background:
+    linear-gradient(90deg, rgba(236,241,212,0.42) 0 var(--sheep-progress-width), rgba(255,239,211,0.56) var(--sheep-progress-width) 100%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.18) 0 12px, rgba(255,250,238,0.06) 12px 24px) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.24),
+    inset 0 0 28px rgba(91,74,35,0.05) !important;
+}
+#tab-sheep .sheep-farm-target-area::after{
+  content:"";
+  position:absolute;
+  left:var(--sheep-progress-width);
+  right:0;
+  top:0;
+  bottom:0;
+  z-index:3;
+  background:
+    radial-gradient(circle at 22% 36%, rgba(255,255,255,0.34) 0 3px, transparent 4px),
+    radial-gradient(circle at 68% 60%, rgba(255,255,255,0.30) 0 3px, transparent 4px),
+    repeating-linear-gradient(135deg, rgba(180,91,59,0.15) 0 7px, rgba(255,253,246,0.16) 7px 18px);
+  border-left:2px dashed rgba(207,84,56,0.48);
+  pointer-events:none;
+}
+#tab-sheep .sheep-farm-progress-fill{
+  z-index:2 !important;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255,255,255,0.18), transparent 36%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.16) 0 13px, rgba(255,255,255,0.04) 13px 26px),
+    linear-gradient(135deg, rgba(126,178,78,0.70), rgba(85,148,62,0.66)) !important;
+}
+#tab-sheep .sheep-farm-percent-marker,
+#tab-sheep .sheep-farm-progress-badge{
+  display:none !important;
+}
+#tab-sheep .sheep-farm-progress-divider{
+  z-index:30 !important;
+  border-left:5px solid rgba(207,84,56,0.92) !important;
+  filter:drop-shadow(0 4px 4px rgba(91,74,35,0.25)) !important;
+}
+#tab-sheep .sheep-farm-progress-divider::after{
+  content:"ตอนนี้";
+  position:absolute;
+  top:18px;
+  left:8px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(255,253,246,0.92);
+  border:1px solid rgba(207,84,56,0.28);
+  color:#a44d34;
+  font-size:10px;
+  font-weight:1000;
+  line-height:1;
+  white-space:nowrap;
+  box-shadow:0 8px 16px rgba(91,74,35,0.12);
+}
+.sheep-goal-clarity-card{
+  width:100%;
+  margin-top:0.9rem;
+  padding:0.85rem;
+  border-radius:1.45rem;
+  background:linear-gradient(135deg, rgba(255,253,246,0.97), rgba(236,241,212,0.94));
+  border:1px solid rgba(224,214,186,0.94);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.92), 0 14px 26px rgba(91,74,35,0.08);
+}
+.sheep-goal-clarity-head{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0.55rem;
+  margin-bottom:0.65rem;
+}
+.sheep-goal-clarity-metric{
+  min-width:0;
+  padding:0.62rem 0.7rem;
+  border-radius:1.05rem;
+  border:1px solid rgba(224,214,186,0.72);
+  background:rgba(255,250,238,0.78);
+}
+.sheep-goal-clarity-metric span{
+  display:block;
+  color:#8b7358;
+  font-size:0.62rem;
+  line-height:1;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.sheep-goal-clarity-metric strong{
+  display:block;
+  margin-top:0.24rem;
+  font-size:1.35rem;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:-0.04em;
+}
+.sheep-goal-clarity-metric.is-current{
+  background:linear-gradient(135deg, rgba(236,241,212,0.98), rgba(207,229,151,0.84));
+  border-color:rgba(142,174,90,0.44);
+}
+.sheep-goal-clarity-metric.is-current strong{ color:#4f7f2d; }
+.sheep-goal-clarity-metric.is-missing{
+  background:linear-gradient(135deg, rgba(255,239,211,0.98), rgba(255,250,238,0.84));
+  border-color:rgba(207,84,56,0.25);
+}
+.sheep-goal-clarity-metric.is-missing strong{ color:#b24e33; }
+.sheep-goal-clarity-bar{
+  position:relative;
+  height:1.35rem;
+  border-radius:999px;
+  overflow:hidden;
+  background:
+    repeating-linear-gradient(135deg, rgba(180,91,59,0.12) 0 8px, rgba(255,253,246,0.55) 8px 18px),
+    rgba(255,239,211,0.88);
+  border:1px solid rgba(224,214,186,0.9);
+  box-shadow:inset 0 2px 4px rgba(91,74,35,0.08);
+}
+.sheep-goal-clarity-fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(135deg, #91b85d, #5f963e);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.36), 0 0 0 1px rgba(255,255,255,0.18);
+  transition:width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sheep-goal-clarity-bar::before,
+.sheep-goal-clarity-bar::after{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  font-size:0.58rem;
+  font-weight:1000;
+  line-height:1;
+  color:rgba(91,59,34,0.62);
+  pointer-events:none;
+}
+.sheep-goal-clarity-bar::before{ content:attr(data-current); left:0.55rem; }
+.sheep-goal-clarity-bar::after{ content:"Target 100%"; right:0.55rem; }
+.sheep-goal-clarity-pin{
+  position:absolute;
+  left:0%;
+  top:-0.18rem;
+  bottom:-0.18rem;
+  width:3px;
+  z-index:4;
+  background:#b24e33;
+  border-radius:999px;
+  box-shadow:0 0 0 3px rgba(255,253,246,0.78), 0 6px 12px rgba(91,74,35,0.16);
+  transform:translateX(-50%);
+  transition:left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sheep-goal-clarity-foot{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:0.4rem;
+  margin-top:0.62rem;
+}
+.sheep-goal-clarity-foot span{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.28rem;
+  padding:0.48rem 0.42rem;
+  border-radius:0.95rem;
+  background:rgba(255,250,238,0.78);
+  border:1px solid rgba(224,214,186,0.66);
+  color:#745237;
+  font-size:0.58rem;
+  line-height:1.15;
+  font-weight:900;
+  text-align:center;
+}
+.sheep-goal-clarity-foot i{ color:#d1903f; font-size:0.58rem; }
+.sheep-goal-clarity-foot b{
+  color:#5b3b22;
+  font-weight:1000;
+  white-space:nowrap;
+}
+
+@media (max-width:430px){
+  #tab-sheep .sheep-farm-progress-divider::after{ display:none; }
+  .sheep-goal-clarity-card{ padding:0.75rem; margin-top:0.75rem; }
+  .sheep-goal-clarity-head{ gap:0.45rem; }
+  .sheep-goal-clarity-metric{ padding:0.56rem 0.58rem; }
+  .sheep-goal-clarity-metric strong{ font-size:1.18rem; }
+  .sheep-goal-clarity-foot{ grid-template-columns:1fr; }
+}
+
+/* =========================================================
+   Sheepy Requested Adjustments
+   1) remove target line + checkered flag in the pen
+   2) spread sheep out more naturally
+   3) move cream remaining area to the front / near the user
+   ========================================================= */
+#tab-sheep .sheep-farm-field{
+  --sheep-progress-depth:0%;
+}
+#tab-sheep .sheep-farm-target-area{
+  background:
+    linear-gradient(180deg,
+      rgba(236,241,212,0.46) 0 var(--sheep-progress-depth),
+      rgba(255,239,211,0.70) var(--sheep-progress-depth) 100%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.18) 0 12px, rgba(255,250,238,0.06) 12px 24px) !important;
+}
+#tab-sheep .sheep-farm-target-area::after{
+  left:0 !important;
+  right:0 !important;
+  top:var(--sheep-progress-depth) !important;
+  bottom:0 !important;
+  border-left:none !important;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(255,255,255,0.32) 0 3px, transparent 4px),
+    radial-gradient(circle at 72% 56%, rgba(255,255,255,0.28) 0 3px, transparent 4px),
+    repeating-linear-gradient(135deg, rgba(180,91,59,0.14) 0 8px, rgba(255,253,246,0.18) 8px 18px) !important;
+}
+#tab-sheep .sheep-farm-progress-fill{
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  bottom:auto !important;
+  width:100% !important;
+  height:var(--sheep-progress-depth) !important;
+  border-radius:14px 14px 0 0 !important;
+}
+#tab-sheep .sheep-farm-percent-marker,
+#tab-sheep .sheep-farm-progress-divider{
+  display:none !important;
 }
 </style>
 
