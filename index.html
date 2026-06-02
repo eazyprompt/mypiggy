@@ -2934,8 +2934,8 @@ function _savingsLightBlueToDeepStops() {
 
     const SHEEP_JAR_VALUE = 10000;
     const SHEEP_JAR_DEFAULT_TARGET = 100000;
-    const SHEEP_JAR_MAX_RENDER = 42; // Keep the pen clearer; stats still show the real sheep count
-    const SHEEP_JAR_MAX_RENDER_MOBILE = 22; // iPhone/mobile: keep visual count lighter; stats still show the real sheep count
+    const SHEEP_JAR_MAX_RENDER = 42; // Minimum desktop render budget; visual sheep can expand to the real Saving count
+    const SHEEP_JAR_MAX_RENDER_MOBILE = 22; // Minimum mobile render budget; visual sheep can expand to the real Saving count
     const SHEEP_JAR_TARGET_VISUAL_OVERFLOW = 1.12; // Allow a little visual overflow only after passing target
     let __lastSheepSavingExpense = 0;
     let __sheepJarRaf = null;
@@ -2949,8 +2949,10 @@ function _savingsLightBlueToDeepStops() {
       }
     }
 
-    function getSheepRenderCap(){
-      return isMobileLiteMode() ? SHEEP_JAR_MAX_RENDER_MOBILE : SHEEP_JAR_MAX_RENDER;
+    function getSheepRenderCap(actualSheepCount){
+      const baseCap = isMobileLiteMode() ? SHEEP_JAR_MAX_RENDER_MOBILE : SHEEP_JAR_MAX_RENDER;
+      const realCount = Math.max(0, Math.floor(Number(actualSheepCount || 0)));
+      return Math.max(baseCap, realCount);
     }
 
     function isSheepTabActive(){
@@ -3068,7 +3070,7 @@ function _savingsLightBlueToDeepStops() {
       if (!layer) return { waterPct: 0, rows: 0, cols: 0 };
 
       const total = Math.max(0, Math.floor(Number(count || 0)));
-      const renderCap = getSheepRenderCap();
+      const renderCap = getSheepRenderCap(total);
       const renderTotal = Math.min(total, renderCap);
       const mobileLite = isMobileLiteMode();
       const w = layer.clientWidth || 300;
@@ -3287,8 +3289,8 @@ function _savingsLightBlueToDeepStops() {
       __lastSheepSavingExpense = amount;
 
       const target = getSheepJarTarget();
-      const fullSheep = Math.floor(amount / SHEEP_JAR_VALUE);
       const sheepDecimal = amount / SHEEP_JAR_VALUE;
+      const fullSheep = Math.max(0, Math.round(sheepDecimal));
       const targetSheep = target / SHEEP_JAR_VALUE;
       const scaleMax = Math.max(target, amount, SHEEP_JAR_VALUE);
       const targetPct = Math.min(88, Math.max(10, (target / scaleMax) * 82));
