@@ -1946,6 +1946,10 @@ body.theme-fintech{
             <h2 class="text-xl font-bold text-slate-800 mt-1">นับแกะในคอก</h2>
           </div>
           <div class="flex items-center gap-2 shrink-0">
+            <button id="btnFeedSheep" type="button" class="sheep-mini-btn sheep-feed-header-btn" onclick="feedSheepFarm()" aria-label="Feed sheep">
+              <i class="fa-solid fa-carrot"></i>
+              <span>Feed</span>
+            </button>
             <button id="btnOpenSheepTarget" type="button" class="sheep-mini-btn sheep-target-header-btn" onclick="openSheepTargetModal()" aria-expanded="false" aria-controls="sheepTargetModal">
               <i class="fa-solid fa-bullseye"></i>
               Set Target
@@ -3322,6 +3326,69 @@ function _savingsLightBlueToDeepStops() {
           <span class="sheep-progress-pill sheep-progress-rate"><i class="fa-solid fa-fence"></i> แกะ 1 ตัว = ฿ 10,000</span>
         `;
       }
+    }
+
+
+    function feedSheepFarm(){
+      const field = document.querySelector('#tab-sheep .sheep-farm-field');
+      const btn = document.getElementById('btnFeedSheep');
+      if (!field) return;
+
+      const mobileLite = isMobileLiteMode();
+      const bitTotal = mobileLite ? 6 : 10;
+      const sheep = Array.from(field.querySelectorAll('.jar-sheep'));
+      const activeTotal = Math.min(sheep.length, mobileLite ? 5 : 9);
+
+      if (field.__sheepFeedTimer) window.clearTimeout(field.__sheepFeedTimer);
+      if (field.__sheepFeedCleanTimer) window.clearTimeout(field.__sheepFeedCleanTimer);
+
+      field.classList.add('is-feeding');
+      if (btn) {
+        btn.classList.add('is-fed');
+        const label = btn.querySelector('span');
+        if (label) label.textContent = 'Fed!';
+      }
+
+      field.querySelectorAll('.sheep-feed-bit').forEach(el => el.remove());
+
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < bitTotal; i++) {
+        const bit = document.createElement('span');
+        bit.className = 'sheep-feed-bit ' + (i % 3 === 0 ? 'is-carrot' : (i % 3 === 1 ? 'is-hay' : 'is-leaf'));
+        const left = 18 + ((i * 13 + 11) % 64);
+        const top = 30 + ((i * 11 + 7) % 28);
+        const drift = ((i % 2 === 0 ? 1 : -1) * (6 + (i % 4) * 3));
+        bit.style.left = left + '%';
+        bit.style.top = top + '%';
+        bit.style.setProperty('--feed-delay', (i * 0.055) + 's');
+        bit.style.setProperty('--feed-rot', ((i % 2 === 0 ? 1 : -1) * (18 + (i % 4) * 9)) + 'deg');
+        bit.style.setProperty('--feed-drift-x', drift + 'px');
+        bit.style.setProperty('--feed-fall-distance', (mobileLite ? 135 : 185) + 'px');
+        frag.appendChild(bit);
+      }
+      field.appendChild(frag);
+
+      for (let i = 0; i < activeTotal; i++) {
+        const idx = sheep.length ? ((i * 7) % sheep.length) : 0;
+        const el = sheep[idx];
+        if (!el) continue;
+        el.classList.add('is-fed-now');
+        el.style.setProperty('--feed-hop-delay', (i * 0.04) + 's');
+      }
+
+      field.__sheepFeedTimer = window.setTimeout(() => {
+        field.classList.remove('is-feeding');
+        sheep.forEach(el => el.classList.remove('is-fed-now'));
+        if (btn) {
+          btn.classList.remove('is-fed');
+          const label = btn.querySelector('span');
+          if (label) label.textContent = 'Feed';
+        }
+      }, mobileLite ? 880 : 1100);
+
+      field.__sheepFeedCleanTimer = window.setTimeout(() => {
+        field.querySelectorAll('.sheep-feed-bit').forEach(el => el.remove());
+      }, mobileLite ? 1180 : 1450);
     }
 
     function setTabBtnState(btn, isActive){
@@ -7759,6 +7826,92 @@ body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.
 @keyframes sheepFarmSheepWanderLite{
   0%, 100%{ transform:translate(-50%, -50%) translateZ(var(--z-lift, 18px)) rotateZ(45deg) rotateX(-60deg); }
   50%{ transform:translate(calc(-50% + var(--move-x, 8px)), calc(-50% + var(--move-y, -5px))) translateZ(var(--z-lift, 18px)) rotateZ(47deg) rotateX(-60deg); }
+}
+
+
+/* =========================================================
+   Sheepy Feed Button + Lightweight Feeding Effect
+   - UI only: no Saving/Target calculation logic changed
+   - Limited temporary nodes for iPhone performance
+   ========================================================= */
+.sheep-feed-header-btn{
+  background:linear-gradient(135deg, #f2b84b 0%, #ef7d3a 58%, #8bae5a 100%) !important;
+  border-color:rgba(255,255,255,0.50) !important;
+  color:#fffdf8 !important;
+  box-shadow:0 10px 22px rgba(199,122,49,0.18) !important;
+}
+.sheep-feed-header-btn:hover,
+.sheep-feed-header-btn.is-fed{
+  transform:translateY(-1px) scale(1.02);
+  box-shadow:0 14px 28px rgba(199,122,49,0.25) !important;
+}
+.sheep-feed-header-btn.is-fed i{
+  animation:sheepFeedIconPop 0.52s ease-out both;
+}
+#tab-sheep .sheep-feed-bit{
+  position:absolute;
+  width:16px;
+  height:8px;
+  z-index:62;
+  border-radius:999px;
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-50%, -50%) rotate(var(--feed-rot, 18deg)) translateZ(34px);
+  animation:sheepFeedDrop 1.15s ease-out var(--feed-delay, 0s) forwards;
+  will-change:transform, opacity;
+}
+#tab-sheep .sheep-feed-bit.is-carrot{
+  width:18px;
+  height:8px;
+  background:linear-gradient(90deg, #f97316 0%, #fb923c 78%, #84a252 79% 100%);
+  box-shadow:0 2px 4px rgba(91,74,35,0.16);
+}
+#tab-sheep .sheep-feed-bit.is-hay{
+  background:#e3b45a;
+  box-shadow:0 3px 0 rgba(191,138,57,0.72), 0 6px 7px rgba(91,74,35,0.10);
+}
+#tab-sheep .sheep-feed-bit.is-leaf{
+  width:13px;
+  height:10px;
+  border-radius:70% 0 70% 0;
+  background:#7faf45;
+  box-shadow:0 3px 6px rgba(91,74,35,0.12);
+}
+body.sheep-tab-active #tab-sheep .sheep-farm-field .jar-sheep.is-fed-now{
+  animation:sheepFeedHappyHop 0.58s ease-out var(--feed-hop-delay, 0s) 2 !important;
+  will-change:transform !important;
+}
+.sheep-mobile-lite #tab-sheep .sheep-feed-bit{
+  width:13px;
+  height:7px;
+  animation-duration:0.92s;
+  will-change:auto;
+}
+body.sheep-tab-active.sheep-mobile-lite #tab-sheep .sheep-farm-field .jar-sheep.is-fed-now{
+  animation:sheepFeedHappyHopLite 0.58s ease-out var(--feed-hop-delay, 0s) 1 !important;
+}
+@keyframes sheepFeedDrop{
+  0%{ opacity:0; transform:translate(calc(-50% - var(--feed-drift-x, 0px)), calc(-50% - var(--feed-fall-distance, 185px))) rotate(var(--feed-rot, 18deg)) translateZ(46px) scale(0.76); }
+  18%{ opacity:1; }
+  70%{ opacity:1; transform:translate(calc(-50% + var(--feed-drift-x, 0px)), -50%) rotate(var(--feed-rot, 18deg)) translateZ(34px) scale(1); }
+  100%{ opacity:0; transform:translate(calc(-50% + var(--feed-drift-x, 0px)), calc(-50% + 10px)) rotate(var(--feed-rot, 18deg)) translateZ(32px) scale(0.92); }
+}
+@keyframes sheepFeedHappyHop{
+  0%, 100%{ transform:translate(-50%, -50%) translateZ(var(--z-lift, 18px)) rotateZ(45deg) rotateX(-60deg) scale(1); }
+  42%{ transform:translate(calc(-50% + 2px), calc(-50% - 10px)) translateZ(calc(var(--z-lift, 18px) + 3px)) rotateZ(43deg) rotateX(-60deg) scale(1.06); }
+  68%{ transform:translate(calc(-50% - 2px), calc(-50% - 3px)) translateZ(calc(var(--z-lift, 18px) + 1px)) rotateZ(48deg) rotateX(-60deg) scale(1.02); }
+}
+@keyframes sheepFeedHappyHopLite{
+  0%, 100%{ transform:translate(-50%, -50%) translateZ(var(--z-lift, 18px)) rotateZ(45deg) rotateX(-60deg); }
+  50%{ transform:translate(calc(-50% + 2px), calc(-50% - 6px)) translateZ(var(--z-lift, 18px)) rotateZ(43deg) rotateX(-60deg); }
+}
+@keyframes sheepFeedIconPop{
+  0%, 100%{ transform:scale(1) rotate(0deg); }
+  45%{ transform:scale(1.22) rotate(-10deg); }
+}
+@media (max-width:380px){
+  .sheep-feed-header-btn{ padding:0 0.58rem; }
+  .sheep-feed-header-btn span{ display:none; }
 }
 
 </style>
